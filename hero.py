@@ -9,17 +9,16 @@ class Hero:
     id = 0
     name = ""
     hp = 100
-    max_hp = 100 # здоровье 1500
+    max_hp = 100  # здоровье 1500
     force = 100  # cила 1300
     dexterity = 100  # ловкость 1200
     charisma = 100  # харизма 1200
     luck = 100  # удача 1200
     accuracy = 100  # меткость 1200
     weapon = None
-    armor = [10, 15, 10]
+    armor = [None, None, None]
     materials = 0
     coins = 0
-    # attack = 1
     hungry = 0
     km = 0
     kl_pl = 0
@@ -27,6 +26,14 @@ class Hero:
     died = 0
     mob_fight = None
     stock = None
+    CNT_LOG = 10
+
+    def calc_armor(self):
+        ret = 0
+        for i in range(0, 3):
+            if self.armor[i]:
+                ret += self.armor[i].arm
+        return ret
 
     def return_data(self):
         data = """
@@ -35,15 +42,19 @@ class Hero:
         ├ 👣{17}
         ├ 💪{3} | 🤸🏽‍♂️{4} | 🗣{5} 
         ├ 👼{6} | 🎯{7}
-        ├ 🗡{8}        ├ 🪖🥾🧥{9}|{10}|{11}
+        ├ 🗡{8}
+        ├ 🪖{9}
+        | 🧥{10}
+        | 🧤{11}
         ├ 📦{12}
         └ 🕳{13}"""
+        armor = self.calc_armor()
         return data.format(self.name, round(self.hp), self.max_hp,
                            self.force, self.dexterity, self.charisma,
-                           self.luck, self.accuracy, self.weapon.get_data(), self.armor[0],
-                           self.armor[1], self.armor[2], self.materials,
+                           self.luck, self.accuracy, self.weapon.get_data_hero(), self.armor[0].get_data_hero(),
+                           self.armor[1].get_data_hero(), self.armor[2].get_data_hero(), self.materials,
                            self.coins, self.hungry, self.calc_attack(),
-                           self.armor[0] + self.armor[1] + self.armor[2], self.km)
+                           armor, self.km)
 
     @staticmethod
     def generate_name():
@@ -58,6 +69,13 @@ class Hero:
                 return (round(50 + self.weapon.dmg * pow(1.03, self.force / 50)))
         else:
             return 1
+
+    def get_hit_armor(self):
+        for i in self.armor:
+            if i.life == 0:
+                i = None
+            else:
+                i.life -= 1
 
     def get_attack(self):
         return self.calc_attack() * random.uniform(0.85, 1.15)
@@ -115,27 +133,36 @@ class Hero:
 
     def attack_mob(self, mob: Mob):
         out = "Сражение с {0} ❤{1}\n".format(mob.name, mob.hp)
-        armor = self.armor[0] + self.armor[1] + self.armor[2]
+        armor = self.calc_armor()
         hp_mob = mob.hp
+        cnt_attack = 0
         if mob.is_first_hit(luck=self.luck):
             if mob.get_miss(self.dexterity):
                 out += "моб промахнулся\n"
             else:
                 dmg = mob.get_attack() - armor
                 if dmg < 0:
-                    out += "урон заблокирован\n"
-                else:
-                    out += "{0} нанес тебе удар 💔-{1}\n".format(mob.name, round(dmg))
-                    self.hp -= dmg
+                    dmg = 1
+                    #out += "урон заблокирован\n"
+
+                out += "{0} нанес тебе удар 💔-{1}\n".format(mob.name, round(dmg))
+                self.hp -= dmg
+                self.get_hit_armor()
+
 
         while round(self.hp) > 0:
+            cnt_attack += 1
             if self.get_miss(mob.dexterity):
-                out += "👤Ты промахнулся\n"
+                if cnt_attack < self.CNT_LOG:
+                    out += "👤Ты промахнулся\n"
             else:
                 att = self.get_attack()
-                out += "👤Ты ударил 💥{0}\n".format(round(att))
+                if cnt_attack < self.CNT_LOG:
+                    out += "👤Ты ударил 💥{0}\n".format(round(att))
                 hp_mob -= att
                 if hp_mob <= 0:
+                    if cnt_attack > self.CNT_LOG:
+                        out += " ......... ....... ....\n"
                     out += "{0} повержен\n".format(mob.name)
                     coins = round(mob.calc_mob_coins(self.km))
                     mats = round(mob.calc_mob_mat(self.km))
@@ -145,14 +172,20 @@ class Hero:
                     return out
 
             if mob.get_miss(self.dexterity):
-                out += "моб промахнулся\n"
+                if cnt_attack < self.CNT_LOG:
+                    out += "моб промахнулся\n"
             else:
                 dmg = mob.get_attack() - armor
                 if dmg < 0:
-                    out += "урон заблокирован\n"
-                else:
+                    dmg = 1
+                    #out += "урон заблокирован\n"
+                if cnt_attack < self.CNT_LOG:
                     out += "{0} нанес тебе удар 💔-{1}\n".format(mob.name, round(dmg))
-                    self.hp -= dmg
+                self.hp -= dmg
+                self.get_hit_armor()
+
+        if cnt_attack > self.CNT_LOG:
+            out += " ......... ....... ....\n"
 
         if round(self.hp) <= 0:
             out += "ты помер :((((((\n"
@@ -168,42 +201,59 @@ class Hero:
 
     def attack_player(self, hero):
         out = ""
-        armor = self.armor[0] + self.armor[1] + self.armor[2]
-        armor_hero = hero.armor[0] + hero.armor[1] + hero.armor[2]
+        armor = self.calc_armor()
+        armor_hero = hero.calc_armor()
+        cnt_attack = 0
         if hero.is_first_hit(luck=self.luck):
             if hero.get_miss(self.dexterity):
                 out += "{0} ❤️ {1} промахнулся\n".format(hero.name, round(hero.hp))
             else:
                 dmg = hero.get_attack() - armor
                 if dmg < 0:
-                    out += "{0} ❤️ {1}  урон {2} заблокирован\n".format(hero.name, round(hero.hp), round(dmg))
-                else:
-                    out += "{0} ❤️ {1} нанес {3} удар 💔-{2}\n".format(hero.name, round(hero.hp), round(dmg), self.name)
-                    self.hp -= dmg
+                    dmg = 1
+                    #out += "{0} ❤️ {1}  урон {2} заблокирован\n".format(hero.name, round(hero.hp), round(dmg))
+
+                out += "{0} ❤️ {1} нанес {3} удар 💔-{2}\n".format(hero.name, round(hero.hp), round(dmg), self.name)
+                self.hp -= dmg
+                self.get_hit_armor()
 
         while round(self.hp) > 0:
+            cnt_attack += 1
             if self.get_miss(hero.dexterity):
-                out += "❤️ {0} {1} промахнулся\n".format(round(self.hp), self.name)
+                if cnt_attack < self.CNT_LOG:
+                    out += "❤️ {0} {1} промахнулся\n".format(round(self.hp), self.name)
             else:
                 dmg = self.get_attack() - armor_hero
                 if dmg < 0:
-                    out += "❤️ {0} урон {1} заблокировал враг\n".format(round(self.hp), round(dmg))
-                else:
+                    dmg = 1
+                    #out += "❤️ {0} урон {1} заблокировал враг\n".format(round(self.hp), round(dmg))
+
+                if cnt_attack < self.CNT_LOG:
                     out += "❤️ {0} {2} ударил 💥{1}\n".format(round(self.hp), round(dmg), self.name)
-                    hero.hp -= dmg
-                    if hero.hp <= 0:
-                        out += "{0} повержен\n".format(hero.name)
-                        return out
+                hero.hp -= dmg
+                hero.get_hit_armor()
+                if hero.hp <= 0:
+                    if cnt_attack > self.CNT_LOG:
+                        out += " ......... ....... ....\n"
+                    out += "{0} повержен\n".format(hero.name)
+                    return out
 
             if hero.get_miss(self.dexterity):
-                out += "{0} ❤️ {1} промахнулся\n".format(hero.name, round(hero.hp))
+                if cnt_attack < self.CNT_LOG:
+                    out += "{0} ❤️ {1} промахнулся\n".format(hero.name, round(hero.hp))
             else:
                 dmg = hero.get_attack() - armor
                 if dmg < 0:
-                    out += "{0} ❤️ {1} урон {2} заблокирован\n".format(hero.name, round(hero.hp), round(dmg))
-                else:
+                    dmg = 1
+                    #out += "{0} ❤️ {1} урон {2} заблокирован\n".format(hero.name, round(hero.hp), round(dmg))
+
+                if cnt_attack < self.CNT_LOG:
                     out += "{0} ❤️ {1} нанес {3} удар 💔-{2}\n".format(hero.name, round(hero.hp), round(dmg), self.name)
-                    self.hp -= dmg
+                self.hp -= dmg
+                self.get_hit_armor()
+
+        if cnt_attack > self.CNT_LOG:
+            out += " ......... ....... ....\n"
 
         if round(self.hp) <= 0:
             out += "{0} помер :((((((\n".format(self.name)

@@ -5,11 +5,14 @@
 import logging
 import random
 import copy
+from db.base import *
 from hero import Hero
 from stock import Stock
+from armor import *
 from weapon import *
 from mob import *
 from menu import *
+from collections import OrderedDict
 
 from multiprocessing import Queue
 
@@ -54,13 +57,23 @@ def get_hero(update):
     if not rslt:
         hero = Hero()
         stock = Stock()
+        stock.equip = OrderedDict()
         for i in range(0, 5):
-            stock.weapons[str(weapons_all[i].dmg)+ "z0"] = weapons_all[i]
+            stock.equip[weapons_all[i].get_code()] = copy.copy(weapons_all[i])
+        stock.equip[armor_all[4].get_code()] = copy.copy(armor_all[4])
+        stock.equip[armor_all[12].get_code()] = copy.copy(armor_all[12])
+        stock.equip[armor_all[21].get_code()] = copy.copy(armor_all[21])
         hero.stock = stock
         hero.id = update.effective_user.id
         hero.name = Hero.generate_name()
         hero.weapon = copy.copy(weapons_all[0])
         hero.weapon.z = 1
+        hero.armor[0] = copy.copy(armor_all[3])
+        hero.armor[1] = copy.copy(armor_all[11])
+        hero.armor[2] = copy.copy(armor_all[20])
+        hero.armor[0].z = 1
+        hero.armor[1].z = 1
+        hero.armor[2].z = 1
         all_data[update.effective_user.id] = [hero, update.effective_chat]
         return hero
     else:
@@ -115,7 +128,8 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             await update.message.reply_text(hero.learn_data(), reply_markup=menu_learn())
         elif update.message.text == "💤Отдохнуть" and hero.hp < hero.max_hp:
             if hero.coins < hero.max_hp:
-                await update.message.reply_text("нужно {0} крышек, вы нищий и не можете отдохнуть\n".format(hero.max_hp), reply_markup=menu_camp())
+                await update.message.reply_text(
+                    "нужно {0} крышек, вы нищий и не можете отдохнуть\n".format(hero.max_hp), reply_markup=menu_camp())
             else:
                 hero.hp = hero.max_hp
                 hero.coins -= hero.max_hp
@@ -153,7 +167,8 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.message.reply_text(header + "вы отправились в пустошь", reply_markup=menu_go())
         if random.randint(0, 1):
             hero.select_mob()
-            await update.message.reply_text("на вас напал моб {0}".format(hero.mob_fight.name), reply_markup=menu_attack())
+            await update.message.reply_text("на вас напал моб {0}".format(hero.mob_fight.name),
+                                            reply_markup=menu_attack())
     elif update.message.text == "⚔️Дать отпор":
         mob = hero.mob_fight
         if mob:
@@ -173,7 +188,8 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         header = hero.make_header()
         if random.randint(0, 1):
             hero.select_mob()
-            await update.message.reply_text(header + "на вас напал моб{0}".format(hero.mob_fight.name), reply_markup=menu_attack())
+            await update.message.reply_text(header + "на вас напал моб {0}".format(hero.mob_fight.name),
+                                            reply_markup=menu_attack())
         else:
             await update.message.reply_text(header + "вы в дороге", reply_markup=menu_go())
     elif update.message.text == "⬅️Назад":
@@ -216,10 +232,18 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.message.reply_text(hero.stock.get_data(), reply_markup=menu_pip())
     elif "/eqw_" in update.message.text:
         w = update.message.text.replace("/eqw_", "")
-        wp = hero.stock.weapons.get(w, None)
+        wp = hero.stock.equip.get(w, None)
         if wp:
-            hero.stock.weapons["{0}z{1}".format(hero.weapon.dmg, hero.weapon.z)] = copy.copy(hero.weapon)
-            hero.weapon = hero.stock.weapons.pop(w)
+            hero.stock.equip[hero.weapon.get_code()] = copy.copy(hero.weapon)
+            hero.weapon = hero.stock.equip.pop(w)
+            await update.message.reply_text(hero.return_data(), reply_markup=menu_pip())
+    elif "/eqa_" in update.message.text:
+        a = update.message.text.replace("/eqa_", "")
+        ap = hero.stock.equip.get(a, None)
+        if ap:
+            i = int(a[0])
+            hero.stock.equip[hero.armor[i].get_code()] = copy.copy(hero.armor[i])
+            hero.armor[i] = hero.stock.equip.pop(a)
             await update.message.reply_text(hero.return_data(), reply_markup=menu_pip())
 
 
