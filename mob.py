@@ -41,13 +41,25 @@ class Mob:
         else:
             return False
 
-    def get_hit(self, dmg, accur):  # удар героя по мобу
-        if random.randint(0, 1000) < self.dexterity - accur:
-            return "miss"
-        else:
-            self.hp = self.hp - dmg
-            return "hit"
 
+list_dange10 = [
+    Mob(name='💊шиза', hp=5, attack=5, dexterity=10, luck=10, accuracy=10, coins=30),
+    Mob(name='💉биполярка', hp=8, attack=10, dexterity=10, luck=10, accuracy=10, coins=30),
+    Mob(name='🩸мигрень', hp=10, attack=15, dexterity=10, luck=10, accuracy=10, coins=30),
+    Mob(name='🧬деменция', hp=20, attack=20, dexterity=10, luck=10, accuracy=10, coins=30),
+    Mob(name='🧫санитар', hp=25, attack=25, dexterity=10, luck=10, accuracy=10, coins=30)
+]
+
+
+list_dange20 = [
+    Mob(name='🐜ледяной муравей', hp=30, attack=15, dexterity=10, luck=10, accuracy=10, coins=30),
+    Mob(name='🐞злобный гоблин', hp=35, attack=20, dexterity=10, luck=10, accuracy=10, coins=30),
+    Mob(name='🐌улитка кровожадная', hp=40, attack=35, dexterity=10, luck=10, accuracy=10, coins=30),
+    Mob(name='🦋че за нах', hp=50, attack=40, dexterity=10, luck=10, accuracy=10, coins=30),
+    Mob(name='🐛сороконожка с ножом', hp=65, attack=55, dexterity=10, luck=10, accuracy=10, coins=30)
+]
+
+danges = {10: list_dange10, 20: list_dange20}
 
 list_mobs1_5 = [
     Mob(name='🐶крысакот', hp=1, attack=2, dexterity=5, luck=5, accuracy=5, coins=20),
@@ -193,6 +205,14 @@ list_mobs85_90 = [
     Mob(name='моб89', hp=3570, attack=1400, dexterity=820, luck=20, accuracy=1220, coins=450)
 ]
 
+list_mobs90 = [
+    Mob(name='моб90', hp=4510, attack=1600, dexterity=1020, luck=20, accuracy=1320, coins=650),
+    Mob(name='моб91', hp=4520, attack=1600, dexterity=1020, luck=20, accuracy=1320, coins=650),
+    Mob(name='моб92', hp=4540, attack=1600, dexterity=1020, luck=20, accuracy=1320, coins=650),
+    Mob(name='моб93', hp=4565, attack=1600, dexterity=1020, luck=20, accuracy=1320, coins=650),
+    Mob(name='моб94', hp=4570, attack=1600, dexterity=1020, luck=20, accuracy=1320, coins=650)
+]
+
 list_mobs = [list_mobs1_5, list_mobs5_10,
              list_mobs10_15, list_mobs15_20,
              list_mobs20_25, list_mobs25_30,
@@ -201,5 +221,5 @@ list_mobs = [list_mobs1_5, list_mobs5_10,
              list_mobs50_55, list_mobs55_60,
              list_mobs60_65, list_mobs65_70,
              list_mobs70_75, list_mobs75_80,
-             list_mobs80_85, list_mobs85_90
+             list_mobs80_85, list_mobs85_90, list_mobs90
              ]

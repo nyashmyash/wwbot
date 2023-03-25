@@ -1,5 +1,49 @@
 from telegram import InlineKeyboardButton, ReplyKeyboardMarkup
 
+def menu_go_dange():
+    keyboard = [
+        [
+            InlineKeyboardButton("👣Дальше"),
+        ],
+        [
+            InlineKeyboardButton("🎒Рюкзак"),
+        ]
+    ]
+
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    return reply_markup
+
+
+def menu_dange():
+    keyboard = [
+        [
+            InlineKeyboardButton("🔥Зайти в данж"),
+            InlineKeyboardButton("👣Идти дaльше")
+        ],
+        [
+            InlineKeyboardButton("🔎Осмотреться"),
+            InlineKeyboardButton("⛺️В лагерь"),
+        ]
+    ]
+
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    return reply_markup
+
+def menu_lomb():
+    keyboard = [
+        [
+            InlineKeyboardButton("Продать все коробки"),
+            InlineKeyboardButton("Продать 1/2 коробок")
+        ],
+        [
+            InlineKeyboardButton("Продать 1/4 коробок"),
+            InlineKeyboardButton("Продать 1/8 коробок"),
+            InlineKeyboardButton("⬅️Назад"),
+        ]
+    ]
+
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    return reply_markup
 
 def menu_attack():
     keyboard = [
@@ -69,16 +113,17 @@ def menu_camp():
         [
             InlineKeyboardButton("📟Пип-бой"),
             InlineKeyboardButton("💤Отдохнуть"),
-            #InlineKeyboardButton("💰Ломбард"),
         ],
         [
-            InlineKeyboardButton("👣Пустошь"),
+
+            InlineKeyboardButton("💰Ломбард"),
+            #InlineKeyboardButton("👓Инженер"),
             InlineKeyboardButton("🎓Обучение")
         ],
-        #[
-            #InlineKeyboardButton("👓Инженер"),
-            #InlineKeyboardButton("🏚Торгаш")
-        #]
+        [
+            InlineKeyboardButton("🏚Торгаш"),
+            InlineKeyboardButton("👣Пустошь"),
+        ]
     ]
 
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)

@@ -11,13 +11,20 @@ class Stock:
     armors = {}
     stuff = {}
     meds = {}
+    MAX_EQUIP = 12
+
+    def get_data_lombard(self):
+        out = "Экипировка которую можно продать:\n\n"
+        for w in self.equip:
+            out += self.equip[w].get_data_cost() + "\n"
+        return out
 
     def get_data(self):
         out = "🎒СОДЕРЖИМОЕ РЮКЗАКА\n"
         out += "   Полезное\n"
         out += " ---  пока ничего ---\n"
         cnt = len(self.equip)
-        out += "Экипировка ({0}/12)\n".format(cnt)
+        out += "Экипировка ({0}/{1})\n".format(cnt, self.MAX_EQUIP)
         for w in self.equip:
             out += self.equip[w].get_data() + "\n"
         return out
