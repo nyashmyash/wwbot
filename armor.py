@@ -2,7 +2,7 @@
 # коробки, кипарит k, иридий i * 2, диски d * 2.5, генератор g * 4, кварц c * 7
 # титан t, осмий o, нитрин n
 crafted_weapon = []
-
+from db.models import ArmorDB
 
 class Armor:
     name = ""
@@ -14,6 +14,7 @@ class Armor:
     z = 0
     upgrade_lvl = 0
     type = 0  # 0 head 1 body 2 foot
+    use = 0
 
     def __init__(self, name, arm, type, life=500, max_life=500, cost=0, mats=0):
         self.name = name
@@ -53,6 +54,14 @@ class Armor:
 
     def get_code(self):
         return "{0}t{1}z{2}".format(self.type, self.arm, self.z)
+
+    def to_db(self):
+        return ArmorDB(code=self.get_code(), use=self.use, life=self.life, max_life=self.max_life)
+
+    def from_db(self, armor_db):
+        self.life = armor_db.life
+        self.max_life = armor_db.max_life
+        self.use = armor_db.use
 
 
 armor_all = [[Armor("кепка", 1, 0, life=100, max_life=100),

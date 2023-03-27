@@ -9,6 +9,7 @@ class Weapon:
     mats = 0
     z = 0
     upgrade_lvl = 0
+    use = 0
 
     def __init__(self, name, dmg, life=500, max_life=500, cost=0, mats=0):
         self.name = name
@@ -48,7 +49,14 @@ class Weapon:
         return "{0}z{1}".format(self.dmg, self.z)
 
     def to_db(self):
-        return WeaponDB(code=self.get_code(), life=self.life, max_life=self.max_life)
+        return WeaponDB(code=self.get_code(), use=self.use, life=self.life, max_life=self.max_life)
+
+    def from_db(self, weapon_db):
+        self.life = weapon_db.life
+        self.max_life = weapon_db.max_life
+        self.use = weapon_db.use
+        self.z = int(weapon_db.code.split('z')[1])
+        self.dmg = int(weapon_db.code.split('z')[0])
 
 
 weapons_all = [Weapon("бита", 1, cost=100),  # титановый арбалет, лазерный лук, секира плазмы
@@ -56,15 +64,16 @@ weapons_all = [Weapon("бита", 1, cost=100),  # титановый арбал
                Weapon("🔫пистолет", 10, cost=5000),
                Weapon("🔫⚡️автомат", 20, cost=15000),
                Weapon("💥лазер", 50, cost=70000),
-               Weapon("⚡️ракетница", 100),
-               Weapon("♻️рандомган", 120),
-               Weapon("☄️рельса", 180),
-               Weapon("❇️потрошитель", 240),
-               Weapon("🧨гранатомет", 300),
-               Weapon("♨️святое пламя", 350),
-               Weapon("🔮плюмбус", 400),
-               Weapon("💠дезинтегратор", 500),
-               Weapon("🦠черная вдова", 550),
-               Weapon("🔆ядерный уничтожитель", 600),
-               Weapon("🌪лазерное торнадо", 650),
-               Weapon("🌀черная дыра", 700)]
+               Weapon("⚡️️электрошок", 75, life=700, max_life=700, cost=80000),
+               Weapon("💥ракетница", 100,life=900, max_life=900, cost=100000),
+               Weapon("♻️рандомган", 120, life=1000, max_life=1000),
+               Weapon("☄️рельса", 180, life=1200, max_life=1200),
+               Weapon("❇️потрошитель", 240, life=1200, max_life=1200),
+               Weapon("🧨гранатомет", 300, life=1500, max_life=1500),
+               Weapon("♨️святое пламя", 350, life=1500, max_life=1500),
+               Weapon("🔮плюмбус", 400, life=1500, max_life=1500),
+               Weapon("💠дезинтегратор", 500, life=1500, max_life=1500),
+               Weapon("🦠черная вдова", 550, life=1500, max_life=1500),
+               Weapon("🔆ядерный уничтожитель", 600, life=2000, max_life=2000),
+               Weapon("🌪лазерное торнадо", 650, life=2000, max_life=2000),
+               Weapon("🌀черная дыра", 700, life=2000, max_life=2000)]

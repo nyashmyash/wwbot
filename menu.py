@@ -129,6 +129,25 @@ def menu_camp():
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     return reply_markup
 
+def menu_learn_x10():
+    keyboard = [
+        [
+            InlineKeyboardButton("💪Сила*"),
+            InlineKeyboardButton("🎯Меткость*"),
+            InlineKeyboardButton("🤸🏽‍♂️Ловкость*"),
+        ],
+        [
+            InlineKeyboardButton("❤️Живучесть*"),
+            InlineKeyboardButton("🗣Харизма*"),
+            InlineKeyboardButton("👼Удача*"),
+        ],
+        [
+            InlineKeyboardButton("⬅️Назад"),
+        ]
+    ]
+
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    return reply_markup
 
 def menu_learn():
     keyboard = [
@@ -141,9 +160,13 @@ def menu_learn():
             InlineKeyboardButton("❤️Живучесть"),
             InlineKeyboardButton("🗣Харизма"),
             InlineKeyboardButton("👼Удача"),
-            InlineKeyboardButton("⬅️Назад")
+        ],
+        [
+            InlineKeyboardButton("⬅️Назад"),
+            InlineKeyboardButton("x10 навыков")
         ]
     ]
 
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     return reply_markup
+

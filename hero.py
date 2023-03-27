@@ -3,11 +3,8 @@ from random import sample
 from mob import *
 import random
 import copy
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.ext.asyncio import async_sessionmaker
-from db.models import HeroDB, WeaponDB
 
+from db.models import HeroDB, WeaponDB
 
 class Hero:
     id = ""
@@ -309,48 +306,6 @@ class Hero:
                       force=self.force, dexterity=self.dexterity,
                       charisma=self.charisma, luck=self.luck,
                       accuracy=self.accuracy, materials=self.materials,
-                      coins=self.coins, hungry=self.hungry, km=self.km, mob="")
+                      coins=self.coins, hungry=self.hungry, km=self.km, mob="", all_km=self.all_km)
 
 
-async def get_hero_db(async_session: async_sessionmaker[AsyncSession], user_id):
-    async with async_session() as session:
-        result = await session.execute(select(HeroDB).where(HeroDB.user_id == user_id))
-        return result.scalars().all()
-
-
-async def add_hero_db(async_session: async_sessionmaker[AsyncSession], hero: Hero):
-    async with async_session() as session:
-        async with session.begin():
-            session.add(hero.to_db())
-
-
-async def add_hero_weapon_db(async_session: async_sessionmaker[AsyncSession], hero: Hero, weapon, use=0):
-    async with async_session() as session:
-        async with session.begin():
-            if not hero.base_id:
-                result = await session.execute(select(HeroDB).where(HeroDB.user_id == hero.id))
-                hero_db = result.scalars().one()
-                hero.base_id = hero_db.id
-            wdb = weapon.to_db()
-            wdb.user = hero.base_id
-            wdb.use = use
-            session.add(wdb)
-
-
-async def upd_hero_weapon_db(async_session: async_sessionmaker[AsyncSession], hero: Hero, code="", life=0, use=0):
-    async with async_session() as session:
-        async with session.begin():
-            result = await session.execute(select(WeaponDB).where(WeaponDB.user == hero.base_id and WeaponDB.code == code))
-            res = result.scalars().one()
-            res.life = life
-            res.use = use
-            await session.commit()
-
-
-async def upd_hero_db(async_session: async_sessionmaker[AsyncSession], hero: Hero):
-    async with async_session() as session:
-        async with session.begin():
-            result = await session.execute(select(HeroDB).where(HeroDB.user_id == hero.id))
-            res = result.scalars().one()
-            res.copy_val(hero.to_db())
-            await session.commit()

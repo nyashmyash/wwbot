@@ -10,7 +10,7 @@ class WeaponDB(Base):
     life = Column(Integer)
     max_life = Column(Integer)
     use = Column(Integer)
-    user = ForeignKey('heroes.id')
+    user_id = Column(Integer)
 
 
 class ArmorDB(Base):
@@ -21,7 +21,7 @@ class ArmorDB(Base):
     life = Column(Integer)
     max_life = Column(Integer)
     use = Column(Integer)
-    user = ForeignKey('heroes.id')
+    user_id = Column(Integer)
 
 
 class HeroDB(Base):
