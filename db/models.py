@@ -2,6 +2,14 @@ from sqlalchemy import Column, String, Integer, ForeignKey
 from db.base import Base
 
 
+class ItemsDB(Base):
+    __tablename__ = "items"
+    id = Column(Integer, autoincrement=True, primary_key=True, index=True)
+    index = Column(Integer)
+    user_id = Column(Integer)
+    count = Column(Integer)
+
+
 class WeaponDB(Base):
     __tablename__ = "weapons"
 

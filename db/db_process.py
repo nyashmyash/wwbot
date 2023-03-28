@@ -1,10 +1,20 @@
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import async_sessionmaker
-from db.models import HeroDB, WeaponDB, ArmorDB
+from db.models import HeroDB, WeaponDB, ArmorDB, ItemsDB
 from weapon import Weapon
 from armor import Armor
 from hero import Hero
+from sqlalchemy.schema import CreateTable
+from sqlalchemy.dialects.postgresql import dialect
+from sqlalchemy.sql import text
+
+
+
+async def create_table_db(async_session: async_sessionmaker[AsyncSession]):
+    async with async_session() as session:
+        await session.execute(text(str(CreateTable(ItemsDB.__table__).compile(dialect=dialect()))))
+        await session.commit()
 
 async def get_hero_db(async_session: async_sessionmaker[AsyncSession], user_id):
     async with async_session() as session:
@@ -86,3 +96,26 @@ async def upd_hero_db(async_session: async_sessionmaker[AsyncSession], hero: Her
             res = result.scalars().one()
             res.copy_val(hero.to_db())
             await session.commit()
+
+
+async def add_hero_items_db(async_session: async_sessionmaker[AsyncSession], hero: Hero):
+    async with async_session() as session:
+        #result = await session.execute(select(ItemsDB).where(ItemsDB.user_id == hero.id))
+        #res = result.scalars().all()
+        for key, val in hero.stock.used_stuff.items():
+            session.add(ItemsDB(index=key, count=val, user_id=hero.base_id))
+
+        await session.commit()
+
+
+async def delete_hero_items_db(async_session: async_sessionmaker[AsyncSession], hero: Hero):
+    async with async_session() as session:
+        async with session.begin():
+            await session.execute(delete(ItemsDB).where(ItemsDB.user_id == hero.base_id))
+            await session.commit()
+
+
+async def get_hero_items_db(async_session: async_sessionmaker[AsyncSession], hero: Hero):
+    async with async_session() as session:
+        result = await session.execute(select(ItemsDB).where(ItemsDB.user_id == hero.id))
+        return result.scalars().all()

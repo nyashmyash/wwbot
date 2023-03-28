@@ -39,7 +39,7 @@ class Weapon:
         if not self.cost:
             return round(self.dmg * 100 * self.life / self.max_life + self.dmg * 200)
         else:
-            return self.cost
+            return round(self.cost  * self.life / self.max_life)
 
     def get_data_hero(self):
         out = "▪️ {0} ⚡️{1} 🔧{2} %".format(self.name, self.dmg, round(100 * self.life / self.max_life))
@@ -65,7 +65,7 @@ weapons_all = [Weapon("бита", 1, cost=100),  # титановый арбал
                Weapon("🔫⚡️автомат", 20, cost=15000),
                Weapon("💥лазер", 50, cost=70000),
                Weapon("⚡️️электрошок", 75, life=700, max_life=700, cost=80000),
-               Weapon("💥ракетница", 100,life=900, max_life=900, cost=100000),
+               Weapon("🚀ракетница", 100,life=900, max_life=900, cost=100000),
                Weapon("♻️рандомган", 120, life=1000, max_life=1000),
                Weapon("☄️рельса", 180, life=1200, max_life=1200),
                Weapon("❇️потрошитель", 240, life=1200, max_life=1200),
