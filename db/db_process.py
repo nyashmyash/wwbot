@@ -16,9 +16,13 @@ async def create_table_db(async_session: async_sessionmaker[AsyncSession]):
         await session.execute(text(str(CreateTable(ItemsDB.__table__).compile(dialect=dialect()))))
         await session.commit()
 
-async def get_hero_db(async_session: async_sessionmaker[AsyncSession], user_id):
+
+async def get_hero_db(async_session: async_sessionmaker[AsyncSession], user_id = 0):
     async with async_session() as session:
-        result = await session.execute(select(HeroDB).where(HeroDB.user_id == user_id))
+        if user_id:
+            result = await session.execute(select(HeroDB).where(HeroDB.user_id == user_id))
+        else:
+            result = await session.execute(select(HeroDB))
         return result.scalars().all()
 
 

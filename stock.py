@@ -68,6 +68,8 @@ class Stock:
                 self.used_stuff[code] -= 1
 
             hero.hungry -= used_items[code].get("hungry", 0)
+            if hero.hungry<0:
+                hero.hungry = 0;
             hero.hp += used_items[code].get("hp", 0)
             hero.buffs[0] = used_items[code].get("force", 0)
             hero.buffs[1] = used_items[code].get("dexterity", 0)

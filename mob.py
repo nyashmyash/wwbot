@@ -43,21 +43,21 @@ class Mob:
 
 
 list_dange10 = [
-    Mob(name='💊шиз-кровожадный', hp=5, attack=5, dexterity=50, luck=50, accuracy=10, coins=30),
-    Mob(name='💉тянка-биполярка', hp=8, attack=10, dexterity=50, luck=50, accuracy=10, coins=30),
-    Mob(name='🩸санитар(с таблетками)', hp=10, attack=15, dexterity=50, luck=50, accuracy=10, coins=30),
-    Mob(name='🧬старушка(деменция)', hp=20, attack=20, dexterity=50, luck=50, accuracy=10, coins=30),
-    Mob(name='🧫санитар(кровожадный)', hp=25, attack=25, dexterity=50, luck=50, accuracy=10, coins=30),
+    Mob(name='😈кровосос', hp=5, attack=5, dexterity=50, luck=50, accuracy=10, coins=30),
+    Mob(name='👩🏻‍🔧тянка-биполярка', hp=8, attack=10, dexterity=50, luck=50, accuracy=10, coins=30),
+    Mob(name='🧔‍♂️санитар(с таблетками)', hp=10, attack=15, dexterity=50, luck=50, accuracy=10, coins=30),
+    Mob(name='👨‍⚕доктор-марианетка(деменция)', hp=20, attack=20, dexterity=50, luck=50, accuracy=10, coins=30),
+    Mob(name='👩‍⚕️медсестра-марионетка', hp=25, attack=25, dexterity=50, luck=50, accuracy=10, coins=30),
     None
 ]
 
 
 list_dange20 = [
-    Mob(name='🐜муравей с клыками', hp=30, attack=15, dexterity=50, luck=100, accuracy=50, coins=30),
-    Mob(name='🐞божья коровка(кровожадная)', hp=35, attack=20, dexterity=50, luck=100, accuracy=50, coins=30),
-    Mob(name='🐌улитка расчленитель', hp=40, attack=35, dexterity=50, luck=100, accuracy=50, coins=30),
-    Mob(name='🦋бабочка(в крови)', hp=50, attack=40, dexterity=50, luck=100, accuracy=50, coins=30),
-    Mob(name='🐛сороконожка(опасня с ножом)', hp=65, attack=55, dexterity=50, luck=100, accuracy=50, coins=30),
+    Mob(name='🐜ползающий', hp=30, attack=15, dexterity=50, luck=100, accuracy=50, coins=30),
+    Mob(name='🐞парящее жало', hp=35, attack=20, dexterity=50, luck=100, accuracy=50, coins=30),
+    Mob(name='🐌двуусый', hp=40, attack=35, dexterity=50, luck=100, accuracy=50, coins=30),
+    Mob(name='🦋порхающий(в ночи)', hp=50, attack=40, dexterity=50, luck=100, accuracy=50, coins=30),
+    Mob(name='🐛паразит(опасня с ножом)', hp=65, attack=55, dexterity=50, luck=100, accuracy=50, coins=30),
     None
 ]
 
@@ -70,6 +70,16 @@ list_dange30 = [
     None
 ]
 
+list_dange35 = [
+    Mob(name='🦀хед-краб', hp=100, attack=100, dexterity=150, luck=150, accuracy=150, coins=30),
+    Mob(name='🦑барнакл', hp=100, attack=120, dexterity=150, luck=150, accuracy=150, coins=30),
+    Mob(name='🦖вортигонт', hp=130, attack=120, dexterity=150, luck=150, accuracy=150, coins=30),
+    Mob(name='🦕пехотинец пришельцев', hp=150, attack=130, dexterity=150, luck=150, accuracy=150, coins=30),
+    Mob(name='🐋гаргантюа(🌟)', hp=200, attack=150, dexterity=150, luck=150, accuracy=150, coins=30),
+    None
+]
+
+
 list_dange40 = [
     Mob(name='🎖чертик', hp=200, attack=100, dexterity=210, luck=210, accuracy=210, coins=30),
     Mob(name='🎖демон', hp=250, attack=100, dexterity=210, luck=210, accuracy=210, coins=30),
@@ -80,7 +90,7 @@ list_dange40 = [
 ]
 
 
-danges = {10: list_dange10, 20: list_dange20, 30: list_dange30, 40: list_dange40}
+danges = {10: list_dange10, 20: list_dange20, 30: list_dange30, 35: list_dange35, 40: list_dange40}
 
 list_mobs1_5 = [
     Mob(name='🐶крысакот(любопытный)', hp=1, attack=2, dexterity=5, luck=5, accuracy=5, coins=20),

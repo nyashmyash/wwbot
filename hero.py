@@ -55,10 +55,13 @@ class Hero:
     def get_stack(self, index):
         if not self.armor[0]:
             return 0
+        if self.armor[0].type_stack == 0:
+            return 0
 
         for i in range(1, 3):
             if self.armor[0].type_stack != self.armor[i].type_stack:
                 return 0
+
         return stack_buff[self.armor[0].type_stack - 1][index]
 
     def get_force(self):
@@ -73,6 +76,14 @@ class Hero:
     def get_accuracy(self):
         return self.accuracy + self.get_stack(3) + self.buffs[3]
 
+    def get_str(self, val, i):
+        out = str(val)
+        if self.get_stack(i):
+            out += "+" + str(self.get_stack(i))
+        if self.buffs[i]:
+            out += "({0})".format(self.buffs[i])
+        return out
+
     def return_data(self):
         data = """
         👤{0} 
@@ -82,8 +93,8 @@ class Hero:
         ├ 👼{6} | 🎯{7}
         ├ 🗡{8}
         ├ 🪖{9}
-        | 🧥{10}
-        | 🧤{11}
+        ├ 🧥{10}
+        ├ 🧤{11}
         ├ 📦{12}
         └ 🕳{13} 👣👣{18}"""
         weapon = None
@@ -94,8 +105,9 @@ class Hero:
 
         armor = self.calc_armor()
         return data.format(self.name, round(self.hp), self.max_hp,
-                           self.get_force(), self.get_dexterity(), self.charisma,
-                           self.get_luck(), self.get_accuracy(), weapon, self.arm_str(self.armor[0]),
+                           self.get_str(self.force, 0), self.get_str(self.dexterity, 1), self.charisma,
+                           self.get_str(self.luck, 2), self.get_str(self.accuracy, 3), weapon,
+                           self.arm_str(self.armor[0]),
                            self.arm_str(self.armor[1]), self.arm_str(self.armor[2]), self.materials,
                            self.coins, self.hungry, self.calc_attack(),
                            armor, self.km, self.all_km)
@@ -125,7 +137,7 @@ class Hero:
                 if self.armor[i].life <= 0:
                     self.armor[i] = None
                 else:
-                    self.armor[i].life -= 0.5
+                    self.armor[i].life -= 1
 
     def get_attack(self):
         if self.weapon and self.weapon.life > 0:
@@ -228,7 +240,7 @@ class Hero:
                         out += "получено 🕳 {0} 📦 {1}\n".format(coins, mats)
                         if random.randint(0, 20) == 7:
                             rkey, ritem = get_random_item()
-                            out += "вам выпал {0}\n".format(ritem['name'])
+                            out += "✅✅вам выпал {0}✅✅\n".format(ritem['name'])
                             self.stock.add_stuff(rkey)
                     return out
 
@@ -259,6 +271,7 @@ class Hero:
         self.km = 0
         self.died += 1
         self.hp = 1
+        self.mob_fight = None
 
     def log_hit(self):
         text_hit = ["сильно ударил",
