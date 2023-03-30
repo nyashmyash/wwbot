@@ -22,8 +22,8 @@ used_items = {100: {"name": "сырое мясо", "hungry": 30, "hp": 2},
               107: {"name": "вонючая жижа", "hungry": 30, "hp": -5},
               108: {"name": "хомячок", "hungry": 15, "hp": -1},
               109: {"name": "крыса", "hungry": 10, "hp": -2},
-              110: {"name": "аптечка", "hp": 10},
-              111: {"name": "большая аптечка", "hp": 30},
+              110: {"name": "аптечка", "hp": 10, "hungry": 10},
+              111: {"name": "большая аптечка", "hp": 30, "hungry": 10},
               200: {"name": "пиво", "force": 10, "luck": 20, "km": 10},
               201: {"name": "вино", "force": 15,"luck": 20, "km": 20},
               202: {"name": "водка", "force": 30, "luck": 50, "km": 30},
@@ -67,17 +67,34 @@ class Stock:
             else:
                 self.used_stuff[code] -= 1
 
-            hero.hungry -= used_items[code].get("hungry", 0)
+            hun = used_items[code].get("hungry", 0)
+            hero.hungry -= hun
             if hero.hungry<0:
                 hero.hungry = 0;
-            hero.hp += used_items[code].get("hp", 0)
+            hp = used_items[code].get("hp", 0)
+            hero.hp += hp
             hero.buffs[0] = used_items[code].get("force", 0)
             hero.buffs[1] = used_items[code].get("dexterity", 0)
             hero.buffs[2] = used_items[code].get("luck", 0)
             hero.buffs[3] = used_items[code].get("accuracy", 0)
             hero.km_buff = used_items[code].get("km", 0)
+            outstr = ""
+            if hun:
+                outstr += "🍗-{0}% ".format(hun)
+            if hp>0:
+                outstr += "❤+{0} ".format(hp)
+            elif hp<0:
+                outstr += "💔{0} ".format(hp)
+            if hero.buffs[0]:
+                outstr += "💪+{0} ".format(hero.buffs[0])
+            if hero.buffs[1]:
+                outstr += "🤸🏽‍♂️+{0} ".format(hero.buffs[1])
+            if hero.buffs[2]:
+                outstr += "👼+{0} ".format(hero.buffs[2])
+            if hero.buffs[3]:
+                outstr += "🎯+{0} ".format(hero.buffs[3])
 
-            return "вы использовали {0}\n".format(used_items[code]["name"])
+            return "вы использовали {0}\n {1}\n".format(used_items[code]["name"], outstr)
         return "нет такого"
 
     def print_stuff(self, code=1):
@@ -91,9 +108,12 @@ class Stock:
             return out
 
     def add_item(self, item):
+        if len(self.equip) == self.MAX_EQUIP:
+            return
         new_item = copy.copy(item)
         while self.equip.get(new_item.get_code(), None):
             new_item.z += 1
+        new_item.use = 0
         self.equip[new_item.get_code()] = new_item
 
     def get_data(self):

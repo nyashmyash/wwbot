@@ -198,7 +198,10 @@ class Hero:
             return False
 
     def make_header(self):
-        return "❤️ {0}\{1} 🍗{2}%  👣{3}\n".format(round(self.hp), self.max_hp, self.hungry, self.km)
+        buffed = ""
+        if self.km_buff > 0:
+            buffed = "*бафф*"
+        return "❤️ {0}\{1} 🍗{2}% {3} 👣{4}\n".format(round(self.hp), self.max_hp, self.hungry, buffed, self.km)
 
     def attack_mob(self, mob: Mob, is_dange=False):
         out = "Сражение с {0} ❤{1}\n".format(mob.name, mob.hp)
@@ -262,7 +265,7 @@ class Hero:
 
         if round(self.hp) <= 0:
             out += "ты помер :((((((\n"
-            self.hp = self.max_hp
+            self.died_hero()
 
         self.km = 0
         return out

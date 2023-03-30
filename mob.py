@@ -57,7 +57,7 @@ list_dange20 = [
     Mob(name='🐞парящее жало', hp=35, attack=20, dexterity=50, luck=100, accuracy=50, coins=30),
     Mob(name='🐌двуусый', hp=40, attack=35, dexterity=50, luck=100, accuracy=50, coins=30),
     Mob(name='🦋порхающий(в ночи)', hp=50, attack=40, dexterity=50, luck=100, accuracy=50, coins=30),
-    Mob(name='🐛паразит(опасня с ножом)', hp=65, attack=55, dexterity=50, luck=100, accuracy=50, coins=30),
+    Mob(name='🐛паразит(опасный с ножом)', hp=65, attack=55, dexterity=50, luck=100, accuracy=50, coins=30),
     None
 ]
 
@@ -81,16 +81,53 @@ list_dange35 = [
 
 
 list_dange40 = [
-    Mob(name='🎖чертик', hp=200, attack=100, dexterity=210, luck=210, accuracy=210, coins=30),
-    Mob(name='🎖демон', hp=250, attack=100, dexterity=210, luck=210, accuracy=210, coins=30),
-    Mob(name='🌟огненный атронах', hp=260, attack=100, dexterity=210, luck=210, accuracy=210, coins=30),
-    Mob(name='⚡️служитель бездны', hp=280, attack=130, dexterity=210, luck=210, accuracy=210, coins=30),
-    Mob(name='️💥повелитель ада', hp=320, attack=150, dexterity=210, luck=210, accuracy=210, coins=30),
+    Mob(name='🎖чертик', hp=200, attack=120, dexterity=210, luck=210, accuracy=210, coins=30),
+    Mob(name='🎖демон', hp=250, attack=130, dexterity=210, luck=210, accuracy=210, coins=30),
+    Mob(name='🌟огненный атронах', hp=260, attack=150, dexterity=210, luck=210, accuracy=210, coins=30),
+    Mob(name='⚡️служитель бездны', hp=280, attack=170, dexterity=210, luck=210, accuracy=210, coins=30),
+    Mob(name='️💥повелитель ада', hp=320, attack=200, dexterity=210, luck=210, accuracy=210, coins=30),
     None
 ]
 
+list_dange50 = [
+    Mob(name='🤡жалкий клоун', hp=250, attack=125, dexterity=320, luck=320, accuracy=320, coins=210),
+    Mob(name='🎈оно', hp=300, attack=150, dexterity=330, luck=320, accuracy=320, coins=210),
+    Mob(name='🤹🏻‍♀️жонглер костями', hp=320, attack=200, dexterity=320, luck=320, accuracy=320, coins=210),
+    Mob(name='🎭кровавый арлекин', hp=400, attack=220, dexterity=320, luck=320, accuracy=320, coins=210),
+    Mob(name='️🎪 ебучий цирк(будешь выступать)', hp=500, attack=250, dexterity=320, luck=320, accuracy=320, coins=210),
+    None
+]
 
-danges = {10: list_dange10, 20: list_dange20, 30: list_dange30, 35: list_dange35, 40: list_dange40}
+list_dange60 = [
+    Mob(name='🐙зерлинг', hp=400, attack=200, dexterity=410, luck=510, accuracy=510, coins=30),
+    Mob(name='🦞гидралиск', hp=450, attack=250, dexterity=410, luck=510, accuracy=510, coins=30),
+    Mob(name='🦐муталиск', hp=560, attack=300, dexterity=410, luck=510, accuracy=510, coins=30),
+    Mob(name='🦀брудлорд', hp=580, attack=330, dexterity=410, luck=510, accuracy=510, coins=30),
+    Mob(name='🦑ультралиск', hp=720, attack=450, dexterity=410, luck=510, accuracy=510, coins=30),
+    None
+]
+
+list_dange70 = [
+    Mob(name='🦂Заразитель (некроморф хитрец)', hp=1000, attack=300, dexterity=710, luck=510, accuracy=710, coins=30),
+    Mob(name='🦎Сталкер (некроморф следит)', hp=1250, attack=350, dexterity=710, luck=510, accuracy=710, coins=30),
+    Mob(name='🐍Расчленитель (некроморф режущий)', hp=1260, attack=400, dexterity=510, luck=210, accuracy=710, coins=30),
+    Mob(name='🦖Охотник (некроморф тебя ищет)', hp=1180, attack=530, dexterity=710, luck=510, accuracy=710, coins=30),
+    Mob(name='🐊Левиафан(некроморф босс)', hp=1520, attack=650, dexterity=710, luck=510, accuracy=710, coins=30),
+    None
+]
+
+list_dange80 = [
+    Mob(name='Потрошитель', hp=2510, attack=700, dexterity=820, luck=520, accuracy=1020, coins=400),
+    Mob(name='Тервигон', hp=2710, attack=800, dexterity=820, luck=520, accuracy=1020, coins=400),
+    Mob(name='Доминатрикс', hp=2810, attack=900, dexterity=820, luck=520, accuracy=1020, coins=400),
+    Mob(name='Стражи тирана', hp=2910, attack=900, dexterity=820, luck=520, accuracy=1020, coins=400),
+    Mob(name='Красный Ужас', hp=3010, attack=1000, dexterity=820, luck=520, accuracy=1020, coins=400),
+    Mob(name='Повелитель роя', hp=3010, attack=1300, dexterity=820, luck=520, accuracy=1020, coins=400),
+    None
+]
+danges = {10: list_dange10, 20: list_dange20,
+          30: list_dange30, 35: list_dange35, 40: list_dange40,
+          50: list_dange50, 60: list_dange60, 70: list_dange70, 80: list_dange80}
 
 list_mobs1_5 = [
     Mob(name='🐶крысакот(любопытный)', hp=1, attack=2, dexterity=5, luck=5, accuracy=5, coins=20),
@@ -149,13 +186,13 @@ list_mobs20_25 = [
 ]
 
 list_mobs25_30 = [
-    Mob(name='🐷свинокрыс(кибернетический)', hp=71, attack=50, dexterity=120, luck=20, accuracy=120, coins=100),
-    Mob(name='🐀мистическая крыса', hp=71, attack=50, dexterity=120, luck=20, accuracy=120, coins=100),
-    Mob(name='🦫бобр(строит плотину)', hp=75, attack=50, dexterity=120, luck=20, accuracy=120, coins=100),
-    Mob(name='🐲дракон(маленький)', hp=76, attack=50, dexterity=120, luck=20, accuracy=120, coins=100),
-    Mob(name='🚬курильщик', hp=78, attack=50, dexterity=120, luck=20, accuracy=120, coins=100),
-    Mob(name='🚬нарик(с косяком)', hp=79, attack=50, dexterity=120, luck=20, accuracy=120, coins=100),
-    Mob(name='🐸жаба(мифическая)', hp=79, attack=50, dexterity=120, luck=20, accuracy=120, coins=120)
+    Mob(name='🐷свинокрыс(кибернетический)', hp=71, attack=50, dexterity=120, luck=120, accuracy=120, coins=100),
+    Mob(name='🐀мистическая крыса', hp=71, attack=50, dexterity=120, luck=120, accuracy=120, coins=100),
+    Mob(name='🦫бобр(строит плотину)', hp=75, attack=50, dexterity=120, luck=120, accuracy=120, coins=100),
+    Mob(name='🐲дракон(маленький)', hp=76, attack=50, dexterity=120, luck=120, accuracy=120, coins=100),
+    Mob(name='🚬курильщик', hp=78, attack=50, dexterity=120, luck=120, accuracy=120, coins=100),
+    Mob(name='🚬нарик(с косяком)', hp=79, attack=50, dexterity=120, luck=120, accuracy=120, coins=100),
+    Mob(name='🐸жаба(мифическая)', hp=79, attack=50, dexterity=120, luck=120, accuracy=120, coins=120)
 ]
 
 list_mobs30_35 = [

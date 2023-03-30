@@ -80,10 +80,17 @@ async def get_hero(update):
             await add_hero_db(async_session, hero)
             await add_hero_weapon_db(async_session, hero)
             await add_hero_armor_db(async_session, hero)
+            hero.coins = 1000
         else:
             hero_db = db_hero_fetch[0]
             db_hero_wp = await get_hero_weapon_db(async_session, hero_db)
             hero.from_db(hero_db)
+            if hero.coins < 0:
+                hero.coins = 1000
+            if not hero.weapon:
+                hero.weapon = copy.copy(weapons_all[0])
+                hero.weapon.use = 1
+
             for iw in range(0, len(db_hero_wp)):
                 dmg = int(db_hero_wp[iw].code.split('z')[0])
                 z = int(db_hero_wp[iw].code.split('z')[1])
@@ -118,6 +125,11 @@ async def get_hero(update):
                     else:
                         hero.stock.equip[arm.get_code()] = arm
 
+            for i in range(0, 3):
+                if not hero.armor[i]:
+                    hero.armor[i] = copy.copy(armor_all[i][0])
+                    hero.armor[i].use = 1
+
             db_hero_itms = await get_hero_items_db(async_session, hero_db)
             if len(db_hero_itms):
                 for it in db_hero_itms:
@@ -141,7 +153,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     hero = await get_hero(update)
     msg_txt = update.message.text
     if hero.km != 0:
-        if hero.weapon.life < 5:
+        if hero.weapon and hero.weapon.life < 5:
             await update.message.reply_text("⭐️⚡️Внимание, оружие {0} скоро сломается!⭐️⚡️".format(hero.weapon.name))
         for ar in hero.armor:
             if ar and ar.life < 5:
@@ -280,7 +292,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             hero.in_dange = 1
             await update.message.reply_text("на вас напал моб {0}".format(hero.mob_fight.name),
                                             reply_markup=menu_go_dange())
-        elif hero.mob_fight and msg_txt != "⚔️Дать отпор":
+        elif hero.mob_fight and msg_txt != "⚔️Дать отпор" and msg_txt != "🏃Дать деру":
             await update.message.reply_text("на вас напал моб {0}".format(hero.mob_fight.name),
                                             reply_markup=menu_attack())
         elif not hero.mob_fight and msg_txt == "⛺️В лагерь":
@@ -289,10 +301,12 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         elif msg_txt == "📟Пип-бой":
             await update.message.reply_text(hero.return_data(), reply_markup=menu_pip())
         elif msg_txt == "🔪Напасть":
+            fight = False
             for h in all_data:
                 hero_h = all_data[h][0]
 
                 if update.effective_user.id != h and hero_h.km == hero.km and hero_h.in_dange <= 0:
+                    fight = True
                     chat = all_data[h][1]
                     out = hero.attack_player(hero_h)
                     hdr1 = "Сражение с {0}\n".format(hero.name)
@@ -321,6 +335,9 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                             hdr1 + out + "Вы выиграли!!!\n получено: 🕳 {0}".format(round(hero.coins * 0.09)),
                             reply_markup=menu_go())
                     break
+            if not fight:
+                await update.message.reply_text(hdr2 + " игрок ушел или вы не можете напасть", reply_markup=menu_go())
+
         elif msg_txt == "👣Пустошь":
             hero.go()
             header = hero.make_header()
@@ -343,8 +360,35 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     await update.message.reply_text(hero.return_data(), reply_markup=menu_camp())
             else:
                 await update.message.reply_text(hero.return_data(), reply_markup=menu_pip())
+        elif msg_txt == "🏃Дать деру":
+            if hero.mob_fight:
+                k = hero.dexterity - hero.mob_fight.dexterity
+                lost = round(hero.mob_fight.calc_mob_coins(hero.km) * 2)
+                if hero.coins > lost:
+                    hero.coins -= lost
 
-
+                if k > random.randint(0, 1000):
+                    if hero.coins < 0:
+                        hero.coins = 0
+                    await update.message.reply_text(hero.make_header() +
+                                                    "побег успешен, но вы потеряли 🕳 {0}\n".format(lost),
+                                                    reply_markup=menu_go())
+                else:
+                    dmg = round(hero.mob_fight.get_attack() - hero.calc_armor())
+                    if dmg <= 0:
+                        dmg = 1
+                    hero.hp -= dmg
+                    if round(hero.hp) <= 0:
+                        hero.died_hero()
+                        await update.message.reply_text(
+                            "побег не успешен, ты помер:(((((, вы потеряли 🕳 {0}".format(lost),
+                            reply_markup=menu_camp())
+                    else:
+                        await update.message.reply_text(hero.make_header() +
+                                                        "побег не успешен(((, вы потеряли 💔 {0} 🕳 {1}".format(dmg,
+                                                                                                                lost),
+                                                        reply_markup=menu_go())
+                hero.mob_fight = None
 
         elif msg_txt == "👣Идти дaльше":
             hero.go()
@@ -380,17 +424,19 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 hero.mob_fight = None
                 hero.in_dange = -1
                 if hero.km == 10:
-                    r = random.randint(0, 10)
+                    r = random.randint(0, 7)
                     logger.info(update.effective_chat.first_name + " dange {0}km {1}".format(hero.km, r))
                     if r == 1:
-                        hero.stock.add_item(weapons_all[4])
+                        i = random.randint(4, 6)
+                        hero.stock.add_item(weapons_all[i])
                         await update.message.reply_text(hero.make_header()
-                                                        + "вам выпало {0}".format(weapons_all[4].name),
+                                                        + "вам выпало {0}".format(weapons_all[i].name),
                                                         reply_markup=menu_go())
                     else:
                         await update.message.reply_text(hero.make_header()
                                                         + "вам выпало нихуя",
                                                         reply_markup=menu_go())
+
                 if hero.km == 20:
                     r = random.randint(0, 7)
                     logger.info(update.effective_chat.first_name + " dange {0}km {1}".format(hero.km, r))
@@ -408,17 +454,10 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     r = random.randint(0, 6)
                     logger.info(update.effective_chat.first_name + " dange {0}km {1}".format(hero.km, r))
                     if r == 3:
-                        name_w = ""
-                        r = random.randint(0, 2)
-                        if r in [0, 1]:
-                            hero.stock.add_item(weapons_all[5])
-                            name_w = weapons_all[5].name
-                        else:
-                            hero.stock.add_item(weapons_all[6])
-                            name_w = weapons_all[6].name
-
+                        r = random.randint(7, 8)
+                        hero.stock.add_item(weapons_all[r])
                         await update.message.reply_text(hero.make_header()
-                                                        + "вам выпало {0}".format(name_w),
+                                                        + "вам выпало {0}".format(weapons_all[r].name),
                                                         reply_markup=menu_go())
                     else:
                         await update.message.reply_text(hero.make_header()
@@ -449,10 +488,95 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                         await update.message.reply_text(hero.make_header()
                                                         + "вам выпало {0}".format(armor_all[type][7].name),
                                                         reply_markup=menu_go())
+                    elif r == 5:
+                        hero.stock.add_item(weapons_all[9])
+                        await update.message.reply_text(hero.make_header()
+                                                        + "вам выпало {0}".format(weapons_all[9].name),
+                                                        reply_markup=menu_go())
                     else:
                         await update.message.reply_text(hero.make_header()
                                                         + "вам выпало нихуя",
                                                         reply_markup=menu_go())
+
+                if hero.km == 50:
+                    r = random.randint(0, 7)
+                    logger.info(update.effective_chat.first_name + " dange {0}km {1}".format(hero.km, r))
+                    if r == 4:
+                        type = random.randint(0, 2)
+                        hero.stock.add_item(armor_all[type][8])
+                        await update.message.reply_text(hero.make_header()
+                                                        + "вам выпало {0}".format(armor_all[type][8].name),
+                                                        reply_markup=menu_go())
+                    elif r == 5:
+                        w = weapons_all[10 + random.randint(0, 2)]
+                        hero.stock.add_item(w)
+                        await update.message.reply_text(hero.make_header()
+                                                        + "вам выпало {0}".format(w.name),
+                                                        reply_markup=menu_go())
+                    else:
+                        await update.message.reply_text(hero.make_header()
+                                                        + "вам выпало нихуя",
+                                                        reply_markup=menu_go())
+
+                if hero.km == 60:
+                    r = random.randint(0, 9)
+                    logger.info(update.effective_chat.first_name + " dange {0}km {1}".format(hero.km, r))
+                    if r == 4:
+                        type = random.randint(0, 2)
+                        hero.stock.add_item(armor_all[type][9])
+                        await update.message.reply_text(hero.make_header()
+                                                        + "вам выпало {0}".format(armor_all[type][9].name),
+                                                        reply_markup=menu_go())
+                    elif r == 5:
+                        w = weapons_all[13 + random.randint(0, 3)]
+                        hero.stock.add_item(w)
+                        await update.message.reply_text(hero.make_header()
+                                                        + "вам выпало {0}".format(w.name),
+                                                        reply_markup=menu_go())
+                    else:
+                        await update.message.reply_text(hero.make_header()
+                                                        + "вам выпало нихуя",
+                                                        reply_markup=menu_go())
+
+                if hero.km == 70:
+                    r = random.randint(0, 9)
+                    logger.info(update.effective_chat.first_name + " dange {0}km {1}".format(hero.km, r))
+                    if r == 4:
+                        type = random.randint(0, 2)
+                        hero.stock.add_item(armor_all[type][10])
+                        await update.message.reply_text(hero.make_header()
+                                                        + "вам выпало {0}".format(armor_all[type][10].name),
+                                                        reply_markup=menu_go())
+                    elif r == 5:
+                        w = weapons_all[17 + random.randint(0, 2)]
+                        hero.stock.add_item(w)
+                        await update.message.reply_text(hero.make_header()
+                                                        + "вам выпало {0}".format(w.name),
+                                                        reply_markup=menu_go())
+                    else:
+                        await update.message.reply_text(hero.make_header()
+                                                        + "вам выпало нихуя",
+                                                        reply_markup=menu_go())
+                if hero.km == 80:
+                    r = random.randint(0, 10)
+                    logger.info(update.effective_chat.first_name + " dange {0}km {1}".format(hero.km, r))
+                    if r == 4:
+                        type = random.randint(0, 2)
+                        hero.stock.add_item(armor_all[type][11])
+                        await update.message.reply_text(hero.make_header()
+                                                        + "вам выпало {0}".format(armor_all[type][10].name),
+                                                        reply_markup=menu_go())
+                    elif r == 5:
+                        w = weapons_all[20]
+                        hero.stock.add_item(w)
+                        await update.message.reply_text(hero.make_header()
+                                                        + "вам выпало {0}".format(w.name),
+                                                        reply_markup=menu_go())
+                    else:
+                        await update.message.reply_text(hero.make_header()
+                                                        + "вам выпало нихуя",
+                                                        reply_markup=menu_go())
+
                 hero.hungry += 2
             else:
                 mob = hero.mob_fight
@@ -521,48 +645,56 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     elif "/tophp" in msg_txt:
         def sortf(e):
             return e.max_hp
+
         all = await get_hero_db(async_session)
-        all.sort(key = sortf)
+        all.sort(reverse=True, key=sortf)
         for h in all:
             data += "{0} || {1}\n".format(h.name, h.max_hp)
 
     elif "/topkm" in msg_txt:
         def sortf(e):
             return e.all_km
+
         all = await get_hero_db(async_session)
-        all.sort(key=sortf)
+        all.sort(reverse=True, key=sortf)
         for h in all:
             data += "{0} || {1}\n".format(h.name, h.all_km)
 
     elif "/topcoins" in msg_txt:
         def sortf(e):
             return e.coins
+
         all = await get_hero_db(async_session)
-        all.sort(key=sortf)
+        all.sort(reverse=True, key=sortf)
         for h in all:
             data += "{0} || {1}\n".format(h.name, h.coins)
 
     elif "/topbm" in msg_txt:
         def sortf(e):
             return e.max_hp + e.force + e.accuracy + e.luck + e.dexterity + e.charisma
+
         all = await get_hero_db(async_session)
-        all.sort(key=sortf)
+        all.sort(reverse=True, key=sortf)
         for h in all:
             data += "{0} || {1}\n".format(h.name, h.max_hp + h.force + h.accuracy + h.luck + h.dexterity + h.charisma)
 
-    elif "/cheatgg" in msg_txt:
-        x = int(msg_txt.replace("/cheatgg", ""))
-        hero.hp = x
-        hero.max_hp = x
-        hero.force = x
-        hero.luck = x
-        hero.dexterity = x
-        hero.accuracy = x
-        hero.charisma = x
-        # for i in range(4, 6):
-        #    hero.stock.equip[weapons_all[i].get_code()] = copy.copy(weapons_all[i])
-        # for i in range(0, 3):
-        #    hero.stock.equip[armor_all[i][5].get_code()] = copy.copy(armor_all[i][5])
+    # elif "/cheatw" in msg_txt:
+    #    hero.stock.equip[armor_all[0][6].get_code()] = copy.copy(armor_all[0][6])
+    #elif "/gokm" in msg_txt:
+    #    x = int(msg_txt.replace("/gokm", ""))
+    #    hero.km = x
+    #elif "/cheatgg" in msg_txt:
+    #    x = int(msg_txt.replace("/cheatgg", ""))
+    #    for i in range(0, 3):
+    #        hero.stock.add_item(armor_all[i][10])
+    #    hero.stock.add_item(weapons_all[19])
+    #    hero.hp = x
+    #    hero.max_hp = x
+    #    hero.force = x
+    #    hero.luck = x
+    #    hero.dexterity = x
+    #    hero.accuracy = x
+    #    hero.charisma = x
     elif msg_txt == "/mystock":
         data = hero.stock.get_data()
     elif msg_txt == "/food":
@@ -579,9 +711,7 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if wp:
             weapon = hero.stock.equip.pop(w)
             if hero.weapon:
-                code = hero.weapon.get_code()
-                hero.weapon.use = 0
-                hero.stock.equip[code] = copy.copy(hero.weapon)
+                hero.stock.add_item(hero.weapon)
             hero.weapon = copy.copy(weapon)
             hero.weapon.use = 1
             data = hero.stock.get_data()
@@ -593,9 +723,7 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             i = int(a.split('t')[0])
             arm = hero.stock.equip.pop(a)
             if hero.armor[i]:
-                code = hero.armor[i].get_code()
-                hero.armor[i].use = 0
-                hero.stock.equip[code] = copy.copy(hero.armor[i])
+                hero.stock.add_item(hero.armor[i])
 
             hero.armor[i] = copy.copy(arm)
             hero.armor[i].use = 1
