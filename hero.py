@@ -7,6 +7,14 @@ from armor import stack_buff
 from stock import get_random_item
 from db.models import HeroDB, WeaponDB
 
+all_modules = {
+    1: [25, "📥модуль силы"],
+    2: [50, "📥модуль ловкости"],
+    3: [50, "📥модуль удачи"],
+    4: [50, "📥модуль точности"],
+    5: [2, "📥модуль хп"],
+}
+
 
 class Hero:
     id = ""
@@ -21,6 +29,7 @@ class Hero:
     accuracy = 10  # меткость 1200
     weapon = None
     armor = None
+    drone = None
     materials = 0
     coins = 0
     hungry = 0
@@ -35,10 +44,12 @@ class Hero:
     CNT_LOG = 10
     buffs = None
     km_buff = 0
+    modul = 0 #11111 есть 5 модулей
 
     def go(self):
         self.km += 1
         self.all_km += 1
+        self.hp += 2 if self.modul//int(pow(10, 4)) == 2 else 0
         if self.km_buff:
             self.km_buff -= 1
         else:
@@ -64,25 +75,58 @@ class Hero:
 
         return stack_buff[self.armor[0].type_stack - 1][index]
 
+    def get_module(self, i=0):
+        if self.modul:
+            modul = self.modul
+            k = 1
+            while modul % 10 != 2 or modul == 0 and k <= len(all_modules.keys()):
+                modul //= 10
+                k += 1
+            if not i:
+                return all_modules[k]
+            elif i == k:
+                return all_modules[k][0]
+        return 0
+
     def get_force(self):
-        return self.force + self.get_stack(0) + self.buffs[0]
+        return self.force + self.get_stack(0) + self.buffs[0] + self.get_module(1)
 
     def get_dexterity(self):
-        return self.dexterity + self.get_stack(1) + self.buffs[1]
+        return self.dexterity + self.get_stack(1) + self.buffs[1] + self.get_module(2)
 
     def get_luck(self):
-        return self.luck + self.get_stack(2) + self.buffs[2]
+        return self.luck + self.get_stack(2) + self.buffs[2] + self.get_module(3)
 
     def get_accuracy(self):
-        return self.accuracy + self.get_stack(3) + self.buffs[3]
+        return self.accuracy + self.get_stack(3) + self.buffs[3] + self.get_module(4)
+
+    def get_str_modul(self):
+        mod = self.get_module()
+        return mod[1] if mod else "нет модуля"
 
     def get_str(self, val, i):
         out = str(val)
-        if self.get_stack(i):
-            out += "+" + str(self.get_stack(i))
+        stack = self.get_stack(i)
+        mod = self.get_module(i+1)
+
+        out += "+" + str(stack) if stack else ""
+        out += "+" + str(mod) if mod else ""
+
         if self.buffs[i]:
-            out += "({0})".format(self.buffs[i])
+            out += f"({self.buffs[i]})"
         return out
+
+    def add_module(self):
+        if self.modul != 0:
+            k = len(str(self.modul)) + 1
+            self.modul += int('1'*k) + int(pow(10, k-1))
+        else:
+            self.modul = 2
+
+    def activate_module(self, i):#1 2 3 4..
+        k = len(str(self.modul))
+        if k<=i:
+            self.modul = int('1'*k) + int(pow(10, i-1))
 
     def return_data(self):
         data = """
@@ -91,18 +135,15 @@ class Hero:
         ├ 👣{17}
         ├ 💪{3} | 🤸🏽‍♂️{4} | 🗣{5} 
         ├ 👼{6} | 🎯{7}
+        ├ {19}
         ├ 🗡{8}
         ├ 🪖{9}
         ├ 🧥{10}
         ├ 🧤{11}
         ├ 📦{12}
         └ 🕳{13} 👣👣{18}"""
-        weapon = None
-        if self.weapon:
-            weapon = self.weapon.get_data_hero()
-        else:
-            weapon = "нет оружия"
 
+        weapon = self.weapon.get_data_hero() if self.weapon else "нет оружия"
         armor = self.calc_armor()
         return data.format(self.name, round(self.hp), self.max_hp,
                            self.get_str(self.force, 0), self.get_str(self.dexterity, 1), self.charisma,
@@ -110,17 +151,14 @@ class Hero:
                            self.arm_str(self.armor[0]),
                            self.arm_str(self.armor[1]), self.arm_str(self.armor[2]), self.materials,
                            self.coins, self.hungry, self.calc_attack(),
-                           armor, self.km, self.all_km)
+                           armor, self.km, self.all_km, self.get_str_modul())
 
     @staticmethod
     def generate_name():
         return "hero.." + "".join(sample(ascii_lowercase, 5))
 
     def arm_str(self, arm):
-        if arm:
-            return arm.get_data_hero()
-        else:
-            return "нет брони"
+        return arm.get_data_hero() if arm else "нет брони"
 
     def calc_attack(self):
         if self.weapon:
@@ -148,17 +186,14 @@ class Hero:
             return 1
 
     def get_miss(self, dex):  # dex шанс уворота для героя 0.1%
-        if random.randint(0, 1000) < dex - self.get_accuracy():
-            return True
-        else:
-            return False
+        if dex - self.get_accuracy() < 0:
+            return random.randint(0, 100) == 1
+        return random.randint(0, 1000) < dex - self.get_accuracy()
+
 
     def calc_cost(self, val):
         out = 13 * val - 3 * self.charisma
-        if out < 10:
-            return 10
-        else:
-            return round(13 * val - 3 * self.charisma);
+        return 10 if out < 10 else round(13 * val - 3 * self.charisma);
 
     def select_mob(self):
         k = self.km // 5
@@ -169,13 +204,13 @@ class Hero:
         self.mob_fight = copy.copy(list_m[i])
 
     def learn_data(self):
-        out = "🕳Крышки: {0}\n".format(self.coins)
-        out += "💪Сила({0}): 🕳{1}\n".format(self.force, self.calc_cost(self.force))
-        out += "🎯Меткость({0}): 🕳{1}\n".format(self.accuracy, self.calc_cost(self.accuracy))
-        out += "🤸🏽‍♂️Ловкость({0}): 🕳{1}\n".format(self.dexterity, self.calc_cost(self.dexterity))
-        out += "❤️Живучесть({0}): 🕳{1}\n".format(self.max_hp, self.calc_cost(self.max_hp))
-        out += "🗣Харизма({0}): 🕳{1}\n".format(self.charisma, 10 * self.charisma)
-        out += "👼Удача({0}): 🕳{1}\n\n".format(self.luck, self.calc_cost(self.luck))
+        out = f"🕳Крышки: {self.coins}\n"
+        out += f"💪Сила({self.force}): 🕳{self.calc_cost(self.force)}\n"
+        out += f"🎯Меткость({self.accuracy}): 🕳{self.calc_cost(self.accuracy)}\n"
+        out += f"🤸🏽‍♂️Ловкость({self.dexterity}): 🕳{self.calc_cost(self.dexterity)}\n"
+        out += f"❤️Живучесть({self.max_hp}): 🕳{self.calc_cost(self.max_hp)}\n"
+        out += f"🗣Харизма({self.charisma}): 🕳{10 * self.charisma}\n"
+        out += f"👼Удача({self.luck}): 🕳{self.calc_cost(self.luck)}\n\n"
         out += "Выбирай желаемый навык:"
         return out
 
@@ -192,19 +227,17 @@ class Hero:
             return "error"
 
     def is_first_hit(self, luck):
-        if random.randint(0, 1000) - 500 < self.get_luck() - luck:
-            return True
-        else:
-            return False
+        return random.randint(0, 1000) - 500 < self.get_luck() - luck
+
 
     def make_header(self):
         buffed = ""
         if self.km_buff > 0:
             buffed = "*бафф*"
-        return "❤️ {0}\{1} 🍗{2}% {3} 👣{4}\n".format(round(self.hp), self.max_hp, self.hungry, buffed, self.km)
+        return f"❤️ {round(self.hp)}\{self.max_hp} 🍗{self.hungry}% {buffed} 👣{self.km}\n"
 
     def attack_mob(self, mob: Mob, is_dange=False):
-        out = "Сражение с {0} ❤{1}\n".format(mob.name, mob.hp)
+        out = f"Сражение с {mob.name} ❤{mob.hp}\n"
         armor = self.calc_armor()
         hp_mob = mob.hp
         cnt_attack = 0
@@ -217,7 +250,7 @@ class Hero:
                     dmg = 1
                     # out += "урон заблокирован\n"
 
-                out += "{0} нанес тебе удар 💔-{1}\n".format(mob.name, round(dmg))
+                out += f"{mob.name} нанес тебе удар 💔-{round(dmg)}\n"
                 self.hp -= dmg
                 self.get_hit_armor()
 
@@ -229,21 +262,21 @@ class Hero:
             else:
                 att = self.get_attack()
                 if cnt_attack < self.CNT_LOG:
-                    out += "👤Ты ударил 💥{0}\n".format(round(att))
+                    out += f"👤Ты ударил 💥{round(att)}\n"
                 hp_mob -= att
                 if hp_mob <= 0:
                     if cnt_attack > self.CNT_LOG:
                         out += " ......... ....... ....\n"
-                    out += "{0} повержен\n".format(mob.name)
+                    out += f"{mob.name} повержен\n"
                     coins = round(mob.calc_mob_coins(self.km))
                     mats = round(mob.calc_mob_mat(self.km))
                     if not is_dange:
                         self.coins += coins
                         self.materials += mats
-                        out += "получено 🕳 {0} 📦 {1}\n".format(coins, mats)
+                        out += f"получено 🕳 {coins} 📦 {mats}\n"
                         if random.randint(0, 20) == 7:
                             rkey, ritem = get_random_item()
-                            out += "✅✅вам выпал {0}✅✅\n".format(ritem['name'])
+                            out += f"✅✅вам выпал {ritem['name']}✅✅\n"
                             self.stock.add_stuff(rkey)
                     return out
 
@@ -256,7 +289,7 @@ class Hero:
                     dmg = 1
                     # out += "урон заблокирован\n"
                 if cnt_attack < self.CNT_LOG:
-                    out += "{0} нанес тебе удар 💔-{1}\n".format(mob.name, round(dmg))
+                    out += f"{mob.name} нанес тебе удар 💔-{round(dmg)}\n"
                 self.hp -= dmg
                 self.get_hit_armor()
 
@@ -284,8 +317,8 @@ class Hero:
                     "хитро подкрался и врезал",
                     "отбежал и из укрытия атаковал",
                     "напал со спины",
-                    "ебнул по покам",
-                    "пунькнул по носу",
+                    "ебнул по почкам",
+                    "переебал вертушкой",
                     "схватил за шею",
                     "сделал хитрый прием"]
         return text_hit[random.randint(0, len(text_hit) - 1)]
@@ -297,14 +330,14 @@ class Hero:
         cnt_attack = 0
         if hero.is_first_hit(luck=self.get_luck()):
             if hero.get_miss(self.get_dexterity()):
-                out += "{0} ❤️ {1} 🌀промахнулся\n".format(hero.name, round(hero.hp))
+                out += f"{hero.name} ❤️ {round(hero.hp)} 🌀промахнулся\n"
             else:
                 dmg = hero.get_attack() - armor
                 if dmg < 0:
                     dmg = 1
                     # out += "{0} ❤️ {1}  урон {2} заблокирован\n".format(hero.name, round(hero.hp), round(dmg))
 
-                out += "❤️ {1} {0} {3} 💔-{2}\n".format(hero.name, round(hero.hp), round(dmg), self.log_hit())
+                out += f"❤️ {hero.name} {round(hero.hp)} {self.log_hit()} 💔-{round(dmg)}\n"
                 self.hp -= dmg
                 self.get_hit_armor()
 
@@ -312,7 +345,7 @@ class Hero:
             cnt_attack += 1
             if self.get_miss(hero.get_dexterity()):
                 if cnt_attack < self.CNT_LOG:
-                    out += "❤️ {0} {1} 🌀промахнулся\n".format(round(self.hp), self.name)
+                    out += f"❤️ {round(self.hp)} {self.name} 🌀промахнулся\n"
             else:
                 dmg = self.get_attack() - armor_hero
                 if dmg < 0:
@@ -320,18 +353,18 @@ class Hero:
                     # out += "❤️ {0} урон {1} заблокировал враг\n".format(round(self.hp), round(dmg))
 
                 if cnt_attack < self.CNT_LOG:
-                    out += "❤️ {0} {2} {3} 💥{1}\n".format(round(self.hp), round(dmg), self.name, self.log_hit())
+                    out += f"❤️ {round(self.hp)} {self.name} {self.log_hit()} 💥{round(dmg)}\n"
                 hero.hp -= dmg
                 hero.get_hit_armor()
                 if hero.hp <= 0:
                     if cnt_attack > self.CNT_LOG:
                         out += " ......... ....... ....\n"
-                    out += "{0} повержен\n".format(hero.name)
+                    out += f"{hero.name} повержен\n"
                     return out
 
             if hero.get_miss(self.get_dexterity()):
                 if cnt_attack < self.CNT_LOG:
-                    out += "{0} ❤️ {1} 🌀промахнулся\n".format(hero.name, round(hero.hp))
+                    out += f"{hero.name} ❤️ {round(hero.hp)} 🌀промахнулся\n"
             else:
                 dmg = hero.get_attack() - armor
                 if dmg < 0:
@@ -339,7 +372,7 @@ class Hero:
                     # out += "{0} ❤️ {1} урон {2} заблокирован\n".format(hero.name, round(hero.hp), round(dmg))
 
                 if cnt_attack < self.CNT_LOG:
-                    out += "❤️ {1} {0} {3} 💔-{2}\n".format(hero.name, round(hero.hp), round(dmg), self.log_hit())
+                    out += f"❤️ {round(hero.hp)} {hero.name} {self.log_hit()} 💔-{round(dmg)}\n"
                 self.hp -= dmg
                 self.get_hit_armor()
 
@@ -347,7 +380,7 @@ class Hero:
             out += " ......... ....... ....\n"
 
         if round(self.hp) <= 0:
-            out += "{0} помер :((((((\n".format(self.name)
+            out += f"{self.name} помер :((((((\n"
             hero.kl_pl += 1
         return out
 
@@ -367,6 +400,8 @@ class Hero:
         self.hungry = hero_db.hungry
         self.km = hero_db.km
         self.all_km = hero_db.all_km
+        self.modul = hero_db.modul
+
 
     def to_db(self):
         return HeroDB(name=self.name, user_id=self.id,
@@ -374,4 +409,4 @@ class Hero:
                       force=self.force, dexterity=self.dexterity,
                       charisma=self.charisma, luck=self.luck,
                       accuracy=self.accuracy, materials=self.materials,
-                      coins=self.coins, hungry=self.hungry, km=self.km, mob="", all_km=self.all_km)
+                      coins=self.coins, hungry=self.hungry, km=self.km, mob="", all_km=self.all_km, modul=self.modul)

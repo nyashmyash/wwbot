@@ -80,28 +80,28 @@ class Stock:
             hero.km_buff = used_items[code].get("km", 0)
             outstr = ""
             if hun:
-                outstr += "🍗-{0}% ".format(hun)
+                outstr += f"🍗-{hun}% "
             if hp>0:
-                outstr += "❤+{0} ".format(hp)
+                outstr += f"❤+{hp} "
             elif hp<0:
-                outstr += "💔{0} ".format(hp)
+                outstr += f"💔{hp} "
             if hero.buffs[0]:
-                outstr += "💪+{0} ".format(hero.buffs[0])
+                outstr += f"💪+{hero.buffs[0]} "
             if hero.buffs[1]:
-                outstr += "🤸🏽‍♂️+{0} ".format(hero.buffs[1])
+                outstr += f"🤸🏽‍♂️+{hero.buffs[1]} "
             if hero.buffs[2]:
-                outstr += "👼+{0} ".format(hero.buffs[2])
+                outstr += f"👼+{hero.buffs[2]} "
             if hero.buffs[3]:
-                outstr += "🎯+{0} ".format(hero.buffs[3])
+                outstr += f"🎯+{hero.buffs[3]} "
 
-            return "вы использовали {0}\n {1}\n".format(used_items[code]["name"], outstr)
+            return f"вы использовали {used_items[code]['name']}\n {outstr}\n"
         return "нет такого"
 
     def print_stuff(self, code=1):
         out = ""
         for k in self.used_stuff:
             if k // 100 == code:
-                out += "{0}({2}) /ustf_{1}\n".format(used_items[k].get('name'), k, self.used_stuff[k])
+                out += f"{used_items[k].get('name')}({self.used_stuff[k]}) /ustf_{k}\n"
         if out == "":
             return " ---  пока ничего ---\n"
         else:
@@ -116,13 +116,21 @@ class Stock:
         new_item.use = 0
         self.equip[new_item.get_code()] = new_item
 
+    def get_delete(self):
+        out = "🎒СОДЕРЖИМОЕ РЮКЗАКА ДЛЯ УДАЛЕНИЯ\n"
+        cnt = len(self.equip)
+        out += f"Экипировка ({cnt}/{self.MAX_EQUIP})\n"
+        for w in self.equip:
+            out += self.equip[w].get_data_drop() + "\n"
+        return out
+
     def get_data(self):
         out = "🎒СОДЕРЖИМОЕ РЮКЗАКА\n"
         out += "   Полезное\n"
         out += " ---  пока ничего ---\n"
         cnt = len(self.equip)
-        out += "Экипировка ({0}/{1})\n".format(cnt, self.MAX_EQUIP)
+        out += f"Экипировка ({cnt}/{self.MAX_EQUIP})\n"
         for w in self.equip:
             out += self.equip[w].get_data() + "\n"
-        out += "/food \n /buff \n"
+        out += "\nеда /food \nбаффы /buff \nвыкинуть /drop"
         return out

@@ -19,20 +19,20 @@ class Weapon:
         self.mats = mats
         self.max_life = max_life
 
-    def get_data(self):
-        out = "▪️ {0} ⚡️{1} 🔧{2} % /eqw_{3}z{4}".format(self.name, self.dmg,
-                                                         round(100 * self.life / self.max_life), self.dmg, self.z)
+    def get_data_drop(self):
+        return self.get_data("drw_")
+
+    def get_data(self, code="eqw_"):
+        out = f"▪️ {self.name} ⚡️{self.dmg} 🔧{round(100 * self.life / self.max_life)} % /{code}{self.dmg}z{self.z}"
         return out
 
     def get_data_cost(self):
-        out = "▪️ {0} ⚡️{1} 🔧{2} % 📦 {5} /sw_{3}z{4}".format(self.name, self.dmg,
-                                                               round(100 * self.life / self.max_life),
-                                                               self.dmg, self.z,
-                                                               self.calc_cost())
+        out = f"▪️ {self.name} ⚡️{self.dmg} 🔧{round(100 * self.life / self.max_life)} % 📦 {self.calc_cost()} /sw_{self.dmg}z{self.z}"
+
         return out
 
     def get_buy(self):
-        out = "▪️ {0} ⚡️{1} 🕳{2} /bw_{1}".format(self.name, self.dmg, self.calc_cost())
+        out = f"▪️ {self.name} ⚡️{self.dmg} 🕳{self.calc_cost()} /bw_{self.dmg}"
         return out
 
     def calc_cost(self):
@@ -42,11 +42,11 @@ class Weapon:
             return round(self.cost  * self.life / self.max_life)
 
     def get_data_hero(self):
-        out = "▪️ {0} ⚡️{1} 🔧{2} %".format(self.name, self.dmg, round(100 * self.life / self.max_life))
+        out = f"▪️ {self.name} ⚡️{self.dmg} 🔧{round(100 * self.life / self.max_life)} %"
         return out
 
     def get_code(self):
-        return "{0}z{1}".format(self.dmg, self.z)
+        return f"{self.dmg}z{self.z}"
 
     def to_db(self):
         return WeaponDB(code=self.get_code(), use=self.use, life=self.life, max_life=self.max_life)

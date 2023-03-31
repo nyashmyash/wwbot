@@ -28,22 +28,20 @@ class Armor:
         self.type = type
         self.type_stack = type_stack
 
-    def get_data(self):
-        out = "▪️ {0} 🛡 {1} 🔧{2} % /eqa_{3}t{4}z{5}".format(self.name, self.arm,
-                                                              round(100 * self.life / self.max_life), self.type,
-                                                              self.arm,
-                                                              self.z)
+    def get_data_drop(self):
+        return self.get_data("dra_")
+
+    def get_data(self, code="eqa_"):
+        out = f"▪️ {self.name} 🛡 {self.arm} 🔧{round(100 * self.life / self.max_life)} % /{code}{self.type}t{self.arm}z{self.z}"
+
         return out
 
     def get_data_cost(self):
-        out = "▪️ {0} 🛡 ️{1} 🔧{2} % 📦 {6} /sa_{3}t{4}z{5}".format(self.name, self.arm,
-                                                                     round(100 * self.life / self.max_life), self.type,
-                                                                     self.arm, self.z,
-                                                                     self.calc_cost())
+        out = f"▪️ {self.name} 🛡 ️{self.arm} 🔧{round(100 * self.life / self.max_life)} % 📦 {self.calc_cost()} /sa_{self.type}t{self.arm}z{self.z}"
         return out
 
     def get_buy(self):
-        out = "▪️ {0} 🛡 {1} 🕳{2} /ba_{3}t{1}".format(self.name, self.arm, self.calc_cost(), self.type)
+        out = f"▪️ {self.name} 🛡 {self.arm} 🕳{self.calc_cost()} /ba_{self.type}t{self.arm}"
         return out
 
     # def craft_cost(self):
@@ -56,11 +54,11 @@ class Armor:
             return round(self.arm * 100 * self.life / self.max_life + self.arm * 200)
 
     def get_data_hero(self):
-        out = "▪️ {0} 🛡 {1} 🔧{2} %".format(self.name, self.arm, round(100 * self.life / self.max_life))
+        out = f"▪️ {self.name} 🛡 {self.arm} 🔧{round(100 * self.life / self.max_life)} %"
         return out
 
     def get_code(self):
-        return "{0}t{1}z{2}".format(self.type, self.arm, self.z)
+        return f"{self.type}t{self.arm}z{self.z}"
 
     def to_db(self):
         return ArmorDB(code=self.get_code(), use=self.use, life=self.life, max_life=self.max_life)
