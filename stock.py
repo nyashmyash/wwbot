@@ -2,13 +2,6 @@ import copy
 import random
 from db.models import ItemsDB
 
-meds_list = {1: ["💉Мед-Х", 40, 300, 3],
-             2: ["💌Медпак", 60, 600, 3],
-             3: ["❣️Баффаут", 25, 200, 5],
-             4: ["🧪Стимбласт", 100, 700, 3],
-             5: ["🧪Стимбласт+", 150, 1500, 1]
-             }
-
 # сила ловка удача меткость харизма hp голод
 
 
@@ -25,19 +18,40 @@ used_items = {100: {"name": "сырое мясо", "hungry": 30, "hp": 2},
               110: {"name": "аптечка", "hp": 10, "hungry": 10},
               111: {"name": "большая аптечка", "hp": 30, "hungry": 10},
               200: {"name": "пиво", "force": 10, "luck": 20, "km": 10},
-              201: {"name": "вино", "force": 15,"luck": 20, "km": 20},
+              201: {"name": "вино", "force": 15, "luck": 20, "km": 20},
               202: {"name": "водка", "force": 30, "luck": 50, "km": 30},
               203: {"name": "абсент", "force": 50, "luck": 60, "km": 40},
               204: {"name": "урановая настойка", "force": 70, "luck": 60, "km": 50},
-              205: {"name": "стероиды", "dexterity": 20,  'accuracy' : 10, "km": 20},
-              206: {"name": "анаболики", "dexterity": 30,  'accuracy' : 20, "km": 30},
-              207: {"name": "мельдоний", "dexterity": 50,  'accuracy' : 50, "km": 40},
+              205: {"name": "стероиды", "dexterity": 20, 'accuracy': 10, "km": 20},
+              206: {"name": "анаболики", "dexterity": 30, 'accuracy': 20, "km": 30},
+              207: {"name": "мельдоний", "dexterity": 50, 'accuracy': 50, "km": 40},
+              300: {"name": "💉Мед-Х", 'hp': 50},
+              301: {"name": "💌Медпак", 'hp': 80},
+              302: {"name": "🧪Стимбласт", 'hp': 120, "km_heal": 3},
+              303: {"name": "🧪Стимбласт+", 'hp': 150, "km_heal": 5},
+
               }
 
 
-def get_random_item():
-    key, value = random.choice(list(used_items.items()))
-    return key, value
+def get_random_item(med=False):
+    if not med:
+        if random.randint(0, 1):
+            return get_random_food()
+        else:
+            return get_random_buff()
+    else:
+        med = random.randint(300, 303)
+        return med, used_items[med]
+
+
+def get_random_buff():
+    buff = random.randint(200, 207)
+    return buff, used_items[buff]
+
+
+def get_random_food():
+    food = random.randint(100, 111)
+    return food, used_items[food]
 
 
 class Stock:
@@ -69,7 +83,7 @@ class Stock:
 
             hun = used_items[code].get("hungry", 0)
             hero.hungry -= hun
-            if hero.hungry<0:
+            if hero.hungry < 0:
                 hero.hungry = 0;
             hp = used_items[code].get("hp", 0)
             hero.hp += hp
@@ -78,12 +92,13 @@ class Stock:
             hero.buffs[2] = used_items[code].get("luck", 0)
             hero.buffs[3] = used_items[code].get("accuracy", 0)
             hero.km_buff = used_items[code].get("km", 0)
+            hero.km_heal = used_items[code].get("km_heal", 0)
             outstr = ""
             if hun:
                 outstr += f"🍗-{hun}% "
-            if hp>0:
+            if hp > 0:
                 outstr += f"❤+{hp} "
-            elif hp<0:
+            elif hp < 0:
                 outstr += f"💔{hp} "
             if hero.buffs[0]:
                 outstr += f"💪+{hero.buffs[0]} "
@@ -127,7 +142,7 @@ class Stock:
     def get_data(self):
         out = "🎒СОДЕРЖИМОЕ РЮКЗАКА\n"
         out += "   Полезное\n"
-        out += " ---  пока ничего ---\n"
+        out += self.print_stuff(3)
         cnt = len(self.equip)
         out += f"Экипировка ({cnt}/{self.MAX_EQUIP})\n"
         for w in self.equip:

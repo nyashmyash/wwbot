@@ -52,6 +52,7 @@ class HeroDB(Base):
     mob = Column(String)
     all_km = Column(Integer)
     modul = Column(Integer)
+    zone = Column(Integer)
 
     def copy_val(self, hero):
         self.name = hero.name
@@ -68,3 +69,5 @@ class HeroDB(Base):
         self.hungry = hero.hungry
         self.km = hero.km
         self.all_km = hero.all_km
+        self.modul = hero.modul
+        self.zone = hero.zone

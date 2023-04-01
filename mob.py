@@ -131,12 +131,15 @@ danges = {10: list_dange10, 20: list_dange20,
 
 list_mobs1_5 = [
     Mob(name='🐶крысакот(любопытный)', hp=1, attack=2, dexterity=5, luck=5, accuracy=5, coins=20),
-    Mob(name='🐱мутакот(голову тебе отожрет)', hp=3, attack=2, dexterity=5, luck=5, accuracy=5, coins=20),
+    Mob(name='🐱кот(голову тебе отожрет)', hp=3, attack=2, dexterity=5, luck=5, accuracy=5, coins=20),
     Mob(name='🐭мутантская мышь убийца', hp=5, attack=2, dexterity=5, luck=5, accuracy=5, coins=20),
     Mob(name='🐹хомяк(сожрет твои кишки)', hp=7, attack=2, dexterity=5, luck=5, accuracy=5, coins=20),
-    Mob(name='🐰толстый заяц(с твоей головой)', hp=9, attack=2, dexterity=5, luck=5, accuracy=5, coins=20),
+    Mob(name='🥚яйцо ксеноморфа', hp=9, attack=2, dexterity=5, luck=5, accuracy=5, coins=20),
     Mob(name='🐷свинокрыс(злобно хрюкает)', hp=9, attack=3, dexterity=5, luck=5, accuracy=5, coins=20),
-    Mob(name='🐸жаба(смотрит и квакает)', hp=9, attack=3, dexterity=5, luck=5, accuracy=5, coins=30)
+    Mob(name='🐸жаба(смотрит и квакает)', hp=9, attack=3, dexterity=5, luck=5, accuracy=5, coins=30),
+    Mob(name='🦐лицехват', hp=9, attack=3, dexterity=5, luck=5, accuracy=5, coins=30),
+    Mob(name='🧟зомби(скучающий)', hp=9, attack=3, dexterity=5, luck=5, accuracy=5, coins=30),
+    Mob(name='🧟‍♀️зомби(любопытный)', hp=9, attack=3, dexterity=5, luck=5, accuracy=5, coins=30),
 
 ]
 
@@ -162,6 +165,7 @@ list_mobs10_15 = [
     Mob(name='🐍киберзмей', hp=25, attack=15, dexterity=15, luck=30, accuracy=15, coins=50),
     Mob(name='🐝пчола(укуренная)', hp=27, attack=15, dexterity=30, luck=15, accuracy=15, coins=50),
     Mob(name='🦄гей(пидарас)', hp=29, attack=15, dexterity=30, luck=15, accuracy=15, coins=50),
+    Mob(name='🪱грудолом', hp=29, attack=15, dexterity=30, luck=15, accuracy=15, coins=50),
     Mob(name='🐸жаба(мутант)', hp=29, attack=15, dexterity=30, luck=15, accuracy=15, coins=60)
 ]
 
@@ -179,16 +183,16 @@ list_mobs20_25 = [
     Mob(name='🐷свинокрыс(демонический)', hp=51, attack=30, dexterity=100, luck=20, accuracy=20, coins=80),
     Mob(name='🕷черная вдова', hp=51, attack=30, dexterity=100, luck=20, accuracy=20, coins=80),
     Mob(name='🐟пиранья(хочет крови)', hp=55, attack=30, dexterity=100, luck=20, accuracy=20, coins=80),
-    Mob(name='🐬делфин-призрак', hp=56, attack=30, dexterity=100, luck=20, accuracy=20, coins=80),
-    Mob(name='🐜муравей-уничтожиель', hp=58, attack=30, dexterity=100, luck=20, accuracy=20, coins=80),
-    Mob(name='🦀краб(злой)', hp=59, attack=30, dexterity=20, luck=100, accuracy=20, coins=80),
+    Mob(name='🐬сухопутный делфин-призрак', hp=56, attack=30, dexterity=100, luck=20, accuracy=20, coins=80),
+    Mob(name='🐜муравей-робот', hp=58, attack=30, dexterity=100, luck=20, accuracy=20, coins=80),
+    Mob(name='🦀гигантский краб(злой)', hp=59, attack=30, dexterity=20, luck=100, accuracy=20, coins=80),
     Mob(name='🐸жаба(демоничекая)', hp=59, attack=30, dexterity=20, luck=100, accuracy=20, coins=100)
 ]
 
 list_mobs25_30 = [
     Mob(name='🐷свинокрыс(кибернетический)', hp=71, attack=50, dexterity=120, luck=120, accuracy=120, coins=100),
     Mob(name='🐀мистическая крыса', hp=71, attack=50, dexterity=120, luck=120, accuracy=120, coins=100),
-    Mob(name='🦫бобр(строит плотину)', hp=75, attack=50, dexterity=120, luck=120, accuracy=120, coins=100),
+    Mob(name='👽молодой ксеноморф', hp=75, attack=50, dexterity=120, luck=120, accuracy=120, coins=100),
     Mob(name='🐲дракон(маленький)', hp=76, attack=50, dexterity=120, luck=120, accuracy=120, coins=100),
     Mob(name='🚬курильщик', hp=78, attack=50, dexterity=120, luck=120, accuracy=120, coins=100),
     Mob(name='🚬нарик(с косяком)', hp=79, attack=50, dexterity=120, luck=120, accuracy=120, coins=100),
@@ -197,11 +201,13 @@ list_mobs25_30 = [
 
 list_mobs30_35 = [
     Mob(name='🐷свинокрыс(мифический🥉🥉🥉)', hp=101, attack=70, dexterity=120, luck=200, accuracy=120, coins=120),
-    Mob(name='🐸жаба(киллер)', hp=105, attack=70, dexterity=120, luck=200, accuracy=120, coins=120),
+    Mob(name='🐸жаба(киллер🥉)', hp=105, attack=70, dexterity=120, luck=200, accuracy=120, coins=120),
     Mob(name='🐊крокодил(не Гена🥉)', hp=106, attack=70, dexterity=120, luck=200, accuracy=120, coins=120),
     Mob(name='🐙осьминог(небольшой🥉)', hp=108, attack=70, dexterity=120, luck=200, accuracy=120, coins=120),
     Mob(name='🦞рак(клешни лезвия🥉)', hp=109, attack=70, dexterity=120, luck=200, accuracy=120, coins=120),
-    Mob(name='🐸жаба(ядерная🥉)', hp=109, attack=70, dexterity=120, luck=200, accuracy=120, coins=140)
+    Mob(name='🐸жаба(ядерная🥉)', hp=109, attack=70, dexterity=120, luck=200, accuracy=120, coins=140),
+    Mob(name='👽ксеноморф(зрелый🥉)', hp=109, attack=70, dexterity=120, luck=200, accuracy=120, coins=120),
+    Mob(name='🚬нарик(ищет закладку🥉)', hp=109, attack=70, dexterity=120, luck=200, accuracy=120, coins=120),
 ]
 
 list_mobs35_40 = [
@@ -209,8 +215,8 @@ list_mobs35_40 = [
     Mob(name='🦐креведка(белорусская🥈)', hp=140, attack=100, dexterity=220, luck=220, accuracy=120, coins=150),
     Mob(name='🐻медвед(шлюха🥈)', hp=140, attack=100, dexterity=220, luck=220, accuracy=120, coins=150),
     Mob(name='🐺волк(не выступает в цирке🥈)', hp=140, attack=100, dexterity=220, luck=220, accuracy=120, coins=150),
-    Mob(name='🦆утка', hp=145, attack=100, dexterity=220, luck=220, accuracy=120, coins=150),
-    Mob(name='🦎чупакабра', hp=150, attack=100, dexterity=220, luck=220, accuracy=120, coins=150),
+    Mob(name='🦆утка(кря-кря🥈)', hp=145, attack=100, dexterity=220, luck=220, accuracy=120, coins=150),
+    Mob(name='🦎чупакабра(🥈)', hp=150, attack=100, dexterity=220, luck=220, accuracy=120, coins=150),
     Mob(name='🐸жаба(термоядерная🥈)', hp=150, attack=100, dexterity=220, luck=220, accuracy=120, coins=170)
 ]
 
@@ -221,7 +227,7 @@ list_mobs40_45 = [
     Mob(name='🐻медвед(превед🥇)', hp=240, attack=150, dexterity=320, luck=320, accuracy=320, coins=160),
     Mob(name='🦂скорпион(ядовитый🥇)', hp=260, attack=150, dexterity=320, luck=320, accuracy=320, coins=160),
     Mob(name='🕵️сыщик(жрет пончики🥇)', hp=270, attack=150, dexterity=320, luck=320, accuracy=320, coins=160),
-    Mob(name='🐸жаба(сердовая🥇)', hp=270, attack=150, dexterity=320, luck=320, accuracy=320, coins=180)
+    Mob(name='🐸жаба(средовая🥇)', hp=270, attack=150, dexterity=320, luck=320, accuracy=320, coins=180)
 ]
 
 list_mobs45_50 = [

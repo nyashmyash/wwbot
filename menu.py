@@ -14,6 +14,22 @@ def menu_go_dange():
     return reply_markup
 
 
+def menu_rad():
+    keyboard = [
+        [
+            InlineKeyboardButton("👣Идти дaльше"),
+            InlineKeyboardButton("⛺️В лагерь"),
+        ],
+        [
+            InlineKeyboardButton("🔎Осмотреться"),
+            InlineKeyboardButton("👣☢Рад-️Пустошь")
+        ]
+    ]
+
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    return reply_markup
+
+
 def menu_dange():
     keyboard = [
         [
@@ -28,6 +44,23 @@ def menu_dange():
 
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     return reply_markup
+
+
+def menu_rad_quit():
+    keyboard = [
+        [
+            InlineKeyboardButton("☢Покинуть Рад-️Пустошь☢"),
+            InlineKeyboardButton("👣Идти дaльше")
+        ],
+        [
+            InlineKeyboardButton("🔎Осмотреться"),
+            InlineKeyboardButton("⛺️В лагерь"),
+        ]
+    ]
+
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    return reply_markup
+
 
 def menu_lomb():
     keyboard = [
@@ -100,7 +133,8 @@ def menu_pip():
         ],
         [
             InlineKeyboardButton("⬅️Назад"),
-            InlineKeyboardButton("📙Дневник")
+            #InlineKeyboardButton("📙Дневник"),
+            InlineKeyboardButton("🔝Топы")
         ]
     ]
 
@@ -123,6 +157,7 @@ def menu_camp():
         [
             InlineKeyboardButton("🏚Торгаш"),
             InlineKeyboardButton("👣Пустошь"),
+            InlineKeyboardButton("👣☢Рад-️Пустошь"),
         ]
     ]
 
