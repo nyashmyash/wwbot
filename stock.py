@@ -56,9 +56,9 @@ def get_random_food():
 
 class Stock:
     equip = None
-    armors = {}
-    used_stuff = {}
-    meds = {}
+    #armors = None
+    used_stuff = None
+    #meds = None
     MAX_EQUIP = 12
 
     def get_data_lombard(self):
@@ -115,7 +115,7 @@ class Stock:
     def print_stuff(self, code=1):
         out = ""
         for k in self.used_stuff:
-            if k // 100 == code:
+            if k // 100 == code and self.used_stuff[k]:
                 out += f"{used_items[k].get('name')}({self.used_stuff[k]}) /ustf_{k}\n"
         if out == "":
             return " ---  пока ничего ---\n"

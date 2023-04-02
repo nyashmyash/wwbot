@@ -78,8 +78,8 @@ async def get_hero(update):
             hero.armor.append(copy.copy(armor_all[1][0]))
             hero.armor.append(copy.copy(armor_all[2][0]))
             await add_hero_db(async_session, hero)
-            await add_hero_weapon_db(async_session, hero)
-            await add_hero_armor_db(async_session, hero)
+            await upd_hero_weapon(async_session, hero)
+            await upd_hero_armor(async_session, hero)
             hero.coins = 1000
         else:
             hero_db = db_hero_fetch[0]
@@ -133,6 +133,8 @@ async def get_hero(update):
             db_hero_itms = await get_hero_items_db(async_session, hero_db)
             if len(db_hero_itms):
                 for it in db_hero_itms:
+                    if not hero.stock.used_stuff:
+                        hero.stock.used_stuff = {}
                     hero.stock.used_stuff[it.index] = it.count
 
         all_data[update.effective_user.id] = [hero, update.effective_chat]
@@ -720,12 +722,9 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         for k in all_data:
             h = all_data[k][0]
             await upd_hero_db(async_session, h)
-            await delete_hero_weapon_db(async_session, h)
-            await add_hero_weapon_db(async_session, h)
-            await delete_hero_armor_db(async_session, h)
-            await add_hero_armor_db(async_session, h)
-            await delete_hero_items_db(async_session, h)
-            await add_hero_items_db(async_session, h)
+            await upd_hero_weapon(async_session, h)
+            await upd_hero_armor(async_session, h)
+            await update_hero_items(async_session, h)
 
     elif "/tophp" in msg_txt:
         def sortf(e):

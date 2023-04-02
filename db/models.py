@@ -1,6 +1,13 @@
 from sqlalchemy import Column, String, Integer, ForeignKey
 from db.base import Base
 
+class DroneDB(Base):
+    __tablename__ = "drones"
+    id = Column(Integer, autoincrement=True, primary_key=True, index=True)
+    index = Column(Integer)
+    user_id = Column(Integer)
+    life = Column(Integer)
+    max_life = Column(Integer)
 
 class ItemsDB(Base):
     __tablename__ = "items"
