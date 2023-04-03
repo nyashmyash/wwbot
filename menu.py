@@ -17,12 +17,13 @@ def menu_go_dange():
 def menu_rad():
     keyboard = [
         [
-            InlineKeyboardButton("👣Идти дaльше"),
-            InlineKeyboardButton("⛺️В лагерь"),
+            InlineKeyboardButton("👣☢Рад-️Пустошь"),
+            InlineKeyboardButton("🔎Осмотреться"),
+
         ],
         [
-            InlineKeyboardButton("🔎Осмотреться"),
-            InlineKeyboardButton("👣☢Рад-️Пустошь")
+            InlineKeyboardButton("⛺️В лагерь"),
+            InlineKeyboardButton("👣Идти дaльше"),
         ]
     ]
 
@@ -34,11 +35,11 @@ def menu_dange():
     keyboard = [
         [
             InlineKeyboardButton("🔥Зайти в данж"),
-            InlineKeyboardButton("👣Идти дaльше")
+            InlineKeyboardButton("🔎Осмотреться"),
         ],
         [
-            InlineKeyboardButton("🔎Осмотреться"),
             InlineKeyboardButton("⛺️В лагерь"),
+            InlineKeyboardButton("👣Идти дaльше")
         ]
     ]
 
@@ -50,11 +51,11 @@ def menu_rad_quit():
     keyboard = [
         [
             InlineKeyboardButton("☢Покинуть Рад-️Пустошь☢"),
-            InlineKeyboardButton("👣Идти дaльше")
+            InlineKeyboardButton("🔎Осмотреться"),
         ],
         [
-            InlineKeyboardButton("🔎Осмотреться"),
             InlineKeyboardButton("⛺️В лагерь"),
+            InlineKeyboardButton("👣Идти дaльше")
         ]
     ]
 
@@ -81,8 +82,9 @@ def menu_lomb():
 def menu_attack():
     keyboard = [
         [
-            InlineKeyboardButton("⚔️Дать отпор"),
-            InlineKeyboardButton("🏃Дать деру")
+            InlineKeyboardButton("🏃Дать деру"),
+            InlineKeyboardButton("⚔️Дать отпор")
+
         ],
         [
             InlineKeyboardButton("🔎Осмотреться")
@@ -97,10 +99,10 @@ def menu_go():
     keyboard = [
         [
             InlineKeyboardButton("📟Пип-бой"),
-            InlineKeyboardButton("🔎Осмотреться"),
+            InlineKeyboardButton("👣Идти дaльше"),
         ],
         [
-            InlineKeyboardButton("👣Идти дaльше"),
+            InlineKeyboardButton("🔎Осмотреться"),
             InlineKeyboardButton("⛺️В лагерь")
         ]
     ]
@@ -116,8 +118,8 @@ def menu_pvp():
             InlineKeyboardButton("🔎Осмотреться"),
         ],
         [
+            InlineKeyboardButton("⛺️В лагерь"),
             InlineKeyboardButton("👣Идти дaльше"),
-            InlineKeyboardButton("⛺️В лагерь")
         ]
     ]
 
@@ -151,7 +153,7 @@ def menu_camp():
         [
 
             InlineKeyboardButton("💰Ломбард"),
-            #InlineKeyboardButton("👓Инженер"),
+            InlineKeyboardButton("👓Инженер"),
             InlineKeyboardButton("🎓Обучение")
         ],
         [

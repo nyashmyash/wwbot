@@ -27,6 +27,12 @@ class WeaponDB(Base):
     use = Column(Integer)
     user_id = Column(Integer)
 
+    def copy_val(self, wp):
+        self.use = wp.use
+        self.life = wp.life
+        self.max_life = wp.max_life
+        self.z = wp.z
+        self.code = wp.get_code()
 
 class ArmorDB(Base):
     __tablename__ = "armor"
@@ -37,6 +43,13 @@ class ArmorDB(Base):
     max_life = Column(Integer)
     use = Column(Integer)
     user_id = Column(Integer)
+
+    def copy_val(self, arm):
+        self.use = arm.use
+        self.life = arm.life
+        self.max_life = arm.max_life
+        self.z = arm.z
+        self.code = arm.get_code()
 
 
 class HeroDB(Base):

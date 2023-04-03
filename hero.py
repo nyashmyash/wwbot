@@ -170,6 +170,8 @@ class Hero:
             self.modul = 2
 
     def activate_module(self, i):  # 1 2 3 4..
+        if not self.modul:
+            return "нет такого модуля\n"
         k = len(str(self.modul))
         if i <= k:
             self.modul = int('1' * k) + int(pow(10, i - 1))
@@ -184,6 +186,7 @@ class Hero:
         ├ 💪{3} | 🤸🏽‍♂️{4} | 🗣{5} 
         ├ 👼{6} | 🎯{7}
         ├ {19}
+        ├ {20}
         ├ 🗡{8}
         ├ 🪖{9}
         ├ 🧥{10}
@@ -193,13 +196,14 @@ class Hero:
 
         weapon = self.weapon.get_data_hero() if self.weapon else "нет оружия"
         armor = self.calc_armor()
+        drone = self.drone.get_drone_text_line() if self.drone else "нет дрона"
         return data.format(self.name, round(self.hp), self.max_hp,
                            self.get_str(self.force, 0), self.get_str(self.dexterity, 1), self.charisma,
                            self.get_str(self.luck, 2), self.get_str(self.accuracy, 3), weapon,
                            self.arm_str(self.armor[0]),
                            self.arm_str(self.armor[1]), self.arm_str(self.armor[2]), self.materials,
                            round(self.coins), self.hungry, self.calc_attack(),
-                           armor, self.km, self.all_km, self.get_str_modul())
+                           armor, self.km, self.all_km, self.get_str_modul(), drone)
 
     @staticmethod
     def generate_name():
@@ -309,7 +313,7 @@ class Hero:
                 dmg = dmg if dmg > 0 else 1
                 drone_hit = ""
                 if self.drone:
-                    drone_hit = self.drone.get_hit()
+                    drone_hit = self.drone.get_hit(dmg, armor)
                 if drone_hit =="":
                     out += f"{mob.name} нанес тебе удар 💔-{round(dmg)}\n"
                     self.hp -= dmg
@@ -324,10 +328,15 @@ class Hero:
                 if cnt_attack < self.CNT_LOG:
                     out += "👤Ты промахнулся\n"
             else:
+                drone_hit = ""
+                drone_dmg = 0
+                if self.drone:
+                    drone_dmg, drone_hit = self.drone.get_attack(mob)
                 att = self.get_attack()
                 if cnt_attack < self.CNT_LOG:
                     out += f"👤Ты ударил 💥{round(att)}\n"
-                hp_mob -= att
+                    out += drone_hit
+                hp_mob -= att + drone_dmg
                 if hp_mob <= 0:
                     if cnt_attack > self.CNT_LOG:
                         out += " ......... ....... ....\n"
@@ -347,13 +356,13 @@ class Hero:
                             chanse = random.randint(0, 7)
                         if chanse == 5:
                             rkey, ritem = get_random_item()
-                            out += f"✅✅вам выпал {ritem['name']}✅✅\n"
+                            out += f"✅✅вам выпал {ritem['name']} /ustf_{rkey}✅✅\n"
                             self.stock.add_stuff(rkey)
                         if self.km >= 30 and self.zone == 1:
                             chanse = random.randint(0, 7)
                             if chanse == 5:
                                 rkey, ritem = get_random_item(True)
-                                out += f"💉💉вам выпал {ritem['name']}💉💉\n"
+                                out += f"💉💉вам выпал {ritem['name']} /ustf_{rkey}💉💉\n"
                                 self.stock.add_stuff(rkey)
 
                     return out
@@ -423,10 +432,15 @@ class Hero:
                 if dmg < 0:
                     dmg = 1
                     # out += "{0} ❤️ {1}  урон {2} заблокирован\n".format(hero.name, round(hero.hp), round(dmg))
-
-                out += f"❤️ {hero.name} {round(hero.hp)} {self.log_hit()} 💔-{round(dmg)}\n"
-                self.hp -= dmg
-                self.get_hit_armor()
+                drone_hit = ""
+                if self.drone:
+                    drone_hit = self.drone.get_hit(dmg, armor)
+                if drone_hit == "":
+                    out += f"❤️ {hero.name} {round(hero.hp)} {self.log_hit()} 💔-{round(dmg)}\n"
+                    self.hp -= dmg
+                    self.get_hit_armor()
+                else:
+                    out += drone_hit
 
         while round(self.hp) > 0:
             cnt_attack += 1
@@ -434,6 +448,11 @@ class Hero:
                 if cnt_attack < self.CNT_LOG:
                     out += f"❤️ {round(self.hp)} {self.name} 🌀промахнулся\n"
             else:
+                drone_hit = ""
+                drone_dmg = 0
+                if self.drone:
+                    drone_dmg, drone_hit = self.drone.get_attack(hero)
+
                 dmg = self.get_attack() - armor_hero
                 if dmg < 0:
                     dmg = 1
@@ -441,7 +460,9 @@ class Hero:
 
                 if cnt_attack < self.CNT_LOG:
                     out += f"❤️ {round(self.hp)} {self.name} {self.log_hit()} 💥{round(dmg)}\n"
-                hero.hp -= dmg
+                    out += drone_hit
+
+                hero.hp -= dmg + drone_dmg
                 hero.get_hit_armor()
                 if hero.hp <= 0:
                     if cnt_attack > self.CNT_LOG:

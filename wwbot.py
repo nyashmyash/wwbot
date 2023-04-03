@@ -13,6 +13,7 @@ from armor import Armor, armor_all
 from weapon import Weapon, weapons_all
 from mob import *
 from menu import *
+from drone import *
 from collections import OrderedDict
 
 from multiprocessing import Queue
@@ -92,6 +93,11 @@ async def get_hero(update):
                 hero.weapon.use = 1
 
             for iw in range(0, len(db_hero_wp)):
+                if db_hero_wp[iw].use>1:
+                    hero.drone = copy.copy(all_drones[db_hero_wp[iw].use-2])
+                    hero.drone.from_db(db_hero_wp[iw])
+                    continue
+
                 dmg = int(db_hero_wp[iw].code.split('z')[0])
                 z = int(db_hero_wp[iw].code.split('z')[1])
                 wpn = None
@@ -251,6 +257,18 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             out = f"📦×{hero.materials}\n"
             out += hero.stock.get_data_lombard()
             await update.message.reply_text(out, reply_markup=menu_lomb())
+        elif msg_txt == "👓Инженер":
+            out = f"🕳×{hero.coins}\n\n"
+            out += "вы можете купить дрона:\n\n"
+            out += all_drones[0].get_buy_text()
+            cnt_mod = len(str(hero.modul)) if hero.modul else 0
+            if cnt_mod:
+                out += "\nвы можете активировать модуль:\n\n"
+                for i in range(0, cnt_mod):
+                    out += f"{all_modules[i+1][1]}  /module{i+1}\n"
+            else:
+                out += "\nнет модулей"
+            await update.message.reply_text(out, reply_markup=menu_pip())
         elif msg_txt == "🏚Торгаш":
             out = f"🕳×{hero.coins}\n"
             out += "вы можете купить:\n"
@@ -309,41 +327,42 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         elif msg_txt == "📟Пип-бой":
             await update.message.reply_text(hero.return_data(), reply_markup=menu_pip())
         elif msg_txt == "🔪Напасть" and hero.km != 0:
-
-            fight = False
-            for h in all_data:
-                hero_h = all_data[h][0]
-                if update.effective_user.id != h and hero_h.km == hero.km and hero_h.in_dange <= 0:
-                    if hero.zone != 1 or hero_h.zone != 1:
+            if hero.zone == 0:
+                await update.message.reply_text("можете напасть только в рад-зоне")
+            else:
+                fight = False
+                for h in all_data:
+                    hero_h = all_data[h][0]
+                    if hero_h.zone != 1:
                         continue
-                    fight = True
-                    chat = all_data[h][1]
-                    out = hero.attack_player(hero_h)
-                    hdr1 = f"Сражение с {hero.name}\n"
-                    hdr2 = f"Сражение с {hero_h.name}\n"
-                    if hero_h.hp <= 0:
-                        hero_h.died_hero()  # -10%
-                        hero_h.coins -= round(hero_h.coins * (0.1 + hero.get_module(6) / 100))
-                        hero.coins += round(hero_h.coins * (0.09 + hero.get_module(6) / 100))
-                        await update.message.reply_text(hdr2 + out +
-                                                        f"Вы выиграли!!!\n получено: 🕳 {round(hero_h.coins * 0.09)}",
-                                                        reply_markup=menu_go())
-                        await chat.send_message(hdr1 + out +
-                                                f"Вы проиграли:((((\n потеряно: 🕳 {round(hero_h.coins * 0.1)}",
-                                                reply_markup=menu_camp())
-                    if hero.hp <= 0:
-                        hero.died_hero()
-                        hero.coins -= round(hero.coins * (0.1 + hero_h.get_module(6) / 100))
-                        hero_h.coins += round(hero.coins * (0.09 + hero_h.get_module(6) / 100))
-                        await update.message.reply_text(hdr2 + out +
-                                                        f"Вы лузер!!!!\n потеряно: 🕳 {round(hero.coins * 0.1)}",
-                                                        reply_markup=menu_camp())
-                        await chat.send_message(
-                            hdr1 + out + f"Вы выиграли!!!\n получено: 🕳 {round(hero.coins * 0.09)}",
-                            reply_markup=menu_go())
-                    break
-            if not fight:
-                await update.message.reply_text("игрок ушел или вы можете напасть только в рад-зоне", reply_markup=menu_go())
+                    if update.effective_user.id != h and hero_h.km == hero.km and hero_h.in_dange <= 0:
+                        chat = all_data[h][1]
+                        out = hero.attack_player(hero_h)
+                        hdr1 = f"Сражение с {hero.name}\n"
+                        hdr2 = f"Сражение с {hero_h.name}\n"
+                        if hero_h.hp <= 0:
+                            hero_h.died_hero()  # -10%
+                            hero_h.coins -= round(hero_h.coins * (0.1 + hero.get_module(6) / 100))
+                            hero.coins += round(hero_h.coins * (0.09 + hero.get_module(6) / 100))
+                            await update.message.reply_text(hdr2 + out +
+                                                            f"Вы выиграли!!!\n получено: 🕳 {round(hero_h.coins * 0.09)}",
+                                                            reply_markup=menu_go())
+                            await chat.send_message(hdr1 + out +
+                                                    f"Вы проиграли:((((\n потеряно: 🕳 {round(hero_h.coins * 0.1)}",
+                                                    reply_markup=menu_camp())
+                        if hero.hp <= 0:
+                            hero.died_hero()
+                            hero.coins -= round(hero.coins * (0.1 + hero_h.get_module(6) / 100))
+                            hero_h.coins += round(hero.coins * (0.09 + hero_h.get_module(6) / 100))
+                            await update.message.reply_text(hdr2 + out +
+                                                            f"Вы лузер!!!!\n потеряно: 🕳 {round(hero.coins * 0.1)}",
+                                                            reply_markup=menu_camp())
+                            await chat.send_message(
+                                hdr1 + out + f"Вы выиграли!!!\n получено: 🕳 {round(hero.coins * 0.09)}",
+                                reply_markup=menu_go())
+                        break
+                if not fight:
+                    await update.message.reply_text("противник ушел")
 
         elif msg_txt == "👣Пустошь":
             hero.go()
@@ -391,8 +410,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 res = hero.attack_mob(mob)
                 hero.mob_fight = None
                 if hero.km != 0:
-                    await update.message.reply_text(res)
-                    await update.message.reply_text(hero.make_header() + "Вы стоите над подверженным монстром.", reply_markup=menu_go())
+                    await update.message.reply_text(hero.make_header() + res, reply_markup=menu_go())
                 else:
                     hero.hp = 1
                     await update.message.reply_text(res)
@@ -452,7 +470,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     text_go = text_mess_go[random.randint(0, len(text_mess_go)-1)]
                     if hero.zone == 1 and random.randint(0, 15) == 4:
                         rkey, ritem = get_random_food()
-                        text_go += f"\n✅✅вам выпал {ritem['name']}✅✅\n"
+                        text_go += f"\n✅✅вам выпал {ritem['name']} /ustf_{rkey}✅✅\n"
                         hero.stock.add_stuff(rkey)
 
                     await update.message.reply_text(header + text_go, reply_markup=menu_go())
@@ -585,6 +603,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                                                         reply_markup=menu_go())
                     else:
                         if random.randint(0, 15) == 1 and 100 < hero.modul < 100000:
+                            hero.add_module()
                             name = hero.get_str_modul()
                             await update.message.reply_text(hero.make_header()
                                                             + f"вам выпал модуль {name}",
@@ -690,7 +709,8 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             for h in all_data:
                 hero_h = all_data[h][0]
                 if update.effective_user.id != h and hero_h.km == hero.km:
-                    out += f"{hero_h.name}\n"
+                    zone = "☢" if hero_h.zone == 1 else ""
+                    out += f"{zone}{hero_h.name}\n"
 
             if out != "":
                 out = "возле вас игроки:\n" + out
@@ -722,9 +742,12 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         for k in all_data:
             h = all_data[k][0]
             await upd_hero_db(async_session, h)
-            await upd_hero_weapon(async_session, h)
-            await upd_hero_armor(async_session, h)
+            await delete_hero_weapon_db(async_session, h)
+            await delete_hero_armor_db(async_session, h)
+            await add_hero_armor_db(async_session, h)
+            await add_hero_weapon_db(async_session, h)
             await update_hero_items(async_session, h)
+            #await upd_indexes(async_session, h)
 
     elif "/tophp" in msg_txt:
         def sortf(e):
@@ -886,8 +909,15 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     data = "не хватило денег для покупки"
     elif "/module" in msg_txt and hero.km == 0:
         i_mod = msg_txt.replace("/module", "")
-        if i_mod in list('12345'):
+        if i_mod in list('123456'):
             data = hero.activate_module(int(i_mod))
+    elif "/buy_dr_1" == msg_txt and hero.km == 0:
+        if hero.coins > 200000:
+            hero.drone = copy.copy(all_drones[0])
+            hero.coins -= 200000
+            data = "вы купили дрона!"
+        else:
+            data = "не хватает крышек((("
 
     if data != "":
         if hero.in_dange <= 0:
