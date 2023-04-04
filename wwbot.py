@@ -78,6 +78,7 @@ async def get_hero(update):
             hero.armor.append(copy.copy(armor_all[0][0]))
             hero.armor.append(copy.copy(armor_all[1][0]))
             hero.armor.append(copy.copy(armor_all[2][0]))
+            hero.stock.used_stuff = {}
             await add_hero_db(async_session, hero)
             await upd_hero_weapon(async_session, hero)
             await upd_hero_armor(async_session, hero)
@@ -142,6 +143,9 @@ async def get_hero(update):
                     if not hero.stock.used_stuff:
                         hero.stock.used_stuff = {}
                     hero.stock.used_stuff[it.index] = it.count
+            else:
+                if not hero.stock.used_stuff:
+                    hero.stock.used_stuff = {}
 
         all_data[update.effective_user.id] = [hero, update.effective_chat]
         return hero
@@ -331,9 +335,11 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 await update.message.reply_text("можете напасть только в рад-зоне")
             else:
                 fight = False
+                not_zone = False
                 for h in all_data:
                     hero_h = all_data[h][0]
                     if hero_h.zone != 1:
+                        not_zone = True
                         continue
                     if update.effective_user.id != h and hero_h.km == hero.km and hero_h.in_dange <= 0:
                         chat = all_data[h][1]
@@ -362,7 +368,10 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                                 reply_markup=menu_go())
                         break
                 if not fight:
-                    await update.message.reply_text("противник ушел")
+                    if not_zone:
+                        await update.message.reply_text("нельзя нападать в обычной пустоши")
+                    else:
+                        await update.message.reply_text("противник ушел")
 
         elif msg_txt == "👣Пустошь":
             hero.go()
@@ -431,9 +440,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                                                     f"побег успешен, но вы потеряли 🕳 {lost}\n",
                                                     reply_markup=menu_go())
                 else:
-                    dmg = round(hero.mob_fight.get_attack() - hero.calc_armor())
-                    if dmg <= 0:
-                        dmg = 1
+                    dmg = round(hero.mob_fight.get_attack())
                     hero.hp -= dmg
                     if round(hero.hp) <= 0:
                         hero.died_hero()
@@ -448,13 +455,15 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
         elif msg_txt == "👣Идти дaльше":
             hero.go()
-            if hero.hungry <= 98:
+            if hero.hungry < 100:
                 if not hero.zone:
                     hero.hungry += 2
                 else:
                     hero.hungry += 3
             else:
                 hero.hp -= round(hero.max_hp / 5)
+            if hero.hungry >100:
+                hero.hungry = 100
             if hero.hp > 0:
                 if hero.hungry > 96:
                     await update.message.reply_text("⭐️⚡вы голодны, скоро начнете умирать⭐️\n/food ⚡")
@@ -818,9 +827,12 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     elif "/drw_" in msg_txt or "/dra_" in msg_txt:
         i = msg_txt.replace("/drw_", "").replace("/dra_", "")
-        data = f"вы уверены что хотите удалить?{hero.stock.equip.get(i).name}\n"
-        i_new = msg_txt.replace("/drw_", "/drww_").replace("/dra_", "/draa_")
-        data += i_new
+        if hero.stock.equip.get(i, None):
+            data = f"вы уверены что хотите удалить?{hero.stock.equip.get(i).name}\n"
+            i_new = msg_txt.replace("/drw_", "/drww_").replace("/dra_", "/draa_")
+            data += i_new
+        else:
+            data = "ошибка удаления\n"
     elif "/drww_" in msg_txt or "/draa_" in msg_txt:
         i = msg_txt.replace("/drww_", "").replace("/draa_", "")
         i_del = hero.stock.equip.pop(i)

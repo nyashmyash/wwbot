@@ -44,10 +44,10 @@ class Drone():
         return self.get_drone_text() + f"/buy_dr_{self.index}, 🕳 {self.cost}\n"
 
     def get_drone_text(self):
-        return f"🛰{self.name}\n💥 {self.dmg}\n🛡 {self.hp}\{self.max_hp}\n👼 {self.chanse} \n"
+        return f"🛰{self.name}\n💥 {self.dmg}\n🛡 {self.hp}/{self.max_hp}\n👼 {self.chanse} \n"
 
     def get_drone_text_line(self):
-        return f"🛰{self.name} 💥 {self.dmg} 🛡 {self.hp}\{self.max_hp}👼 {self.chanse}"
+        return f"🛰{self.name} 💥 {self.dmg} 🛡 {self.hp}/{self.max_hp}👼 {self.chanse}"
 
 
     def to_db(self):

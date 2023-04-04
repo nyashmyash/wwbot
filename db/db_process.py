@@ -10,14 +10,13 @@ from sqlalchemy.dialects.postgresql import dialect
 from sqlalchemy.sql import text, and_
 
 
-
-async def create_table_db(async_session: async_sessionmaker[AsyncSession]):
+async def create_table_db(async_session: async_sessionmaker[AsyncSession]) -> None:
     async with async_session() as session:
         await session.execute(text(str(CreateTable(ItemsDB.__table__).compile(dialect=dialect()))))
         await session.commit()
 
 
-async def get_hero_db(async_session: async_sessionmaker[AsyncSession], user_id = 0):
+async def get_hero_db(async_session: async_sessionmaker[AsyncSession], user_id: int = 0) -> list:
     async with async_session() as session:
         if user_id:
             result = await session.execute(select(HeroDB).where(HeroDB.user_id == user_id))
@@ -26,19 +25,19 @@ async def get_hero_db(async_session: async_sessionmaker[AsyncSession], user_id =
         return result.scalars().all()
 
 
-async def get_hero_weapon_db(async_session: async_sessionmaker[AsyncSession], herodb):
+async def get_hero_weapon_db(async_session: async_sessionmaker[AsyncSession], herodb: HeroDB) -> list:
     async with async_session() as session:
         result = await session.execute(select(WeaponDB).where(WeaponDB.user_id == herodb.id))
         return result.scalars().all()
 
 
-async def get_hero_armor_db(async_session: async_sessionmaker[AsyncSession], herodb):
+async def get_hero_armor_db(async_session: async_sessionmaker[AsyncSession], herodb: HeroDB) -> list:
     async with async_session() as session:
         result = await session.execute(select(ArmorDB).where(ArmorDB.user_id == herodb.id))
         return result.scalars().all()
 
 
-async def add_hero_db(async_session: async_sessionmaker[AsyncSession], hero: Hero):
+async def add_hero_db(async_session: async_sessionmaker[AsyncSession], hero: Hero) -> HeroDB:
     async with async_session() as session:
         async with session.begin():
             new_hero = hero.to_db()
@@ -47,22 +46,22 @@ async def add_hero_db(async_session: async_sessionmaker[AsyncSession], hero: Her
             return new_hero
 
 
-async def upd_indexes(async_session: async_sessionmaker[AsyncSession], hero: Hero):
-    async with async_session() as session:
-        result = await session.execute(select(ArmorDB).where(ArmorDB.user_id == hero.base_id))
-        i = 1
-        for arm in result.scalars().all():
-            arm.id = i
-            i += 1
-        i = 1
-        result = await session.execute(select(WeaponDB).where(WeaponDB.user_id == hero.base_id))
-        for wp in result.scalars().all():
-            wp.id = i
-            i += 1
+# async def upd_indexes(async_session: async_sessionmaker[AsyncSession], hero: Hero) -> None:
+#     async with async_session() as session:
+#         result = await session.execute(select(ArmorDB).where(ArmorDB.user_id == hero.base_id))
+#         i = 1
+#         for arm in result.scalars().all():
+#             arm.id = i
+#             i += 1
+#         i = 1
+#         result = await session.execute(select(WeaponDB).where(WeaponDB.user_id == hero.base_id))
+#         for wp in result.scalars().all():
+#             wp.id = i
+#             i += 1
+#
+#         await session.commit()
 
-        await session.commit()
-
-async def upd_hero_db(async_session: async_sessionmaker[AsyncSession], hero: Hero):
+async def upd_hero_db(async_session: async_sessionmaker[AsyncSession], hero: Hero) -> None:
     async with async_session() as session:
         async with session.begin():
             result = await session.execute(select(HeroDB).where(HeroDB.user_id == hero.id))
@@ -71,13 +70,13 @@ async def upd_hero_db(async_session: async_sessionmaker[AsyncSession], hero: Her
             await session.commit()
 
 
-async def get_hero_items_db(async_session: async_sessionmaker[AsyncSession], herodb):
+async def get_hero_items_db(async_session: async_sessionmaker[AsyncSession], herodb) -> list:
     async with async_session() as session:
         result = await session.execute(select(ItemsDB).where(ItemsDB.user_id == herodb.id))
         return result.scalars().all()
 
 
-async def update_hero_items(async_session: async_sessionmaker[AsyncSession], hero: Hero):
+async def update_hero_items(async_session: async_sessionmaker[AsyncSession], hero: Hero) -> None:
     async with async_session() as session:
         result = await session.execute(select(ItemsDB).where(ItemsDB.user_id == hero.base_id))
         ind = []
@@ -89,15 +88,18 @@ async def update_hero_items(async_session: async_sessionmaker[AsyncSession], her
                 i.count = 0
             ind.append(i.index)
 
-        for key, val in hero.stock.used_stuff.items():
-            if key not in ind:
-                itm = ItemsDB(index = key, user_id=hero.base_id, count = val )
-                session.add(itm)
+        if hero.stock.used_stuff:
+            for key, val in hero.stock.used_stuff.items():
+                if key not in ind:
+                    itm = ItemsDB(index=key, user_id=hero.base_id, count=val)
+                    session.add(itm)
+        else:
+            hero.stock.used_stuff = {}
 
         await session.commit()
 
 
-async def add_hero_weapon_db(async_session: async_sessionmaker[AsyncSession], hero: Hero):
+async def add_hero_weapon_db(async_session: async_sessionmaker[AsyncSession], hero: Hero) -> None:
     async with async_session() as session:
         async with session.begin():
             if hero.weapon:
@@ -115,7 +117,8 @@ async def add_hero_weapon_db(async_session: async_sessionmaker[AsyncSession], he
                 session.add(ddb)
             await session.commit()
 
-async def add_hero_armor_db(async_session: async_sessionmaker[AsyncSession], hero: Hero):
+
+async def add_hero_armor_db(async_session: async_sessionmaker[AsyncSession], hero: Hero) -> None:
     async with async_session() as session:
         async with session.begin():
             for i in hero.armor:
@@ -133,14 +136,15 @@ async def add_hero_armor_db(async_session: async_sessionmaker[AsyncSession], her
                     session.add(adb)
             await session.commit()
 
-async def delete_hero_weapon_db(async_session: async_sessionmaker[AsyncSession], hero: Hero):
+
+async def delete_hero_weapon_db(async_session: async_sessionmaker[AsyncSession], hero: Hero) -> None:
     async with async_session() as session:
         async with session.begin():
             await session.execute(delete(WeaponDB).where(WeaponDB.user_id == hero.base_id))
             await session.commit()
 
 
-async def delete_hero_armor_db(async_session: async_sessionmaker[AsyncSession], hero: Hero):
+async def delete_hero_armor_db(async_session: async_sessionmaker[AsyncSession], hero: Hero) -> None:
     async with async_session() as session:
         async with session.begin():
             await session.execute(delete(ArmorDB).where(ArmorDB.user_id == hero.base_id))

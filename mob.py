@@ -11,7 +11,7 @@ class Mob:
     coins = 20
     materials = 40
 
-    def __init__(self, name, hp, attack, dexterity, luck, accuracy, coins):
+    def __init__(self, name: str, hp: int, attack: int, dexterity: int, luck: int, accuracy: int, coins: int):
         self.name = name
         self.hp = hp
         self.attack = attack
@@ -20,22 +20,22 @@ class Mob:
         self.accuracy = accuracy
         self.coins = coins
 
-    def calc_mob_coins(self, km):
+    def calc_mob_coins(self, km: int) -> float:
         return (1 + km / 3) * self.coins * random.uniform(0.85, 1.15)
 
-    def calc_mob_mat(self, km):
+    def calc_mob_mat(self, km: int) -> float:
         return (1 + km / 3) * self.coins*1.5 * random.uniform(0.85, 1.15)
 
-    def get_attack(self):
+    def get_attack(self) -> float:
         return self.attack * random.uniform(0.85, 1.15)
 
-    def get_miss(self, dex):  # dex шанс уворота для героя 0.1%
+    def get_miss(self, dex: int) -> bool:  # dex шанс уворота для героя 0.1%
         if random.randint(0, 1000) < dex - self.accuracy:
             return True
         else:
             return False
 
-    def is_first_hit(self, luck):
+    def is_first_hit(self, luck: int) -> bool:
         if random.randint(0, 1000) - 500 < self.luck - luck:
             return True
         else:

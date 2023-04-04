@@ -1,5 +1,8 @@
 from sqlalchemy import Column, String, Integer, ForeignKey
 from db.base import Base
+#from hero import Hero
+#from weapon import Weapon
+#from armor import Armor
 
 class DroneDB(Base):
     __tablename__ = "drones"
@@ -27,7 +30,7 @@ class WeaponDB(Base):
     use = Column(Integer)
     user_id = Column(Integer)
 
-    def copy_val(self, wp):
+    def copy_val(self, wp: object) -> None:
         self.use = wp.use
         self.life = wp.life
         self.max_life = wp.max_life
@@ -44,7 +47,7 @@ class ArmorDB(Base):
     use = Column(Integer)
     user_id = Column(Integer)
 
-    def copy_val(self, arm):
+    def copy_val(self, arm: object) -> None:
         self.use = arm.use
         self.life = arm.life
         self.max_life = arm.max_life
@@ -74,7 +77,7 @@ class HeroDB(Base):
     modul = Column(Integer)
     zone = Column(Integer)
 
-    def copy_val(self, hero):
+    def copy_val(self, hero: object) -> None:
         self.name = hero.name
         self.user_id = hero.user_id
         self.hp = hero.hp

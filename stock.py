@@ -1,6 +1,6 @@
 import copy
 import random
-from db.models import ItemsDB
+#from hero import Hero
 
 # сила ловка удача меткость харизма hp голод
 
@@ -17,6 +17,9 @@ used_items = {100: {"name": "сырое мясо", "hungry": 30, "hp": 2},
               109: {"name": "крыса", "hungry": 10, "hp": -2},
               110: {"name": "аптечка", "hp": 10, "hungry": 10},
               111: {"name": "большая аптечка", "hp": 30, "hungry": 10},
+              112: {"name": "консервы", "hp": 10, "hungry": 35},
+              113: {"name": "гнилые фрукты", "hp": -3, "hungry": 35},
+              114: {"name": "вяленое мясо", "hungry": 40},
               200: {"name": "пиво", "force": 10, "luck": 20, "km": 10},
               201: {"name": "вино", "force": 15, "luck": 20, "km": 20},
               202: {"name": "водка", "force": 30, "luck": 50, "km": 30},
@@ -33,7 +36,7 @@ used_items = {100: {"name": "сырое мясо", "hungry": 30, "hp": 2},
               }
 
 
-def get_random_item(med=False):
+def get_random_item(med: bool = False) -> (int, dict):
     if not med:
         if random.randint(0, 1):
             return get_random_food()
@@ -44,13 +47,13 @@ def get_random_item(med=False):
         return med, used_items[med]
 
 
-def get_random_buff():
+def get_random_buff() -> (int, dict):
     buff = random.randint(200, 207)
     return buff, used_items[buff]
 
 
-def get_random_food():
-    food = random.randint(100, 111)
+def get_random_food() -> (int, dict):
+    food = random.randint(100, 114)
     return food, used_items[food]
 
 
@@ -61,19 +64,19 @@ class Stock:
     #meds = None
     MAX_EQUIP = 12
 
-    def get_data_lombard(self):
+    def get_data_lombard(self) -> str:
         out = "Экипировка которую можно продать:\n\n"
         for w in self.equip:
             out += self.equip[w].get_data_cost() + "\n"
         return out
 
-    def add_stuff(self, key):
+    def add_stuff(self, key) -> None:
         if not self.used_stuff.get(key, None):
             self.used_stuff[key] = 1
         else:
             self.used_stuff[key] += 1
 
-    def use_stuff(self, code, hero):
+    def use_stuff(self, code: int, hero: object) -> str:
         stf = self.used_stuff.get(code, None)
         if stf:
             if self.used_stuff[code] == 1:
@@ -112,7 +115,7 @@ class Stock:
             return f"вы использовали {used_items[code]['name']}\n {outstr}\n"
         return "нет такого"
 
-    def print_stuff(self, code=1):
+    def print_stuff(self, code: int = 1) -> str:
         out = ""
         for k in self.used_stuff:
             if k // 100 == code and self.used_stuff[k]:
@@ -122,7 +125,7 @@ class Stock:
         else:
             return out
 
-    def add_item(self, item):
+    def add_item(self, item: object) -> None:
         if len(self.equip) == self.MAX_EQUIP:
             return
         new_item = copy.copy(item)
@@ -131,7 +134,7 @@ class Stock:
         new_item.use = 0
         self.equip[new_item.get_code()] = new_item
 
-    def get_delete(self):
+    def get_delete(self) -> str:
         out = "🎒СОДЕРЖИМОЕ РЮКЗАКА ДЛЯ УДАЛЕНИЯ\n"
         cnt = len(self.equip)
         out += f"Экипировка ({cnt}/{self.MAX_EQUIP})\n"
@@ -139,7 +142,7 @@ class Stock:
             out += self.equip[w].get_data_drop() + "\n"
         return out
 
-    def get_data(self):
+    def get_data(self) -> str:
         out = "🎒СОДЕРЖИМОЕ РЮКЗАКА\n"
         out += "   Полезное\n"
         out += self.print_stuff(3)

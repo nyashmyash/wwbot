@@ -18,7 +18,7 @@ class Armor:
     use = 0
     type_stack = 0
 
-    def __init__(self, name, arm, type, life=500, max_life=500, cost=0, mats=0, type_stack=0):
+    def __init__(self, name: str, arm: int, type: int, life: int = 500, max_life: int = 500, cost: int = 0, mats: int =0, type_stack: int = 0):
         self.name = name
         self.arm = arm
         self.life = life
@@ -28,42 +28,42 @@ class Armor:
         self.type = type
         self.type_stack = type_stack
 
-    def get_data_drop(self):
+    def get_data_drop(self) -> str:
         return self.get_data("dra_")
 
-    def get_data(self, code="eqa_"):
+    def get_data(self, code: str ="eqa_") -> str:
         out = f"▪️ {self.name} 🛡 {self.arm} 🔧{round(100 * self.life / self.max_life)} % /{code}{self.type}t{self.arm}z{self.z}"
 
         return out
 
-    def get_data_cost(self):
+    def get_data_cost(self) -> str:
         out = f"▪️ {self.name} 🛡 ️{self.arm} 🔧{round(100 * self.life / self.max_life)} % 📦 {self.calc_cost()} /sa_{self.type}t{self.arm}z{self.z}"
         return out
 
-    def get_buy(self):
+    def get_buy(self) -> str:
         out = f"▪️ {self.name} 🛡 {self.arm} 🕳{self.calc_cost()} /ba_{self.type}t{self.arm}"
         return out
 
     # def craft_cost(self):
     #    self.calc_cost()
 
-    def calc_cost(self):
+    def calc_cost(self) -> int:
         if self.cost:
             return round(self.cost * self.life / self.max_life)
         else:
             return round(self.arm * 100 * self.life / self.max_life + self.arm * 200)
 
-    def get_data_hero(self):
+    def get_data_hero(self) -> str:
         out = f"▪️ {self.name} 🛡 {self.arm} 🔧{round(100 * self.life / self.max_life)} %"
         return out
 
-    def get_code(self):
+    def get_code(self) -> str:
         return f"{self.type}t{self.arm}z{self.z}"
 
-    def to_db(self):
+    def to_db(self) -> ArmorDB:
         return ArmorDB(code=self.get_code(), use=self.use, life=self.life, max_life=self.max_life)
 
-    def from_db(self, armor_db):
+    def from_db(self, armor_db: ArmorDB) -> None:
         self.life = armor_db.life
         self.max_life = armor_db.max_life
         self.use = armor_db.use

@@ -1,5 +1,6 @@
 from telegram import InlineKeyboardButton, ReplyKeyboardMarkup
 
+
 def menu_go_dange():
     keyboard = [
         [
@@ -14,7 +15,7 @@ def menu_go_dange():
     return reply_markup
 
 
-def menu_rad():
+def menu_rad() -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("👣☢Рад-️Пустошь"),
@@ -31,7 +32,7 @@ def menu_rad():
     return reply_markup
 
 
-def menu_dange():
+def menu_dange() -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("🔥Зайти в данж"),
@@ -47,7 +48,7 @@ def menu_dange():
     return reply_markup
 
 
-def menu_rad_quit():
+def menu_rad_quit() -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("☢Покинуть Рад-️Пустошь☢"),
@@ -63,7 +64,7 @@ def menu_rad_quit():
     return reply_markup
 
 
-def menu_lomb():
+def menu_lomb() -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("Продать все коробки"),
@@ -79,7 +80,8 @@ def menu_lomb():
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     return reply_markup
 
-def menu_attack():
+
+def menu_attack() -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("🏃Дать деру"),
@@ -95,7 +97,7 @@ def menu_attack():
     return reply_markup
 
 
-def menu_go():
+def menu_go() -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("📟Пип-бой"),
@@ -111,7 +113,7 @@ def menu_go():
     return reply_markup
 
 
-def menu_pvp():
+def menu_pvp() -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("🔪Напасть"),
@@ -127,7 +129,7 @@ def menu_pvp():
     return reply_markup
 
 
-def menu_pip():
+def menu_pip() -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("🎒Рюкзак"),
@@ -135,7 +137,7 @@ def menu_pip():
         ],
         [
             InlineKeyboardButton("⬅️Назад"),
-            #InlineKeyboardButton("📙Дневник"),
+            # InlineKeyboardButton("📙Дневник"),
             InlineKeyboardButton("🔝Топы")
         ]
     ]
@@ -144,7 +146,7 @@ def menu_pip():
     return reply_markup
 
 
-def menu_camp():
+def menu_camp() -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("📟Пип-бой"),
@@ -166,7 +168,8 @@ def menu_camp():
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     return reply_markup
 
-def menu_learn_x10():
+
+def menu_learn_x10() -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("💪Сила*"),
@@ -186,7 +189,8 @@ def menu_learn_x10():
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     return reply_markup
 
-def menu_learn():
+
+def menu_learn() -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("💪Сила"),
@@ -206,4 +210,3 @@ def menu_learn():
 
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     return reply_markup
-
