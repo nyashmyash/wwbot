@@ -59,9 +59,7 @@ def get_random_food() -> (int, dict):
 
 class Stock:
     equip = None
-    #armors = None
     used_stuff = None
-    #meds = None
     MAX_EQUIP = 12
 
     def get_data_lombard(self) -> str:
@@ -90,12 +88,13 @@ class Stock:
                 hero.hungry = 0;
             hp = used_items[code].get("hp", 0)
             hero.hp += hp
-            hero.buffs[0] = used_items[code].get("force", 0)
-            hero.buffs[1] = used_items[code].get("dexterity", 0)
-            hero.buffs[2] = used_items[code].get("luck", 0)
-            hero.buffs[3] = used_items[code].get("accuracy", 0)
-            hero.km_buff = used_items[code].get("km", 0)
-            hero.km_heal = used_items[code].get("km_heal", 0)
+            if code // 100 != 1:
+                hero.buffs[0] = used_items[code].get("force", 0)
+                hero.buffs[1] = used_items[code].get("dexterity", 0)
+                hero.buffs[2] = used_items[code].get("luck", 0)
+                hero.buffs[3] = used_items[code].get("accuracy", 0)
+                hero.km_buff = used_items[code].get("km", 0)
+                hero.km_heal = used_items[code].get("km_heal", 0)
             outstr = ""
             if hun:
                 outstr += f"🍗-{hun}% "

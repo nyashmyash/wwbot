@@ -26,7 +26,7 @@ class Drone():
 
     def get_hit(self, armor, dmg):
         if self.hp > 0 and self.chanse > random.randint(0, 100):
-            hit = round(dmg / self.coeff)
+            hit = round(dmg / self.coeff) // 10
             self.hp -= hit
             if self.hp > 0:
                 return f"🛰{self.name} заблокировал урон 🛡{hit}\n"

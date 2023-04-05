@@ -160,7 +160,7 @@ async def me_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     else:
         await update.message.reply_text(hero.return_data(), reply_markup=menu_pip())
 
-rad_zones = [15, 25, 34, 45, 55, 65]
+rad_zones = [15, 25, 34, 45, 55, 65, 75, 85]
 
 async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     hero = await get_hero(update)
@@ -181,9 +181,11 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             use_10x = 10
         if msg_txt == "💪Сила":
             while i < use_10x:
-                if hero.coins >= hero.calc_cost(hero.force):
+                if hero.coins >= hero.calc_cost(hero.force) and hero.inc_force():
                     hero.coins -= hero.calc_cost(hero.force)
                     hero.force += 1
+                else:
+                    break
                 i += 1
             if use_10x == 1:
                 await update.message.reply_text(hero.learn_data(), reply_markup=menu_learn())
@@ -192,9 +194,11 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
         elif msg_txt == "🎯Меткость":
             while i < use_10x:
-                if hero.coins >= hero.calc_cost(hero.accuracy):
+                if hero.coins >= hero.calc_cost(hero.accuracy) and hero.inc_acc():
                     hero.coins -= hero.calc_cost(hero.accuracy)
                     hero.accuracy += 1
+                else:
+                    break
                 i += 1
             if use_10x == 1:
                 await update.message.reply_text(hero.learn_data(), reply_markup=menu_learn())
@@ -203,9 +207,11 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
         elif msg_txt == "🤸🏽‍♂️Ловкость":
             while i < use_10x:
-                if hero.coins >= hero.calc_cost(hero.dexterity):
+                if hero.coins >= hero.calc_cost(hero.dexterity) and hero.inc_dex():
                     hero.coins -= hero.calc_cost(hero.dexterity)
                     hero.dexterity += 1
+                else:
+                    break
                 i += 1
             if use_10x == 1:
                 await update.message.reply_text(hero.learn_data(), reply_markup=menu_learn())
@@ -214,10 +220,12 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
         elif msg_txt == "❤️Живучесть":
             while i < use_10x:
-                if hero.coins >= hero.calc_cost(hero.max_hp):
+                if hero.coins >= hero.calc_cost(hero.max_hp) and hero.inc_hp():
                     hero.coins -= hero.calc_cost(hero.max_hp)
                     hero.max_hp += 1
                     hero.hp += 1
+                else:
+                    break
                 i += 1
             if use_10x == 1:
                 await update.message.reply_text(hero.learn_data(), reply_markup=menu_learn())
@@ -225,9 +233,11 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 await update.message.reply_text(hero.learn_data(), reply_markup=menu_learn_x10())
         elif msg_txt == "🗣Харизма":
             while i < use_10x:
-                if hero.coins >= 10 * hero.charisma:
+                if hero.coins >= 10 * hero.charisma and hero.inc_char():
                     hero.coins -= 10 * hero.charisma
                     hero.charisma += 1
+                else:
+                    break
                 i += 1
             if use_10x == 1:
                 await update.message.reply_text(hero.learn_data(), reply_markup=menu_learn())
@@ -235,9 +245,11 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 await update.message.reply_text(hero.learn_data(), reply_markup=menu_learn_x10())
         elif msg_txt == "👼Удача":
             while i < use_10x:
-                if hero.coins >= hero.calc_cost(hero.luck):
+                if hero.coins >= hero.calc_cost(hero.luck) and hero.inc_luck():
                     hero.coins -= hero.calc_cost(hero.luck)
                     hero.luck += 1
+                else:
+                    break
                 i += 1
             if use_10x == 1:
                 await update.message.reply_text(hero.learn_data(), reply_markup=menu_learn())
@@ -338,12 +350,14 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 not_zone = False
                 for h in all_data:
                     hero_h = all_data[h][0]
-                    if hero_h.zone != 1:
-                        not_zone = True
-                        continue
                     if update.effective_user.id != h and hero_h.km == hero.km and hero_h.in_dange <= 0:
+                        if hero_h.zone != 1:
+                            not_zone = True
+                            continue
                         chat = all_data[h][1]
-                        out = hero.attack_player(hero_h)
+                        #out = hero.attack_player(hero_h)
+                        out = hero.attack_pvp_wmobs(hero_h)
+
                         hdr1 = f"Сражение с {hero.name}\n"
                         hdr2 = f"Сражение с {hero_h.name}\n"
                         if hero_h.hp <= 0:
@@ -731,6 +745,9 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if hero.km in danges.keys() and not hero.mob_fight and hero.in_dange == 0 and hero.zone == 0:
         await update.message.reply_text("Перед вами вход в пещеру", reply_markup=menu_dange())
 
+    if hero.km == 30 and not hero.mob_fight and hero.zone == 1:
+        await update.message.reply_text(f"Можно изучить дзен, всего заполнено 🕳{hero.get_in_dzen()}\nПоместить крышки в дзен /dzen", reply_markup=menu_go())
+
     if hero.km in rad_zones and not hero.mob_fight:
         if hero.zone == 1:
             await update.message.reply_text("Можно выйти из радиоактивной пустоши", reply_markup=menu_rad_quit())
@@ -847,7 +864,6 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             hero.weapon = copy.copy(weapon)
             hero.weapon.use = 1
             data = hero.stock.get_data()
-
     elif "/eqa_" in msg_txt:
         a = msg_txt.replace("/eqa_", "")
         ap = hero.stock.equip.get(a, None)
@@ -930,6 +946,11 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             data = "вы купили дрона!"
         else:
             data = "не хватает крышек((("
+    elif "/dzen" == msg_txt and hero.km == 30 and hero.zone == 1:
+        data = f"Вы отправили 🕳{hero.coins} в дзен\n"
+        hero.dzen += hero.coins
+        hero.coins = 0
+        data += f"Набрано 🕳{hero.get_in_dzen()} из 🕳{hero.get_coins_to_dzen()}\n"
 
     if data != "":
         if hero.in_dange <= 0:
