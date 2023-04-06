@@ -18,7 +18,8 @@ class Armor:
     use = 0
     type_stack = 0
 
-    def __init__(self, name: str, arm: int, type: int, life: int = 500, max_life: int = 500, cost: int = 0, mats: int =0, type_stack: int = 0):
+    def __init__(self, name: str, arm: int, type: int, life: int = 500, max_life: int = 500, cost: int = 0,
+                 mats: int = 0, type_stack: int = 0):
         self.name = name
         self.arm = arm
         self.life = life
@@ -31,7 +32,7 @@ class Armor:
     def get_data_drop(self) -> str:
         return self.get_data("dra_")
 
-    def get_data(self, code: str ="eqa_") -> str:
+    def get_data(self, code: str = "eqa_") -> str:
         out = f"▪️ {self.name} 🛡 {self.arm} 🔧{round(100 * self.life / self.max_life)} % /{code}{self.type}t{self.arm}z{self.z}"
 
         return out
@@ -77,7 +78,10 @@ stack_buff = [
     [70, 70, 100, 0],
     [100, 0, 100, 100],
     [150, 100, 150, 0],
-    [200, 120, 100, 100]
+    [200, 120, 100, 100],
+    [200, 120, 100, 100],
+    [0, 0, 500, 0],
+    [500, 0, 0, 0],
 ]
 
 armor_all = [[Armor("кепка", 1, 0, life=100, max_life=100),
@@ -92,14 +96,15 @@ armor_all = [[Armor("кепка", 1, 0, life=100, max_life=100),
               # +70 ловки +30 силы + 50 удачи
               Armor("👹даэдрический шлем", 35, 0, life=500, max_life=500, type_stack=3, cost=80000),
               # +50 силы + 30 ловки + 50 удачи
-              Armor("☯️мифический шлем", 50, 0, life=600, max_life=600, type_stack=4, cost=150000),
+              Armor("☯️мифический шлем", 50, 0, life=600, max_life=600, type_stack=4, cost=100000),
               # +70 ловки + 70 силы + 100 удачи
-              Armor("🐲шлем дракона", 70, 0, life=700, type_stack=5, max_life=700),
+              Armor("🐲шлем дракона", 70, 0, life=700, type_stack=5, max_life=700, cost=120000),
               # +100 меткости +100 силы + 100 удачи
-              Armor("☢️атомный шлем", 120, 0, life=1000, type_stack=6, max_life=1000),
-             # +150 силы +100 ловкости + 150 удачи
-              Armor("☣️шлем тиранид", 140, 0, life=1500, type_stack=7, max_life=1500)],
-
+              Armor("☢️атомный шлем", 120, 0, life=1000, type_stack=6, max_life=1000, cost=130000),
+              # +150 силы +100 ловкости + 150 удачи
+              Armor("☣️шлем тиранид", 140, 0, life=1500, type_stack=7, max_life=1500, cost=150000),
+              Armor("🤡️маска клоуна", 70, 0, life=200, type_stack=8, max_life=200),
+              Armor("☠️шлем смерти", 50, 0, life=200, type_stack=9, max_life=200)],
              [Armor("плащ", 1, 1, life=100, max_life=100),
               Armor("куртка", 2, 1, life=100, max_life=100),
               Armor("бронежилет", 5, 1, life=100, max_life=100),
@@ -109,10 +114,13 @@ armor_all = [[Armor("кепка", 1, 0, life=100, max_life=100),
               Armor("✳️титановая броня", 40, 1, life=500, max_life=500, type_stack=1, cost=70000),
               Armor("💠адамантовая броня", 50, 1, life=500, max_life=500, type_stack=2, cost=80000),
               Armor("👹даэдрическая броня", 65, 1, life=500, max_life=500, type_stack=3, cost=100000),
-              Armor("☯️мифическая броня", 90, 1, life=700, type_stack=4, max_life=700, cost=150000),
-              Armor("🐲броня дракона", 140, 1, life=1000, type_stack=5, max_life=1000),
-              Armor("☢️атомная броня", 190, 1, life=1500, type_stack=6, max_life=1500),
-              Armor("☣️броня тиранид", 220, 1, life=1500, type_stack=7, max_life=1500)],
+              Armor("☯️мифическая броня", 90, 1, life=700, type_stack=4, max_life=700, cost=110000),
+              Armor("🐲броня дракона", 140, 1, life=1000, type_stack=5, max_life=1000, cost=120000),
+              Armor("☢️атомная броня", 190, 1, life=1500, type_stack=6, max_life=1500, cost=130000),
+              Armor("☣️броня тиранид", 220, 1, life=1500, type_stack=7, max_life=1500, cost=150000),
+              Armor("🤡️костюм клоуна", 33, 1, life=200, type_stack=8, max_life=200),
+              Armor("☠️броня смерти", 66, 1, life=200, type_stack=9, max_life=200),
+              ],
 
              [Armor("рукавицы", 1, 2, life=100, max_life=100),
               Armor("перчатки", 2, 2, life=100, max_life=100),
@@ -124,7 +132,9 @@ armor_all = [[Armor("кепка", 1, 0, life=100, max_life=100),
               Armor("💠адамантовые перчатки", 25, 2, life=500, type_stack=2, max_life=500, cost=70000),
               Armor("👹даэдрические перчатки", 40, 2, life=500, type_stack=3, max_life=500, cost=90000),
               Armor("☯️мифические перчатки", 60, 2, life=700, type_stack=4, max_life=700, cost=100000),
-              Armor("🐲перчатки дракона", 90, 2, life=800, type_stack=5, max_life=800),
-              Armor("☢️атомные перчатки", 120, 2, life=1000, type_stack=6, max_life=1000),
-              Armor("☣️️перчатки тиранид", 120, 2, life=1500, type_stack=7, max_life=1500)
+              Armor("🐲перчатки дракона", 90, 2, life=800, type_stack=5, max_life=800, cost=110000),
+              Armor("☢️атомные перчатки", 120, 2, life=1000, type_stack=6, max_life=1000, cost=120000),
+              Armor("☣️️перчатки тиранид", 120, 2, life=1500, type_stack=7, max_life=1500, cost=130000),
+              Armor("🤡перчатки клоуна", 33, 2, life=200, type_stack=8, max_life=200),
+              Armor("☠️перчатки смерти", 66, 2, life=200, type_stack=9, max_life=200),
               ]]

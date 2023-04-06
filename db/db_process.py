@@ -46,20 +46,20 @@ async def add_hero_db(async_session: async_sessionmaker[AsyncSession], hero: Her
             return new_hero
 
 
-# async def upd_indexes(async_session: async_sessionmaker[AsyncSession], hero: Hero) -> None:
-#     async with async_session() as session:
-#         result = await session.execute(select(ArmorDB).where(ArmorDB.user_id == hero.base_id))
-#         i = 1
-#         for arm in result.scalars().all():
-#             arm.id = i
-#             i += 1
-#         i = 1
-#         result = await session.execute(select(WeaponDB).where(WeaponDB.user_id == hero.base_id))
-#         for wp in result.scalars().all():
-#             wp.id = i
-#             i += 1
-#
-#         await session.commit()
+async def upd_indexes(async_session: async_sessionmaker[AsyncSession]) -> None:
+    async with async_session() as session:
+        result = await session.execute(select(ArmorDB))
+        i = 1
+        for arm in result.scalars().all():
+            arm.id = i
+            i += 1
+        i = 1
+        result = await session.execute(select(WeaponDB))
+        for wp in result.scalars().all():
+            wp.id = i
+            i += 1
+
+        await session.commit()
 
 async def upd_hero_db(async_session: async_sessionmaker[AsyncSession], hero: Hero) -> None:
     async with async_session() as session:

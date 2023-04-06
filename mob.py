@@ -132,13 +132,14 @@ list_dange40 = [
 ]
 
 list_dange50 = [
-    Mob(name='🤡жалкий клоун', hp=250, attack=125, dexterity=320, luck=320, accuracy=320, coins=210),
-    Mob(name='🎈оно', hp=300, attack=150, dexterity=330, luck=320, accuracy=320, coins=210),
-    Mob(name='🤹🏻‍♀️жонглер костями', hp=320, attack=200, dexterity=320, luck=320, accuracy=320, coins=210),
-    Mob(name='🎭кровавый арлекин', hp=400, attack=220, dexterity=320, luck=320, accuracy=320, coins=210),
-    Mob(name='️🎪 ебучий цирк(будешь выступать)', hp=500, attack=250, dexterity=320, luck=320, accuracy=320, coins=210),
+    Mob(name='👨🏻‍🏭Сайфер', hp=250, attack=125, dexterity=320, luck=320, accuracy=320, coins=210),
+    Mob(name='🤵🏻Агент Смит', hp=300, attack=150, dexterity=330, luck=320, accuracy=320, coins=210),
+    Mob(name='🦹🏿‍♂️Морфеус', hp=320, attack=200, dexterity=320, luck=320, accuracy=320, coins=210),
+    Mob(name='🦹‍♀️Тринити', hp=400, attack=220, dexterity=320, luck=320, accuracy=320, coins=210),
+    Mob(name='🦹🏻️Нео', hp=500, attack=250, dexterity=320, luck=320, accuracy=320, coins=210),
     None
 ]
+
 
 list_dange60 = [
     Mob(name='🐙зерлинг', hp=400, attack=200, dexterity=410, luck=510, accuracy=510, coins=30),
@@ -171,6 +172,23 @@ danges = {10: list_dange10, 20: list_dange20,
           30: list_dange30, 35: list_dange35, 40: list_dange40,
           50: list_dange50, 60: list_dange60, 70: list_dange70, 80: list_dange80}
 
+list_mob_clown_zone = [
+    Mob(name='🤡жалкий клоун', hp=550, attack=225, dexterity=620, luck=320, accuracy=320, coins=210),
+    Mob(name='🐺волк в цирке(выступает)', hp=550, attack=225, dexterity=620, luck=320, accuracy=320, coins=210),
+    Mob(name='🤹🏿мим(хуим)', hp=550, attack=225, dexterity=620, luck=320, accuracy=320, coins=210),
+    Mob(name='🎈оно', hp=500, attack=250, dexterity=630, luck=320, accuracy=320, coins=210),
+    Mob(name='🤹🏻‍♀️жонглер костями', hp=520, attack=290, dexterity=620, luck=320, accuracy=320, coins=210),
+    Mob(name='🎭кровавый арлекин', hp=500, attack=290, dexterity=620, luck=320, accuracy=320, coins=210),
+    Mob(name='️🎪 ебучий цирк(будешь выступать)', hp=700, attack=290, dexterity=620, luck=320, accuracy=320, coins=210),
+    Mob(name='🥲Пьеро(ищет Мальвину⭐️)', hp=1000, attack=290, dexterity=620, luck=320, accuracy=320, coins=210),
+    Mob(name='️🙍🏼‍♀️Мальвина⭐️(нахуй Пьеро)', hp=1200, attack=400, dexterity=620, luck=320, accuracy=320, coins=210),
+    Mob(name='🎅🏻️Карабас-барабас(отпиздит тебя плеткой⭐️⭐️)', hp=1500, attack=500, dexterity=720, luck=320, accuracy=320, coins=210),
+    None
+]
+
+
+
+
 list_mobs1_5 = [
     Mob(name='🐶крысакот(любопытный)', hp=1, attack=2, dexterity=5, luck=5, accuracy=5, coins=20),
     Mob(name='🐱кот(голову тебе отожрет)', hp=3, attack=2, dexterity=5, luck=5, accuracy=5, coins=20),
@@ -189,15 +207,15 @@ list_mobs5_10 = [
     Mob(name='🐷свинокрыс(злобно хрюкает и смотрит)', hp=11, attack=10, dexterity=10, luck=10, accuracy=5, coins=30),
     Mob(name='🦊я лав чина', hp=11, attack=10, dexterity=10, luck=10, accuracy=10, coins=30),
     Mob(name='🐼панда в декрете', hp=13, attack=10, dexterity=10, luck=10, accuracy=10, coins=30),
-    Mob(name='🦭просто стас', hp=15, attack=10, dexterity=10, luck=10, accuracy=10, coins=30),
+    Mob(name='🦭🦭🦭просто стас🦭🦭🦭', hp=15, attack=10, dexterity=10, luck=10, accuracy=10, coins=30),
     Mob(name='🌚скобка', hp=17, attack=10, dexterity=10, luck=10, accuracy=10, coins=30),
     Mob(name='Точа🍗 (травит токсичностью)', hp=17, attack=10, dexterity=10, luck=10, accuracy=10, coins=30),
-    Mob(name='🍒пьяная вишня', hp=19, attack=10, dexterity=10, luck=10, accuracy=10, coins=30),
+    Mob(name='🍒пьяная вишня🍒', hp=19, attack=10, dexterity=10, luck=10, accuracy=10, coins=30),
     Mob(name='❄️Снежка(дает бан⭐️)', hp=19, attack=12, dexterity=10, luck=10, accuracy=10, coins=30),
     Mob(name='⭐️Кирюха(кирюха⭐️)', hp=19, attack=13, dexterity=10, luck=100, accuracy=10, coins=30),
     Mob(name='😰METOKS(Бог нытья😰)', hp=19, attack=13, dexterity=10, luck=100, accuracy=10, coins=30),
     Mob(name='🐸жаба(злится)', hp=19, attack=13, dexterity=10, luck=100, accuracy=10, coins=40),
-
+    Mob(name='☃️☃️☃️𝚃𝙷𝙴𝙻𝚄𝙸𝙳𝙴𝙽☃️☃️☃️(46 dzen >:)', hp=19, attack=13, dexterity=10, luck=100, accuracy=10, coins=30),
 ]
 
 list_mobs10_15 = [

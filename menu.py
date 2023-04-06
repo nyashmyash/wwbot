@@ -32,6 +32,40 @@ def menu_rad() -> ReplyKeyboardMarkup:
     return reply_markup
 
 
+def menu_clown() -> ReplyKeyboardMarkup:
+    keyboard = [
+        [
+            InlineKeyboardButton("👣️🎪 Зайти в блядский цирк🎪 ️"),
+            InlineKeyboardButton("🔎Осмотреться"),
+
+        ],
+        [
+            InlineKeyboardButton("⛺️В лагерь"),
+            InlineKeyboardButton("👣Идти дaльше"),
+        ]
+    ]
+
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    return reply_markup
+
+
+def menu_dead() -> ReplyKeyboardMarkup:
+    keyboard = [
+        [
+            InlineKeyboardButton("👣️☠️Пустошь смерти☠️"),
+            InlineKeyboardButton("🔎Осмотреться"),
+
+        ],
+        [
+            InlineKeyboardButton("⛺️В лагерь"),
+            InlineKeyboardButton("👣Идти дaльше"),
+        ]
+    ]
+
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    return reply_markup
+
+
 def menu_dange() -> ReplyKeyboardMarkup:
     keyboard = [
         [
@@ -106,6 +140,21 @@ def menu_go() -> ReplyKeyboardMarkup:
         [
             InlineKeyboardButton("🔎Осмотреться"),
             InlineKeyboardButton("⛺️В лагерь")
+        ]
+    ]
+
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    return reply_markup
+
+
+def menu_go_dead() -> ReplyKeyboardMarkup:
+    keyboard = [
+        [
+            InlineKeyboardButton("📟Пип-бой"),
+            InlineKeyboardButton("👣Идти дaльше"),
+        ],
+        [
+            InlineKeyboardButton("🔎Осмотреться"),
         ]
     ]
 

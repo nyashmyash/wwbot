@@ -88,11 +88,12 @@ class Stock:
                 hero.hungry = 0;
             hp = used_items[code].get("hp", 0)
             hero.hp += hp
+            force = dex = luck = accur = 0
             if code // 100 != 1:
-                hero.buffs[0] = used_items[code].get("force", 0)
-                hero.buffs[1] = used_items[code].get("dexterity", 0)
-                hero.buffs[2] = used_items[code].get("luck", 0)
-                hero.buffs[3] = used_items[code].get("accuracy", 0)
+                force = used_items[code].get("force", 0)
+                dex = used_items[code].get("dexterity", 0)
+                luck = used_items[code].get("luck", 0)
+                accur = used_items[code].get("accuracy", 0)
                 hero.km_buff = used_items[code].get("km", 0)
                 hero.km_heal = used_items[code].get("km_heal", 0)
             outstr = ""
@@ -102,14 +103,19 @@ class Stock:
                 outstr += f"❤+{hp} "
             elif hp < 0:
                 outstr += f"💔{hp} "
-            if hero.buffs[0]:
-                outstr += f"💪+{hero.buffs[0]} "
-            if hero.buffs[1]:
-                outstr += f"🤸🏽‍♂️+{hero.buffs[1]} "
-            if hero.buffs[2]:
-                outstr += f"👼+{hero.buffs[2]} "
-            if hero.buffs[3]:
-                outstr += f"🎯+{hero.buffs[3]} "
+            if force:
+                outstr += f"💪+{force} "
+                hero.buffs[0] = force
+            if dex:
+                outstr += f"🤸🏽‍♂️+{dex} "
+                hero.buffs[1] = dex
+            if luck:
+                outstr += f"👼+{luck} "
+                hero.buffs[2] = luck
+            if accur:
+                outstr += f"🎯+{accur} "
+                hero.buffs[3] = accur
+
 
             return f"вы использовали {used_items[code]['name']}\n {outstr}\n"
         return "нет такого"
@@ -149,5 +155,5 @@ class Stock:
         out += f"Экипировка ({cnt}/{self.MAX_EQUIP})\n"
         for w in self.equip:
             out += self.equip[w].get_data() + "\n"
-        out += "\nеда /food \nбаффы /buff \nвыкинуть /drop"
+        out += "\nеда /food \nбаффы /buff \nвыкинуть /drop\nмобы в команде /mobs"
         return out
