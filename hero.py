@@ -57,6 +57,79 @@ text_mess_go = ["Вы обследовали разрушенный дом, но
 
                 ]
 
+text_hit = ["сильно ударил",
+            "пунькнул по носу",
+            "переебал в щи",
+            "вмазал",
+            "хитро подкрался и врезал",
+            "отбежал и из укрытия атаковал",
+            "напал со спины",
+            "ебнул по почкам",
+            "переебал вертушкой",
+            "схватил за шею",
+            "сделал хитрый прием",
+            "положил на лопатки",
+            "послал на хуй",
+            "взорвал гранату",
+            "заехал в голову",
+            "атаковал в спину",
+            "прописал оплеуху",
+            "дал подзатыльник",
+            "ошарашил метким выстрелом",
+            "прописал жесткий удар",
+            "пнул ногой в спину",
+            "огрел по голове",
+            "саданул метко в корпус",
+            "припечатал к стене",
+            ]
+
+text_hit_mob = ["выстрелил твари в морду",
+                "отстрелил щупальце",
+                "вмазал по морде",
+                "ударил в корпус",
+                "наступил на голову",
+                "размазал кишки",
+                "в прыжке выстрелил и попал",
+                "из укрытия выстрелил",
+                "хитро подкрался и переебал",
+                "оторвал руку",
+                "поймал в ловушку",
+                "ударил с разворота по морде",
+                "деморализировал тварь",
+                "накинулся и въебал",
+                "разломал челюсть твари",
+                "дал пинок",
+                "быстро контратаковал",
+                "закинул гранату",
+                "скинул с обрыва",
+                "заехал по морде",
+                "атаковал дерзко",
+                ]
+
+
+text_hero_mis = ["смешно упал с оружием",
+                 "подскользнулся на ровном месте",
+                 "упал в яму",
+                 "впал в ступор",
+                 "дрогнул и промахнулся",
+                 "промахнулся в упор",
+                 "меткость качай",
+                 "глупо махал руками",
+                 "выстрелил в дерево",
+                 "считал ворон",
+                 "просчитался и промазал",
+                 "смазал выстрел",
+                 "оружие дало осечку",
+                 "не смог ровно держать пуху"]
+
+
+text_hero_dead = ["умер, стюпид д*б",
+                  "ахаха, нуб",
+                  "ну умер и умер",
+                  "ну ничего, воскресят",
+                  "жить будешь, в лагере реанимируют",
+                  "F",
+                  "R.I.P."]
 
 class Hero:
     id = ""
@@ -195,7 +268,7 @@ class Hero:
     def add_module(self):
         if self.modul != 0:
             k = len(str(self.modul)) + 1
-            self.modul = int('1' * k) + int(pow(10, k - 1))
+            self.modul = int("1" * k) + int(pow(10, k - 1))
         else:
             self.modul = 2
 
@@ -204,7 +277,7 @@ class Hero:
             return "нет такого модуля\n"
         k = len(str(self.modul))
         if i <= k:
-            self.modul = int('1' * k) + int(pow(10, i - 1))
+            self.modul = int("1" * k) + int(pow(10, i - 1))
             return f"{self.get_str_modul()} активирован\n"
         return "нет такого модуля\n"
 
@@ -303,16 +376,16 @@ class Hero:
             if 3 > self.zone > 0:
                 self.mob_fight.hp *= 2
                 if self.zone == 1:
-                    if ')' in self.mob_fight.name:
+                    if ")" in self.mob_fight.name:
                         self.mob_fight.name = self.mob_fight.name.replace(")", "☢️)")
                     else:
-                        self.mob_fight.name += '☢'
+                        self.mob_fight.name += "☢"
                 elif self.zone == 2:
                     self.mob_fight.coins *= 1.5
-                    if ')' in self.mob_fight.name:
+                    if ")" in self.mob_fight.name:
                         self.mob_fight.name = self.mob_fight.name.replace(")", "☠)")
                     else:
-                        self.mob_fight.name += '☠'
+                        self.mob_fight.name += "☠"
 
                 self.mob_fight.attack *= 2
                 self.mob_fight.dexterity *= 2
@@ -362,66 +435,60 @@ class Hero:
         return f"{zoned}❤️ {round(self.hp)}\{self.max_hp} 🍗{self.hungry}% {buffed} 👣{self.km} \n"
 
     def attack_mob_pvp(self, mob: Mob) -> str:
-        out = f"❤️ {round(self.hp)} {self.name} vs {mob.name} ❤{mob.hp}\n"
+        out = f"❤️ {round(self.hp)} {self.name} vs {mob.name} ❤{round(mob.hp)}\n"
         armor = self.calc_armor()
         hp_mob = mob.hp
         cnt_attack = 0
+        is_first = True
         if mob.is_first_hit(luck=self.get_luck()):
-            if mob.get_miss(self.get_dexterity()):
-                out += f"🌀{mob.name} промахнулся\n"
-            else:
-                dmg = mob.get_attack() - armor
-                dmg = dmg if dmg > 0 else 1
-                drone_hit = ""
-                if self.drone:
-                    drone_hit = self.drone.get_hit(dmg, armor)
-                    if self.drone.hp <= 0:
-                        self.drone = None
-                if drone_hit == "":
-                    out += f"{mob.name} нанес {self.name} удар 💔-{round(dmg)}\n"
-                    self.hp -= dmg
-                    self.get_hit_armor()
-                else:
-                    out += drone_hit
+            is_first = False
 
         while round(self.hp) > 0:
             cnt_attack += 1
-            if self.get_miss(mob.dexterity):
-                if cnt_attack < self.CNT_LOG:
-                    out += f"❤️ {round(self.hp)} {self.name} промахнулся\n"
+            if is_first:
+                is_first = False
+                if self.get_miss(mob.dexterity):
+                    if cnt_attack < self.CNT_LOG:
+                        out += f"❤️ {round(self.hp)} {self.name} {self.log_hit(text_hero_mis)}\n"
+                else:
+                    drone_hit = ""
+                    drone_dmg = 0
+                    if self.drone:
+                        drone_dmg, drone_hit = self.drone.get_attack(mob)
+                    att = self.get_attack()
+                    if cnt_attack < self.CNT_LOG:
+                        out += f"❤️ {round(self.hp)} {self.name} {self.log_hit(text_hit_mob)} 💥{round(att)}\n"
+                        out += drone_hit
+                    hp_mob -= att + drone_dmg
+                    if hp_mob <= 0:
+                        if cnt_attack > self.CNT_LOG:
+                            out += " ......... ....... ....\n"
+                        out += f"{mob.name} повержен\n"
+                        return out
             else:
-                drone_hit = ""
-                drone_dmg = 0
-                if self.drone:
-                    drone_dmg, drone_hit = self.drone.get_attack(mob)
-                att = self.get_attack()
-                if cnt_attack < self.CNT_LOG:
-                    out += f"❤️ {round(self.hp)} {self.name} ударил 💥{round(att)}\n"
-                    out += drone_hit
-                hp_mob -= att + drone_dmg
-                if hp_mob <= 0:
-                    if cnt_attack > self.CNT_LOG:
-                        out += " ......... ....... ....\n"
-                    out += f"{mob.name} повержен\n"
-                    return out
-
-            if mob.get_miss(self.get_dexterity()):
-                if cnt_attack < self.CNT_LOG:
-                    out += f"🌀{mob.name} промахнулся\n"
-            else:
-                dmg = mob.get_attack() - armor
-                if dmg < 0:
-                    dmg = 1
-                if cnt_attack < self.CNT_LOG:
-                    out += f"{mob.name} нанес {self.name} удар 💔-{round(dmg)}\n"
-                self.hp -= dmg
-                self.get_hit_armor()
+                is_first = True
+                if mob.get_miss(self.get_dexterity()):
+                    out += f"🌀{mob.name} {self.log_hit(text_mob_mis)}\n"
+                else:
+                    dmg = mob.get_attack() - armor
+                    dmg = dmg if dmg > 0 else 1
+                    drone_hit = ""
+                    if self.drone:
+                        drone_hit = self.drone.get_hit(dmg, armor)
+                        if self.drone.hp <= 0:
+                            self.drone = None
+                    if drone_hit == "":
+                        out += f"{mob.name} {self.log_hit(text_att_mob)} {self.name} 💔-{round(dmg)}\n"
+                        self.hp -= dmg
+                        self.get_hit_armor()
+                    else:
+                        out += drone_hit
 
         if cnt_attack > self.CNT_LOG:
             out += " ......... ....... ....\n"
 
         if round(self.hp) <= 0:
-            out += f"{self.name} помер :((((((\n"
+            out += f"{self.name} {self.log_hit(text_hero_dead)}\n"
             self.died_hero()
         self.km = 0
         return out
@@ -432,116 +499,109 @@ class Hero:
         armor = self.calc_armor()
         hp_mob = mob.hp
         cnt_attack = 0
-        if mob.is_first_hit(luck=self.get_luck()):
-            if mob.get_miss(self.get_dexterity()):
-                out += "🌀моб промахнулся\n"
-            else:
-                dmg = mob.get_attack() - armor
-                dmg = dmg if dmg > 0 else 1
-                drone_hit = ""
-                if self.drone:
-                    drone_hit = self.drone.get_hit(dmg, armor)
-                    if self.drone.hp <= 0:
-                        self.drone = None
-                if drone_hit == "":
-                    out += f"{mob.name} нанес тебе удар 💔-{round(dmg)}\n"
-                    self.hp -= dmg
-                    self.get_hit_armor()
-                else:
-                    out += drone_hit
+        is_first = True
+        if mob.is_first_hit(luck=self.get_luck()): #первый ли удар моба
+            is_first = False
 
         while round(self.hp) > 0:
             cnt_attack += 1
-            if self.get_miss(mob.dexterity):
-                if cnt_attack < self.CNT_LOG:
-                    out += "👤Ты промахнулся\n"
-            else:
-                drone_hit = ""
-                drone_dmg = 0
-                if self.drone:
-                    drone_dmg, drone_hit = self.drone.get_attack(mob)
-                att = self.get_attack()
-                if cnt_attack < self.CNT_LOG:
-                    out += f"👤Ты ударил 💥{round(att)}\n"
-                    out += drone_hit
-                hp_mob -= att + drone_dmg
-                if hp_mob <= 0:
-                    if cnt_attack > self.CNT_LOG:
-                        out += " ......... ....... ....\n"
-                    out += f"{mob.name} повержен\n"
-                    bonus_mod = self.get_module(6)
-                    coins = round(mob.calc_mob_coins(self.km) * (1 + bonus_mod / 100))
-                    mats = round(mob.calc_mob_mat(self.km) * (1 + bonus_mod / 100))
-                    if not is_dange:
-                        self.coins += coins
-                        self.materials += mats
-                        bonus_str = f"+{bonus_mod}%" if bonus_mod else ""
-                        out += f"получено 🕳 {coins}{bonus_str} 📦 {mats}{bonus_str}\n"
-                        chanse = 0
-                        if not self.zone:
-                            chanse = random.randint(0, 20)
-                        else:
-                            chanse = random.randint(0, 7)
-                        if chanse == 5:
-                            rkey, ritem = get_random_item()
-                            out += f"✅✅вам выпал {ritem['name']} /ustf_{rkey}✅✅\n"
-                            self.stock.add_stuff(rkey)
-
-                        if self.zone >= 2 or (self.km >= 30 and self.zone == 1):
-                            chanse = random.randint(0, 7)
+            if is_first:
+                is_first = False
+                if self.get_miss(mob.dexterity): #начинаем бить
+                    if cnt_attack < self.CNT_LOG:
+                        out += f"👤Ты {self.log_hit(text_hero_mis)}\n"
+                else:
+                    drone_hit = ""
+                    drone_dmg = 0
+                    if self.drone:
+                        drone_dmg, drone_hit = self.drone.get_attack(mob)
+                    att = self.get_attack()
+                    if cnt_attack < self.CNT_LOG:
+                        out += f"👤Ты {self.log_hit(text_hit_mob)} 💥{round(att)}\n"
+                        out += drone_hit
+                    hp_mob -= att + drone_dmg
+                    if hp_mob <= 0:
+                        if cnt_attack > self.CNT_LOG:
+                            out += " ......... ....... ....\n"
+                        out += f"{mob.name} повержен\n"
+                        bonus_mod = self.get_module(6)
+                        coins = round(mob.calc_mob_coins(self.km) * (1 + bonus_mod / 100))
+                        mats = round(mob.calc_mob_mat(self.km) * (1 + bonus_mod / 100))
+                        if not is_dange:
+                            self.coins += coins
+                            self.materials += mats
+                            bonus_str = f"+{bonus_mod}%" if bonus_mod else ""
+                            out += f"получено 🕳 {coins}{bonus_str} 📦 {mats}{bonus_str}\n"
+                            chanse = 0
+                            if not self.zone:
+                                chanse = random.randint(0, 20)
+                            else:
+                                chanse = random.randint(0, 7)
                             if chanse == 5:
-                                rkey, ritem = get_random_item(True)
-                                out += f"💉💉вам выпал {ritem['name']} /ustf_{rkey}💉💉\n"
+                                rkey, ritem = get_random_item()
+                                out += f"✅✅вам выпал {ritem['name']} /ustf_{rkey}✅✅\n"
                                 self.stock.add_stuff(rkey)
-                        if random.randint(0, 20) == 1:
 
-                            if not self.mobs:
-                                self.mobs = []
-                            if len(self.mobs) < 2:
-                                out += f"моб {mob.name} взят в команду!\n"
-                                self.mobs.append(mob)
+                            if self.zone >= 2 or (self.km >= 30 and self.zone == 1):
+                                chanse = random.randint(0, 7)
+                                if chanse == 5:
+                                    rkey, ritem = get_random_item(True)
+                                    out += f"💉💉вам выпал {ritem['name']} /ustf_{rkey}💉💉\n"
+                                    self.stock.add_stuff(rkey)
+                            if random.randint(0, 20) == 1:
 
-                        if self.zone == 1 and not self.drone:
-                            if random.randint(0, 1000) == 555:
-                                out += f"🛰{all_drones[1].name} возле поверженного моба лежал дрон, теперь можно его использовать\n"
-                                self.drone = copy.copy(all_drones[1])
-                        if self.zone == 2:
-                            if random.randint(0, 1000) == 666:
-                                type = random.randint(0, 2)
-                                self.stock.add_item(armor_all[type][13])
-                                out += f"Вой вой вам выпало кое-что интересное {armor_all[type][13].name}"
-                            if random.randint(0, 1000) == 666:
-                                self.stock.add_item(weapons_all[22])
-                                out += f"Вой вой вам выпало кое-что интересное {weapons_all[22].name}"
-                        if self.zone == 3:
-                            if random.randint(0, 1000) == 777:
-                                type = random.randint(0, 2)
-                                self.stock.add_item(armor_all[type][12])
-                                out += f"Вой вой вам выпало кое-что интересное {armor_all[type][12].name}"
-                            if random.randint(0, 1000) == 777:
-                                self.stock.add_item(weapons_all[21])
-                                out += f"Вой вой вам выпало кое-что интересное {weapons_all[21].name}"
+                                if not self.mobs:
+                                    self.mobs = []
+                                if len(self.mobs) < 2:
+                                    out += f"моб {mob.name} взят в команду!\n"
+                                    self.mobs.append(mob)
 
-                    return out
+                            if self.zone == 1 and not self.drone:
+                                if random.randint(0, 1000) == 555:
+                                    out += f"🛰{all_drones[1].name} возле поверженного моба лежал дрон, теперь можно его использовать\n"
+                                    self.drone = copy.copy(all_drones[1])
+                            if self.zone == 2:
+                                if random.randint(0, 1000) == 666:
+                                    type = random.randint(0, 2)
+                                    self.stock.add_item(armor_all[type][13])
+                                    out += f"Вой вой вам выпало кое-что интересное {armor_all[type][13].name}"
+                                if random.randint(0, 1000) == 666:
+                                    self.stock.add_item(weapons_all[22])
+                                    out += f"Вой вой вам выпало кое-что интересное {weapons_all[22].name}"
+                            if self.zone == 3:
+                                if random.randint(0, 1000) == 777:
+                                    type = random.randint(0, 2)
+                                    self.stock.add_item(armor_all[type][12])
+                                    out += f"Вой вой вам выпало кое-что интересное {armor_all[type][12].name}"
+                                if random.randint(0, 1000) == 777:
+                                    self.stock.add_item(weapons_all[21])
+                                    out += f"Вой вой вам выпало кое-что интересное {weapons_all[21].name}"
 
-            if mob.get_miss(self.get_dexterity()):
-                if cnt_attack < self.CNT_LOG:
-                    out += "🌀моб промахнулся\n"
+                        return out
             else:
-                dmg = mob.get_attack() - armor
-                if dmg < 0:
-                    dmg = 1
-                    # out += "урон заблокирован\n"
-                if cnt_attack < self.CNT_LOG:
-                    out += f"{mob.name} нанес тебе удар 💔-{round(dmg)}\n"
-                self.hp -= dmg
-                self.get_hit_armor()
+                is_first = True
+                if mob.get_miss(self.get_dexterity()):
+                    out += f"🌀{self.log_hit(text_mob_mis)}\n"
+                else:
+                    dmg = mob.get_attack() - armor
+                    dmg = dmg if dmg > 0 else 1
+                    drone_hit = ""
+                    if self.drone:
+                        drone_hit = self.drone.get_hit(dmg, armor)
+                        if self.drone.hp <= 0:
+                            self.drone = None
+                    if drone_hit == "":
+                        out += f"{self.log_hit(text_att_mob)} 💔-{round(dmg)}\n"
+                        self.hp -= dmg
+                        self.get_hit_armor()
+                    else:
+                        out += drone_hit
 
         if cnt_attack > self.CNT_LOG:
             out += " ......... ....... ....\n"
 
         if round(self.hp) <= 0:
-            out += "ты помер :((((((\n"
+            out += f"{self.log_hit(text_hero_dead)}\n"
             if self.zone == 1 or self.zone == 2:
                 out += f"потеряно: 🕳 {round(self.coins * 0.5)}"
                 self.coins *= 0.5
@@ -562,23 +622,8 @@ class Hero:
         self.zone = 0
         self.mob_fight = None
 
-    def log_hit(self) -> str:
-        text_hit = ["сильно ударил",
-                    "пунькнул по носу",
-                    "переебал в щи",
-                    "вмазал",
-                    "хитро подкрался и врезал",
-                    "отбежал и из укрытия атаковал",
-                    "напал со спины",
-                    "ебнул по почкам",
-                    "переебал вертушкой",
-                    "схватил за шею",
-                    "сделал хитрый прием",
-                    "положил на лопатки",
-                    "послал на хуй",
-                    "взорвал гранату",
-                    "зехал в голову"]
-        return text_hit[random.randint(0, len(text_hit) - 1)]
+    def log_hit(self, texts_list) -> str:
+        return texts_list[random.randint(0, len(texts_list) - 1)]
 
     def attack_pvp_wmobs(self, hero: object) -> str:
         out = ""
@@ -587,7 +632,7 @@ class Hero:
         else:
             out += hero.attack_player_with_mobs(self)
 
-        if hero.hp > 0 and self.hp > 0:
+        if hero.km !=0 and self.km != 0:
             out += self.attack_player(hero)
 
         return out
@@ -623,73 +668,64 @@ class Hero:
         armor = self.calc_armor()
         armor_hero = hero.calc_armor()
         cnt_attack = 0
-        if hero.is_first_hit(luck=self.get_luck()):
-            if hero.get_miss(self.get_dexterity()):
-                out += f"❤️ {round(hero.hp)} {hero.name} 🌀промахнулся\n"
-            else:
-                dmg = hero.get_attack() - armor
-                if dmg < 0:
-                    dmg = 1
-                    # out += "{0} ❤️ {1}  урон {2} заблокирован\n".format(hero.name, round(hero.hp), round(dmg))
-                drone_hit = ""
-                if self.drone:
-                    drone_hit = self.drone.get_hit(dmg, armor)
-                    if self.drone.hp <= 0:
-                        self.drone = None
-                if drone_hit == "":
-                    out += f"❤️ {hero.name} {round(hero.hp)} {self.log_hit()} 💔-{round(dmg)}\n"
-                    self.hp -= dmg
-                    self.get_hit_armor()
-                else:
-                    out += drone_hit
+        is_first = False
+        if self.is_first_hit(luck=hero.get_luck()):
+            is_first = True
 
         while round(self.hp) > 0:
             cnt_attack += 1
-            if self.get_miss(hero.get_dexterity()):
-                if cnt_attack < self.CNT_LOG:
-                    out += f"❤️ {round(self.hp)} {self.name} 🌀промахнулся\n"
+            if is_first:
+                is_first = False
+                if self.get_miss(hero.get_dexterity()):
+                    if cnt_attack < self.CNT_LOG:
+                        out += f"❤️ {round(self.hp)} {self.name} 🌀{self.log_hit(text_hero_mis)}\n"
+                else:
+                    drone_hit = ""
+                    drone_dmg = 0
+                    if self.drone:
+                        drone_dmg, drone_hit = self.drone.get_attack(hero)
+
+                    dmg = self.get_attack() - armor_hero
+                    if dmg < 0:
+                        dmg = 1
+
+                    if cnt_attack < self.CNT_LOG:
+                        out += f"❤️ {round(self.hp)} {self.name} {self.log_hit(text_hit)} 💥{round(dmg)}\n"
+                        out += drone_hit
+
+                    hero.hp -= dmg + drone_dmg
+                    hero.get_hit_armor()
+                    if hero.hp <= 0:
+                        if cnt_attack > self.CNT_LOG:
+                            out += " ......... ....... ....\n"
+                        out += f"{hero.name} повержен\n"
+                        return out
             else:
-                drone_hit = ""
-                drone_dmg = 0
-                if self.drone:
-                    drone_dmg, drone_hit = self.drone.get_attack(hero)
+                is_first = True
+                if hero.get_miss(self.get_dexterity()):
+                    if cnt_attack < self.CNT_LOG:
+                        out += f"❤️ {round(hero.hp)} {hero.name}  🌀{self.log_hit(text_hero_mis)}\n"
+                else:
+                    drone_hit = ""
+                    drone_dmg = 0
+                    if self.drone:
+                        drone_dmg, drone_hit = hero.drone.get_attack(hero)
 
-                dmg = self.get_attack() - armor_hero
-                if dmg < 0:
-                    dmg = 1
-                    # out += "❤️ {0} урон {1} заблокировал враг\n".format(round(self.hp), round(dmg))
+                    dmg = hero.get_attack() - armor
+                    if dmg < 0:
+                        dmg = 1
 
-                if cnt_attack < self.CNT_LOG:
-                    out += f"❤️ {round(self.hp)} {self.name} {self.log_hit()} 💥{round(dmg)}\n"
-                    out += drone_hit
-
-                hero.hp -= dmg + drone_dmg
-                hero.get_hit_armor()
-                if hero.hp <= 0:
-                    if cnt_attack > self.CNT_LOG:
-                        out += " ......... ....... ....\n"
-                    out += f"{hero.name} повержен\n"
-                    return out
-
-            if hero.get_miss(self.get_dexterity()):
-                if cnt_attack < self.CNT_LOG:
-                    out += f"❤️ {round(hero.hp)} {hero.name}  🌀промахнулся\n"
-            else:
-                dmg = hero.get_attack() - armor
-                if dmg < 0:
-                    dmg = 1
-                    # out += "{0} ❤️ {1} урон {2} заблокирован\n".format(hero.name, round(hero.hp), round(dmg))
-
-                if cnt_attack < self.CNT_LOG:
-                    out += f"❤️ {round(hero.hp)} {hero.name} {self.log_hit()} 💔-{round(dmg)}\n"
-                self.hp -= dmg
-                self.get_hit_armor()
+                    if cnt_attack < self.CNT_LOG:
+                        out += f"❤️ {round(hero.hp)} {hero.name} {self.log_hit(text_hit)} 💔-{round(dmg)}\n"
+                        out += drone_hit
+                    self.hp -= dmg + drone_dmg
+                    self.get_hit_armor()
 
         if cnt_attack > self.CNT_LOG:
             out += " ......... ....... ....\n"
 
         if round(self.hp) <= 0:
-            out += f"{self.name} помер :((((((\n"
+            out += f"{self.name} {self.log_hit(text_hero_dead)}\n"
             hero.kl_pl += 1
         return out
 

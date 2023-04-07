@@ -49,11 +49,11 @@ async def add_hero_db(async_session: async_sessionmaker[AsyncSession], hero: Her
 async def upd_indexes(async_session: async_sessionmaker[AsyncSession]) -> None:
     async with async_session() as session:
         result = await session.execute(select(ArmorDB))
-        i = 1
+        i = 100
         for arm in result.scalars().all():
             arm.id = i
             i += 1
-        i = 1
+        i = 100
         result = await session.execute(select(WeaponDB))
         for wp in result.scalars().all():
             wp.id = i
