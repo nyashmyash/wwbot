@@ -61,7 +61,8 @@ class HeroDB(Base):
     id = Column(Integer, autoincrement=True, primary_key=True, index=True)
     name = Column(String)
     user_id = Column(String, unique=True)
-    chat_id = Column(String)
+    band_id = Column(Integer)
+    band_name = Column(String)
     hp = Column(Integer)
     max_hp = Column(Integer)  # здоровье 1500
     force = Column(Integer)  # cила 1300
@@ -97,4 +98,5 @@ class HeroDB(Base):
         self.modul = hero.modul
         self.zone = hero.zone
         self.dzen = hero.dzen
-        self.chat_id = hero.chat_id
+        self.band_id = hero.band_id
+        self.band_name = hero.band_name

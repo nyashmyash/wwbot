@@ -131,9 +131,18 @@ text_hero_dead = ["умер, стюпид д*б",
                   "F",
                   "R.I.P."]
 
+class Band:
+    name = ""
+    note = ""
+    points = 0
+    user_id = 0
+
+
+
 class Hero:
     id = ""
-    chat_id = ""
+    band_id = 0
+    band_name = ""
     name = ""
     base_id = 0
     hp = 10
@@ -169,15 +178,17 @@ class Hero:
     def go(self) -> None:
         self.km += 1
         self.all_km += 1
+
+        if self.km_heal > 0:
+            self.km_heal -= 1
+            self.hp += round(self.max_hp * 0.05)
+
         heal_hp = round(self.max_hp * self.get_module(5) / 100)
         if heal_hp:
             self.hp += heal_hp
             if self.hp > self.max_hp:
                 self.hp = self.max_hp
 
-        if self.km_heal > 0:
-            self.km_heal -= 1
-            self.hp += round(self.max_hp * 0.05)
         if self.km_buff:
             self.km_buff -= 1
         else:
@@ -284,6 +295,7 @@ class Hero:
     def return_data(self) -> str:
         data = """
         👤{0} {21}
+        ├ 🤟{22}
         ├ ❤ {1}/{2}  🍗{14}% | ⚔️{15} | 🛡 {16} 
         ├ 👣{17}
         ├ 💪{3} | 🤸🏽‍♂️{4} | 🗣{5} 
@@ -301,13 +313,14 @@ class Hero:
         weapon = self.weapon.get_data_hero() if self.weapon else "нет оружия"
         armor = self.calc_armor()
         drone = self.drone.get_drone_text_line() if self.drone else "нет дрона"
+        band_name = self.band_name + "   /band" if self.band_name not in ["введите имя банды","", None] else "нет банды"
         return data.format(self.name, round(self.hp), self.max_hp,
                            self.get_str(self.force, 0), self.get_str(self.dexterity, 1), self.charisma,
                            self.get_str(self.luck, 2), self.get_str(self.accuracy, 3), weapon,
                            self.arm_str(self.armor[0]),
                            self.arm_str(self.armor[1]), self.arm_str(self.armor[2]), self.materials,
                            round(self.coins), self.hungry, self.calc_attack(),
-                           armor, self.km, self.all_km, self.get_str_modul(), drone, dzen)
+                           armor, self.km, self.all_km, self.get_str_modul(), drone, dzen, band_name)
 
     @staticmethod
     def generate_name() -> str:
@@ -348,7 +361,14 @@ class Hero:
 
     def calc_cost(self, val: int) -> int:
         out = 13 * val - 3 * self.charisma
-        return 10 if out < 10 else round(13 * val - 3 * self.charisma);
+        return 10 if out < 10 else round(13 * val - 3 * self.charisma)
+
+    def sel_mob_from_zone(self, mobs_zone):
+        r = random.randint(0, 100)
+        k = len(mobs_zone) - 1
+        while k > 0 and r % k != 0:
+            k -= 1
+        self.mob_fight = copy.copy(mobs_zone[k])
 
     def select_mob(self) -> None:
         if self.zone == 3:
@@ -357,11 +377,9 @@ class Hero:
             r = round(200 - self.km * 1.5) if self.km < 80 else 80
         if random.randint(0, 400) < r:
             if self.zone == 3:
-                r = random.randint(0, 100)
-                k = 9
-                while k > 0 and r % k != 0:
-                    k -= 1
-                self.mob_fight = copy.copy(list_mob_clown_zone[k])
+                self.sel_mob_from_zone(list_mob_clown_zone)
+            elif self.zone == 4:
+                self.sel_mob_from_zone(list_mk_zone)
             else:
                 k = self.km // 5
                 if k >= len(list_mobs):
@@ -449,7 +467,7 @@ class Hero:
                 is_first = False
                 if self.get_miss(mob.dexterity):
                     if cnt_attack < self.CNT_LOG:
-                        out += f"❤️ {round(self.hp)} {self.name} {self.log_hit(text_hero_mis)}\n"
+                        out += f"❤️ {round(self.hp)} {self.name} ➰ {self.log_hit(text_hero_mis)}\n"
                 else:
                     drone_hit = ""
                     drone_dmg = 0
@@ -509,7 +527,7 @@ class Hero:
                 is_first = False
                 if self.get_miss(mob.dexterity): #начинаем бить
                     if cnt_attack < self.CNT_LOG:
-                        out += f"👤Ты {self.log_hit(text_hero_mis)}\n"
+                        out += f"👤Ты ➰ {self.log_hit(text_hero_mis)}\n"
                 else:
                     drone_hit = ""
                     drone_dmg = 0
@@ -601,18 +619,21 @@ class Hero:
             out += " ......... ....... ....\n"
 
         if round(self.hp) <= 0:
-            out += f"{self.log_hit(text_hero_dead)}\n"
-            if self.zone == 1 or self.zone == 2:
-                out += f"потеряно: 🕳 {round(self.coins * 0.5)}"
-                self.coins *= 0.5
-            else:
-                if self.km >= 30:
-                    out += f"потеряно: 🕳 {round(self.coins * 0.25)}"
-                    self.coins = round(self.coins * 0.75)
-
-            self.died_hero()
+            out += self.died_hero_mob()
 
         self.km = 0
+        return out
+
+    def died_hero_mob(self) -> None:
+        out = f"{self.log_hit(text_hero_dead)}\n"
+        if self.zone == 1 or self.zone == 2:
+            out += f"потеряно: 🕳 {round(self.coins * 0.5)}"
+            self.coins *= 0.5
+        else:
+            if self.km >= 30:
+                out += f"потеряно: 🕳 {round(self.coins * 0.25)}"
+                self.coins = round(self.coins * 0.75)
+        self.died_hero()
         return out
 
     def died_hero(self) -> None:
@@ -733,7 +754,8 @@ class Hero:
         self.base_id = hero_db.id
         self.name = hero_db.name
         self.id = hero_db.user_id
-        self.chat_id = hero_db.chat_id
+        self.band_id = hero_db.band_id
+        self.band_name = hero_db.band_name
         self.hp = hero_db.hp
         self.max_hp = hero_db.max_hp
         self.force = hero_db.force
@@ -757,4 +779,5 @@ class Hero:
                       charisma=self.charisma, luck=self.luck,
                       accuracy=self.accuracy, materials=self.materials,
                       coins=self.coins, hungry=self.hungry, km=self.km, mob="",
-                      all_km=self.all_km, modul=self.modul, zone=self.zone, dzen=self.dzen, chat_id=self.chat_id)
+                      all_km=self.all_km, modul=self.modul, zone=self.zone, dzen=self.dzen,
+                      band_id=self.band_id, band_name = self.band_name)
