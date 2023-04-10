@@ -24,16 +24,16 @@ class Weapon:
         return self.get_data("drw_")
 
     def get_data(self, code="eqw_") -> str:
-        out = f"▪️ {self.name} ⚡️{self.dmg} 🔧{round(100 * self.life / self.max_life)} % /{code}{self.dmg}z{self.z}"
+        out = f"▪️ {self.get_name()} ⚡️{self.dmg} 🔧{round(100 * self.life / self.max_life)} % /{code}{self.dmg}z{self.z}"
         return out
 
     def get_data_cost(self) -> str:
-        out = f"▪️ {self.name} ⚡️{self.dmg} 🔧{round(100 * self.life / self.max_life)} % 📦 {self.calc_cost()} /sw_{self.dmg}z{self.z}"
+        out = f"▪️ {self.get_name()} ⚡️{self.dmg} 🔧{round(100 * self.life / self.max_life)} % 📦 {self.calc_cost()} /sw_{self.dmg}z{self.z}"
 
         return out
 
     def get_buy(self) -> str:
-        out = f"▪️ {self.name} ⚡️{self.dmg} 🕳{self.calc_cost()} /bw_{self.dmg}"
+        out = f"▪️ {self.get_name()} ⚡️{self.dmg} 🕳{self.calc_cost()} /bw_{self.dmg}"
         return out
 
     def calc_cost(self) -> int:
@@ -43,8 +43,11 @@ class Weapon:
             return round(self.cost * self.life / self.max_life)
 
     def get_data_hero(self) -> str:
-        out = f"▪️ {self.name} ⚡️{self.dmg} 🔧{round(100 * self.life / self.max_life)} %"
+        out = f"▪️ {self.get_name()} ⚡️{self.dmg} 🔧{round(100 * self.life / self.max_life)} %"
         return out
+
+    def get_name(self) -> str:
+        return self.name
 
     def get_code(self) -> str:
         return f"{self.dmg}z{self.z}"
@@ -80,7 +83,7 @@ weapons_all = [Weapon("бита", 1, cost=100),  # титановый арбал
                Weapon("🔆ядерный уничтожитель", 600, life=2000, max_life=2000),
                Weapon("🌪лазерное торнадо", 650, life=2000, max_life=2000),
                Weapon("🌀черная дыра", 700, life=2000, max_life=2000), #19
-               Weapon("🌀пушка тиранид", 900, life=2000, max_life=2000),
+               Weapon("🌀пушка тиранид", 850, life=2000, max_life=2000),
                Weapon("🔪коса смерти", 666, life=1000, max_life=1000),
                Weapon("🪓клоунский молоток", 456, life=1000, max_life=1000),
                Weapon("Посох Шао-Кана", 770, life=1000, max_life=1000),

@@ -126,7 +126,7 @@ class Stock:
             if k // 100 == code and self.used_stuff[k]:
                 out += f"{used_items[k].get('name')}({self.used_stuff[k]}) /ustf_{k}\n"
         if out == "":
-            return " ---  пока ничего ---\n"
+            return " пока ничего \n"
         else:
             return out
 

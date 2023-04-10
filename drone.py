@@ -25,6 +25,9 @@ class Drone():
         self.buffs = buffs
         self.coeff = coeff
 
+    def get_name(self) -> str:
+        return self.name
+
     def get_hit(self, dmg:int, perk: str = "0") -> str:
         chanse = self.chanse
         if perk != '0' and perk != '':
@@ -34,9 +37,9 @@ class Drone():
             hit = hit if hit > 0 else 1
             #self.hp -= hit
             if self.hp > 0:
-                return f"🛰{self.name} заблокировал урон 🛡{hit}\n"
+                return f"🛰{self.get_name()} заблокировал урон 🛡{hit}\n"
             else:
-                return f"🛰{self.name} ебнулся 🛡{hit} и умер(((\n"
+                return f"🛰{self.get_name()} ебнулся 🛡{hit} и умер(((\n"
         return ""
 
     def get_attack(self, enemy: object, perk: str = "") -> (int, str):
@@ -45,17 +48,17 @@ class Drone():
             chanse = round(chanse * perk_list[int(perk)-1])
         if chanse > random.randint(0, 100):
             dmg = round(self.dmg * random.uniform(0.85, 1.15))
-            return dmg, f"🛰{self.name} атаковал 💥{dmg} врага {enemy.name}\n"
+            return dmg, f"🛰{self.get_name()} атаковал 💥{dmg} врага {enemy.get_name()}\n"
         return 0, ""
 
     def get_buy_text(self) -> str:
         return self.get_drone_text() + f"/buy_dr_{self.index}, 🕳 {self.cost}\n"
 
     def get_drone_text(self) -> str:
-        return f"🛰{self.name}\n💥 {self.dmg}\n🛡 {self.hp}/{self.max_hp}\n👼 {self.chanse} \n"
+        return f"🛰{self.get_name()}\n💥 {self.dmg}\n🛡 {self.hp}/{self.max_hp}\n👼 {self.chanse} \n"
 
     def get_drone_text_line(self) -> str:
-        return f"🛰{self.name} 💥 {self.dmg} 🛡 {self.hp}/{self.max_hp}👼 {self.chanse}"
+        return f"🛰{self.get_name()} 💥 {self.dmg} 🛡 {self.hp}/{self.max_hp}👼 {self.chanse}"
 
     def to_db(self) -> WeaponDB:
         return WeaponDB(code=self.name, use=self.index+1, life=self.hp, max_life=self.max_hp)

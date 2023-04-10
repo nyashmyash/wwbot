@@ -47,6 +47,9 @@ class Mob:
         self.accuracy = accuracy
         self.coins = coins
 
+    def get_name(self) -> str:
+        return self.name
+
     def calc_mob_coins(self, km: int) -> float:
         return (1 + km / 3) * self.coins * random.uniform(0.85, 1.15)
 
@@ -187,10 +190,10 @@ list_dange70 = [
 ]
 
 list_dange80 = [
-    Mob(name='Потрошитель', hp=2510, attack=700, dexterity=820, luck=520, accuracy=1020, coins=400),
-    Mob(name='Тервигон', hp=2710, attack=800, dexterity=820, luck=520, accuracy=1020, coins=400),
-    Mob(name='Доминатрикс', hp=2810, attack=900, dexterity=820, luck=520, accuracy=1020, coins=400),
-    Mob(name='Стражи тирана', hp=2910, attack=900, dexterity=820, luck=520, accuracy=1020, coins=400),
+    Mob(name='Потрошитель', hp=2010, attack=700, dexterity=820, luck=520, accuracy=1020, coins=400),
+    Mob(name='Тервигон', hp=2210, attack=800, dexterity=820, luck=520, accuracy=1020, coins=400),
+    Mob(name='Доминатрикс', hp=2510, attack=900, dexterity=820, luck=520, accuracy=1020, coins=400),
+    Mob(name='Стражи тирана', hp=2610, attack=900, dexterity=820, luck=520, accuracy=1020, coins=400),
     Mob(name='Красный Ужас', hp=3010, attack=1000, dexterity=820, luck=520, accuracy=1020, coins=400),
     Mob(name='Повелитель роя', hp=3010, attack=1300, dexterity=820, luck=520, accuracy=1020, coins=400),
     None
@@ -401,11 +404,11 @@ list_mobs70_75 = [
 ]
 
 list_mobs75_80 = [
-    Mob(name='моб75⚡️⚡️', hp=2510, attack=1000, dexterity=720, luck=720, accuracy=820, coins=370),
-    Mob(name='моб76⚡⚡️️', hp=2520, attack=1000, dexterity=720, luck=720, accuracy=820, coins=370),
-    Mob(name='моб77⚡⚡️️', hp=2540, attack=1000, dexterity=720, luck=720, accuracy=820, coins=370),
-    Mob(name='моб78⚡⚡️️', hp=2565, attack=1000, dexterity=720, luck=720, accuracy=820, coins=370),
-    Mob(name='моб79⚡️⚡️', hp=2570, attack=1000, dexterity=720, luck=720, accuracy=820, coins=370)
+    Mob(name='🧞Джин (ужасающий⚡️⚡ )️', hp=2010, attack=900, dexterity=820, luck=720, accuracy=820, coins=370),
+    Mob(name='🧜🏿‍♀️Русалка (Нетфликс⚡⚡ )️️', hp=2150, attack=1000, dexterity=820, luck=720, accuracy=820, coins=370),
+    Mob(name='🧚🏻‍♀️Фея (твоих кошмарных снов ⚡⚡ )️️', hp=2200, attack=1100, dexterity=820, luck=720, accuracy=820, coins=370),
+    Mob(name='🧜🏾‍♂️Тритон (Бог ⚡⚡ )️️', hp=2200, attack=1100, dexterity=820, luck=720, accuracy=820, coins=370),
+    Mob(name='🧜🏻Тритон (кибертрон ⚡️⚡️ )', hp=2300, attack=1200, dexterity=820, luck=720, accuracy=820, coins=370)
 ]
 
 list_mobs80_85 = [

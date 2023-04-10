@@ -33,16 +33,16 @@ class Armor:
         return self.get_data("dra_")
 
     def get_data(self, code: str = "eqa_") -> str:
-        out = f"▪️ {self.name} 🛡 {self.arm} 🔧{round(100 * self.life / self.max_life)} % /{code}{self.type}t{self.arm}z{self.z}"
+        out = f"▪️ {self.get_name()} 🛡 {self.arm} 🔧{round(100 * self.life / self.max_life)} % /{code}{self.type}t{self.arm}z{self.z}"
 
         return out
 
     def get_data_cost(self) -> str:
-        out = f"▪️ {self.name} 🛡 ️{self.arm} 🔧{round(100 * self.life / self.max_life)} % 📦 {self.calc_cost()} /sa_{self.type}t{self.arm}z{self.z}"
+        out = f"▪️ {self.get_name()} 🛡 ️{self.arm} 🔧{round(100 * self.life / self.max_life)} % 📦 {self.calc_cost()} /sa_{self.type}t{self.arm}z{self.z}"
         return out
 
     def get_buy(self) -> str:
-        out = f"▪️ {self.name} 🛡 {self.arm} 🕳{self.calc_cost()} /ba_{self.type}t{self.arm}"
+        out = f"▪️ {self.get_name()} 🛡 {self.arm} 🕳{self.calc_cost()} /ba_{self.type}t{self.arm}"
         return out
 
     # def craft_cost(self):
@@ -54,8 +54,11 @@ class Armor:
         else:
             return round(self.arm * 100 * self.life / self.max_life + self.arm * 200)
 
+    def get_name(self) -> str:
+        return self.name
+
     def get_data_hero(self) -> str:
-        out = f"▪️ {self.name} 🛡 {self.arm} 🔧{round(100 * self.life / self.max_life)} %"
+        out = f"▪️ {self.get_name()} 🛡 {self.arm} 🔧{round(100 * self.life / self.max_life)} %"
         return out
 
     def get_code(self) -> str:
