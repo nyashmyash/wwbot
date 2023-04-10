@@ -72,7 +72,7 @@ class Mob:
         return texts_list[random.randint(0, len(texts_list) - 1)]
 
     def attack_mob(self, mob: object) -> str:
-        out = f"❤{self.hp} {self.name} vs {mob.name} ❤{mob.hp}\n"
+        out = f"❤{round(self.hp)} {self.name} vs {mob.name} ❤{round(mob.hp)}\n"
         cnt_attack = 0
         is_first = True
         if self.is_first_hit(luck=mob.luck):
@@ -95,12 +95,14 @@ class Mob:
                 is_first = True
                 if self.get_miss(mob.dexterity):
                     if cnt_attack < self.CNT_LOG:
-                        out += f"❤️ {round(mob.hp)} {self.name} 🌀{self.log_hit(text_mob_mis)}\n"
+                        out += f"❤️ {round(self.hp)} {self.name} 🌀{self.log_hit(text_mob_mis)}\n"
                 else:
                     att = self.get_attack()
                     mob.hp -= att
+                    if cnt_attack < self.CNT_LOG:
+                        out += f"❤️ {round(self.hp)} {self.name} {self.log_hit(text_att_mob)} {mob.name} 💔-{round(dmg)}\n"
                     if mob.hp <= 0:
-                        if cnt_attack >= self.CNT_LOG:
+                        if cnt_attack > self.CNT_LOG:
                             out += " ......... ....... ....\n"
                         out += f"{mob.name} повержен\n"
                         return out

@@ -174,6 +174,8 @@ class Hero:
     km_heal = 0
     dzen = 0
     mobs = None
+    perks = '0'*6
+    arm_clc = 0
 
     def go(self) -> None:
         self.km += 1
@@ -222,6 +224,10 @@ class Hero:
 
     def get_coins_to_dzen(self) -> int:
         return (self.get_dzen_lvl() + 1) * 500000
+
+    # def get_perk(self, i: int) -> int:
+    #     perks = list(self.perks)
+    #     return int(perks[i])
 
     def get_module(self, i: int = 0, value=0) -> int:
         k, mod = self.get_act_modul()
@@ -355,7 +361,7 @@ class Hero:
             return 1
 
     def get_miss(self, dex: int) -> bool:  # dex шанс уворота для героя 0.1%
-        if dex - self.get_accuracy() < 0:
+        if dex - self.get_accuracy() < 0 or dex - self.get_accuracy() > 1000:
             return random.randint(0, 100) == 1
         return random.randint(0, 1000) < dex - self.get_accuracy()
 
@@ -472,7 +478,7 @@ class Hero:
                     drone_hit = ""
                     drone_dmg = 0
                     if self.drone:
-                        drone_dmg, drone_hit = self.drone.get_attack(mob)
+                        drone_dmg, drone_hit = self.drone.get_attack(mob, self.perks[4])
                     att = self.get_attack()
                     if cnt_attack < self.CNT_LOG:
                         out += f"❤️ {round(self.hp)} {self.name} {self.log_hit(text_hit_mob)} 💥{round(att)}\n"
@@ -492,7 +498,7 @@ class Hero:
                     dmg = dmg if dmg > 0 else 1
                     drone_hit = ""
                     if self.drone:
-                        drone_hit = self.drone.get_hit(dmg, armor)
+                        drone_hit = self.drone.get_hit(dmg, self.perks)
                         if self.drone.hp <= 0:
                             self.drone = None
                     if drone_hit == "":
@@ -532,7 +538,7 @@ class Hero:
                     drone_hit = ""
                     drone_dmg = 0
                     if self.drone:
-                        drone_dmg, drone_hit = self.drone.get_attack(mob)
+                        drone_dmg, drone_hit = self.drone.get_attack(mob, self.perks[4])
                     att = self.get_attack()
                     if cnt_attack < self.CNT_LOG:
                         out += f"👤Ты {self.log_hit(text_hit_mob)} 💥{round(att)}\n"
@@ -605,7 +611,7 @@ class Hero:
                     dmg = dmg if dmg > 0 else 1
                     drone_hit = ""
                     if self.drone:
-                        drone_hit = self.drone.get_hit(dmg, armor)
+                        drone_hit = self.drone.get_hit(dmg, self.perks)
                         if self.drone.hp <= 0:
                             self.drone = None
                     if drone_hit == "":
@@ -682,12 +688,52 @@ class Hero:
         hero.mobs = None
         return out
 
+    @staticmethod
+    def fight_heroes(hero1: object, hero2: object, cnt_attack: int) -> str:
+        out = ""
+        if hero1.get_miss(hero2.get_dexterity()):
+            if cnt_attack < hero1.CNT_LOG:
+                out += f"❤️ {round(hero1.hp)} {hero1.name} 🌀{hero1.log_hit(text_hero_mis)}\n"
+        else:
+            drone_hit = ""
+            drone_hit_block = ""
+            drone_dmg = 0
+            if hero1.drone:
+                drone_dmg, drone_hit = hero1.drone.get_attack(hero2, hero1.perks[4])
+            if drone_hit != "":
+                out += drone_hit
+                hero2.hp -= drone_dmg
+                if hero2.hp <= 0:
+                    out += f"{hero2.name} повержен\n"
+                    return out
 
+            dmg = hero1.get_attack() - hero2.arm_clc
+
+            if hero2.drone:
+                drone_hit_block = hero2.drone.get_hit(dmg, hero2.perks[4])
+                if hero2.drone.hp <= 0:
+                    hero2.drone = None
+
+            if drone_hit_block == "":
+                dmg = 1 if dmg < 0 else dmg
+                if cnt_attack < hero1.CNT_LOG:
+                    out += f"❤️ {round(hero1.hp)} {hero1.name} {hero1.log_hit(text_hit)} 💥{round(dmg)}\n"
+
+                hero2.hp -= dmg
+                hero2.get_hit_armor()
+                if hero2.hp <= 0:
+                    if cnt_attack > hero1.CNT_LOG:
+                        out += " ......... ....... ....\n"
+                    out += f"{hero2.name} повержен\n"
+                    return out
+            else:
+                out += drone_hit_block
+        return out
 
     def attack_player(self, hero: object) -> str:
         out = ""
-        armor = self.calc_armor()
-        armor_hero = hero.calc_armor()
+        self.arm_clc = self.calc_armor()
+        hero.arm_clc = hero.calc_armor()
         cnt_attack = 0
         is_first = False
         if self.is_first_hit(luck=hero.get_luck()):
@@ -697,50 +743,12 @@ class Hero:
             cnt_attack += 1
             if is_first:
                 is_first = False
-                if self.get_miss(hero.get_dexterity()):
-                    if cnt_attack < self.CNT_LOG:
-                        out += f"❤️ {round(self.hp)} {self.name} 🌀{self.log_hit(text_hero_mis)}\n"
-                else:
-                    drone_hit = ""
-                    drone_dmg = 0
-                    if self.drone:
-                        drone_dmg, drone_hit = self.drone.get_attack(hero)
-
-                    dmg = self.get_attack() - armor_hero
-                    if dmg < 0:
-                        dmg = 1
-
-                    if cnt_attack < self.CNT_LOG:
-                        out += f"❤️ {round(self.hp)} {self.name} {self.log_hit(text_hit)} 💥{round(dmg)}\n"
-                        out += drone_hit
-
-                    hero.hp -= dmg + drone_dmg
-                    hero.get_hit_armor()
-                    if hero.hp <= 0:
-                        if cnt_attack > self.CNT_LOG:
-                            out += " ......... ....... ....\n"
-                        out += f"{hero.name} повержен\n"
-                        return out
+                out += Hero.fight_heroes(self, hero, cnt_attack)
             else:
                 is_first = True
-                if hero.get_miss(self.get_dexterity()):
-                    if cnt_attack < self.CNT_LOG:
-                        out += f"❤️ {round(hero.hp)} {hero.name}  🌀{self.log_hit(text_hero_mis)}\n"
-                else:
-                    drone_hit = ""
-                    drone_dmg = 0
-                    if self.drone:
-                        drone_dmg, drone_hit = hero.drone.get_attack(hero)
-
-                    dmg = hero.get_attack() - armor
-                    if dmg < 0:
-                        dmg = 1
-
-                    if cnt_attack < self.CNT_LOG:
-                        out += f"❤️ {round(hero.hp)} {hero.name} {self.log_hit(text_hit)} 💔-{round(dmg)}\n"
-                        out += drone_hit
-                    self.hp -= dmg + drone_dmg
-                    self.get_hit_armor()
+                out += Hero.fight_heroes(hero, self, cnt_attack)
+            if hero.hp <= 0 or self.hp <= 0:
+                break
 
         if cnt_attack > self.CNT_LOG:
             out += " ......... ....... ....\n"

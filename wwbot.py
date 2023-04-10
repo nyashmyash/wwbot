@@ -936,6 +936,8 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     #    x = int(msg_txt.replace("/gokm", ""))
     #    hero.km = x
     elif msg_txt.startswith("/name_drone"):
+        if len(msg_txt.replace("/name_drone", "")) > 100:
+            return
         if hero.drone:
             hero.drone.name = msg_txt.replace("/name_drone", "")
     elif "/online" == msg_txt:
@@ -969,6 +971,7 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     #     hero.dexterity = x
     #     hero.accuracy = x
     #     hero.charisma = x
+
     elif msg_txt == "/mystock":
         data = hero.stock.get_data()
     elif msg_txt == "/food":
@@ -976,8 +979,10 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     elif msg_txt == "/buff":
         data = hero.stock.print_stuff(2)
     elif "/ustf_" in msg_txt:
-        code = int(msg_txt.replace("/ustf_", ""))
-        data_ = hero.stock.use_stuff(code, hero)
+        code = msg_txt.replace("/ustf_", "")
+        if len(code) > 100:
+            return
+        data_ = hero.stock.use_stuff(int(code), hero)
         await menu_sel(update, hero, data_)
 
     elif "/drop" == msg_txt:
@@ -985,6 +990,8 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     elif msg_txt.startswith("/drw_") or msg_txt.startswith("/dra_"):
         i = msg_txt.replace("/drw_", "").replace("/dra_", "")
+        if len(i) > 100:
+            return
         if hero.stock.equip.get(i, None):
             data = f"вы уверены что хотите удалить?{hero.stock.equip.get(i).name}\n"
             i_new = msg_txt.replace("/drw_", "/drww_").replace("/dra_", "/draa_")
@@ -993,10 +1000,14 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             data = "ошибка удаления\n"
     elif msg_txt.startswith("/drww_") or msg_txt.startswith("/draa_"):
         i = msg_txt.replace("/drww_", "").replace("/draa_", "")
+        if len(i) > 100:
+            return
         i_del = hero.stock.equip.pop(i)
         data = f"удалено {i_del.name}"
     elif msg_txt.startswith("/eqw_"):
         w = msg_txt.replace("/eqw_", "")
+        if len(w) > 100:
+            return
         wp = hero.stock.equip.get(w, None)
         data_ = "ошибка"
         if wp:
@@ -1009,6 +1020,8 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await menu_sel(update, hero, data_)
     elif msg_txt.startswith("/eqa_"):
         a = msg_txt.replace("/eqa_", "")
+        if len(a) > 100:
+            return
         ap = hero.stock.equip.get(a, None)
         data_ = "ошибка"
         if ap:
@@ -1024,6 +1037,8 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     elif msg_txt.startswith("/sw_") and hero.km == 0:
         w = msg_txt.replace("/sw_", "")
+        if len(w) > 100:
+            return
         wp = hero.stock.equip.get(w, None)
         if wp:
             w = hero.stock.equip.pop(w)
@@ -1033,6 +1048,8 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             await update.message.reply_text(out, reply_markup=menu_lomb())
     elif msg_txt.startswith("/sa_") and hero.km == 0:
         a = msg_txt.replace("/sa_", "")
+        if len(a) > 100:
+            return
         ap = hero.stock.equip.get(a, None)
         if ap:
             a = hero.stock.equip.pop(a)
@@ -1045,6 +1062,8 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             data = "рюкзак полон"
         else:
             weapon_dmg = msg_txt.replace("/bw_", "")
+            if len(weapon_dmg) > 100:
+                return
             buy_weapon = None
             for weapon in weapons_all:
                 if str(weapon.dmg) == weapon_dmg:
@@ -1103,7 +1122,7 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             hero.coins -= 30000
         else:
             data = "не хватает крышек((("
-    elif msg_txt.startswith("/leave_band") and hero.km == 27 and hero.zone <= 1:
+    elif msg_txt == "/leave_band" and hero.km == 27 and hero.zone <= 1:
         if hero.band_name and hero.band_name != "":
             hero.band_name = ""
             data = f"вы покинули банду {hero.band_name}(((!!"
