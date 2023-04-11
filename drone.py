@@ -1,7 +1,7 @@
 import random
 from db.models import WeaponDB
 
-perk_list = [1.15, 1.30, 1.4, 1.6]
+perk_drone_list = [1.15, 1.30, 1.4, 1.7]
 
 class Drone():
     index = 0
@@ -28,14 +28,14 @@ class Drone():
     def get_name(self) -> str:
         return self.name
 
-    def get_hit(self, dmg:int, perk: str = "0") -> str:
+    def get_hit(self, dmg:int, perk: str) -> str:
         chanse = self.chanse
-        if perk != '0' and perk != '':
-            chanse = round(chanse * perk_list[int(perk)-1])
+        if perk[4] != '0':
+            chanse = round(chanse * perk_drone_list[int(perk[4])-1])
         if self.hp > 0 and chanse > random.randint(0, 100):
             hit = round(dmg / self.coeff) // 8
             hit = hit if hit > 0 else 1
-            #self.hp -= hit
+            self.hp -= hit
             if self.hp > 0:
                 return f"🛰{self.get_name()} заблокировал урон 🛡{hit}\n"
             else:
@@ -44,8 +44,8 @@ class Drone():
 
     def get_attack(self, enemy: object, perk: str = "") -> (int, str):
         chanse = self.chanse
-        if perk != '0' and perk != '':
-            chanse = round(chanse * perk_list[int(perk)-1])
+        if perk[4] != '0' and perk != '':
+            chanse = round(chanse * perk_drone_list[int(perk[4])-1])
         if chanse > random.randint(0, 100):
             dmg = round(self.dmg * random.uniform(0.85, 1.15))
             return dmg, f"🛰{self.get_name()} атаковал 💥{dmg} врага {enemy.get_name()}\n"

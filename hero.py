@@ -7,7 +7,7 @@ from armor import stack_buff, armor_all
 from weapon import weapons_all
 from stock import get_random_item
 from db.models import HeroDB, WeaponDB
-from drone import all_drones
+from drone import all_drones, perk_drone_list
 
 all_modules = {
     1: [25, "📥модуль силы"],
@@ -17,6 +17,10 @@ all_modules = {
     5: [5, "📥модуль хп"],
     6: [15, "📥модуль дохода"]
 }
+
+perk_luck_list = perk_force_list = perk_arm_list = perk_dex_list = [1.1, 1.2, 1.3, 1.5]
+perk_accur_list = [1.1, 1.3, 1.5, 1.7]
+
 
 text_mess_go = ["Вы обследовали разрушенный дом, но ничего интересного не обнаружили.",
                 "Выбежала дикая собака, но вы на нее крикнули и она поджав хвост спряталась. Вы заметили проем в заборе.",
@@ -123,13 +127,16 @@ text_hero_mis = ["смешно упал с оружием",
                  "не смог ровно держать пуху"]
 
 
-text_hero_dead = ["умер\, стюпид д*б",
-                  "ахаха\, нуб",
+text_hero_dead = ["умер, стюпид д*б",
+                  "ахаха, нуб",
                   "ну умер и умер",
                   "ну ничего, воскресят",
                   "жить будешь, в лагере реанимируют",
                   "F",
-                  "R.I.P."]
+                  "R.I.P.",
+                  "смерть это только начало",
+                  "жизнь это боль, смерть это отсутсвие боли",
+                  "в загробном мире ты вечен, но рано еще хоронить, в лагере поднимут"]
 
 class Band:
     name = ""
@@ -200,12 +207,14 @@ class Hero:
     def get_name(self) -> str:
         return self.name
 
-    def calc_armor(self) -> int:
+    def calc_armor(self, use_perk:bool = False) -> int:
         ret = 0
         for i in range(0, 3):
             if self.armor[i]:
                 ret += self.armor[i].arm
-        return ret
+        if use_perk and self.perks[1]!='0':
+            ret *= perk_arm_list[int(self.perks[1])-1]
+        return round(ret)
 
     def get_stack(self, index: int) -> int:
         if not self.armor[0]:
@@ -232,7 +241,7 @@ class Hero:
     #     perks = list(self.perks)
     #     return int(perks[i])
 
-    def get_module(self, i: int = 0, value=0) -> int:
+    def get_module(self, i: int = 0, value: int = 0) -> int:
         k, mod = self.get_act_modul()
         if k != i:
             return 0
@@ -243,14 +252,24 @@ class Hero:
 
         return mod[0]
 
-    def get_force(self) -> int:
-        return self.force + self.get_stack(0) + self.buffs[0] + self.get_module(1, self.force)
+    def get_force(self, use_perk: bool = False) -> int:
+        force = self.force
+        if use_perk and self.perks[0] != '0':
+            force = force * perk_force_list[int(self.perks[0]) - 1]
 
-    def get_dexterity(self) -> int:
-        return self.dexterity + self.get_stack(1) + self.buffs[1] + self.get_module(2, self.dexterity)
+        return force + self.get_stack(0) + self.buffs[0] + self.get_module(1, self.force)
 
-    def get_luck(self) -> int:
-        return self.luck + self.get_stack(2) + self.buffs[2] + self.get_module(3, self.luck)
+    def get_dexterity(self, use_perk: bool = False) -> int:
+        dexterity = self.dexterity
+        if use_perk and self.perks[2] != '0':
+            dexterity *= perk_dex_list[int(self.perks[2]) - 1]
+        return dexterity + self.get_stack(1) + self.buffs[1] + self.get_module(2, self.dexterity)
+
+    def get_luck(self, use_perk: bool = False) -> int:
+        luck = self.luck
+        if use_perk and self.perks[5] != '0':
+            luck *= perk_luck_list[int(self.perks[5]) - 1]
+        return luck + self.get_stack(2) + self.buffs[2] + self.get_module(3, self.luck)
 
     def get_accuracy(self) -> int:
         return self.accuracy + self.get_stack(3) + self.buffs[3] + self.get_module(4, self.accuracy)
@@ -301,6 +320,73 @@ class Hero:
             return f"{self.get_str_modul()} активирован\n"
         return "нет такого модуля\n"
 
+    def ret_cnt_perks(self) -> int:
+        out = 0
+        for i in self.perks:
+            out += int(i)
+        return out
+
+    def get_bm(self) -> int:
+        return self.max_hp + self.force + self.accuracy + self.luck + self.dexterity + self.charisma
+
+    def free_perks(self) -> int:
+        return 1 + self.get_bm()//1250 - self.ret_cnt_perks()
+
+    def inc_perk(self, ind: int) -> str:
+        lvls = [250, 550, 850, 1150]
+        if int(self.perks[ind]) >= 4:
+            return "нельзя увиличить перк!!"
+        if ind == 0 and self.force < lvls[int(self.perks[0])]:
+            return f"надо увеличить силу до {lvls[int(self.perks[0])]}"
+        if ind == 1 and self.max_hp < lvls[int(self.perks[1])]:
+            return f"надо увеличить хп до {lvls[int(self.perks[1])]}"
+        if ind == 2 and self.dexterity < lvls[int(self.perks[2])]:
+            return f"надо увеличить ловку до {lvls[int(self.perks[2])]}"
+        if ind == 3 and self.accuracy < lvls[int(self.perks[3])]:
+            return f"надо увеличить меткость до {lvls[int(self.perks[3])]}"
+        if ind == 4 and self.charisma < lvls[int(self.perks[4])]:
+            return f"надо увеличить харизму до {lvls[int(self.perks[4])]}"
+        if ind == 5 and self.luck < lvls[int(self.perks[5])]:
+            return f"надо увеличить удачу до {lvls[int(self.perks[5])]}"
+
+        lst_perks = list(self.perks)
+        lst_perks[ind] = str(int(lst_perks[ind]) + 1)
+        self.perks = ''.join(lst_perks)
+
+        return "перк успешно увеличен"
+
+    def return_perks(self) -> str:
+        data = "ваши умения:\n"
+        cnt_free = self.free_perks()
+        if cnt_free > 0:
+            data += f"у вас есть свободные очки: {cnt_free}\n"
+            data += "список куда можно использовать очки:\n"
+            data += f"силач   /perk_force\n"
+            data += f"бронь   /perk_arm\n"
+            data += f"ловкач  /perk_dex\n"
+            data += f"меткий  /perk_accur\n"
+            data += f"харя    /perk_char\n"
+            data += f"лаки    /perk_luck\n"
+        else:
+            data += f"количество bm до перка {1250*self.ret_cnt_perks() - self.get_bm()}\n"
+
+        if self.perks[0] != '0':
+            data += f"силач (увеличение силы) {self.perks[0]}, коэф {perk_force_list[int(self.perks[0])-1]}\n"
+        if self.perks[1] != '0':
+            data += f"бронированный (усил-ние брони) {self.perks[1]}, коэф {perk_arm_list[int(self.perks[1])-1]}\n"
+        if self.perks[2] != '0':
+            data += f"ловкач (увеличение ловкости) {self.perks[2]}, коэф {perk_dex_list[int(self.perks[2]) - 1]}\n"
+        if self.perks[3] != '0':
+            data += f"меткий (разброс урона значительно увеличивается) {self.perks[3]}, коэф {perk_accur_list[int(self.perks[3]) - 1]}\n"
+        if self.perks[4] != '0':
+            data += f"харизматичный (эффективность дронов) {self.perks[4]}, коэф {perk_drone_list[int(self.perks[4]) - 1]}\n"
+        if self.perks[5] != '0':
+            data += f"удачливый (увеличение шанса ударить первым) {self.perks[5]}, коэф {perk_arm_list[int(self.perks[5]) - 1]}\n"
+        if data == "ваши умения:\n":
+            return "у вас нет умений!"
+
+        return data
+
     def return_data(self) -> str:
         data = """
         👤{0} {21}
@@ -338,12 +424,12 @@ class Hero:
     def arm_str(self, arm) -> str:
         return arm.get_data_hero() if arm else "нет брони"
 
-    def calc_attack(self) -> int:
+    def calc_attack(self, use_force=False) -> int:
         if self.weapon:
             if self.force < 50:
-                return round(self.weapon.dmg + self.get_force())
+                return round(self.weapon.dmg + self.get_force(use_force))
             else:
-                return round(50 + self.weapon.dmg * pow(1.03, self.get_force() / 50))
+                return round(50 + self.weapon.dmg * pow(1.03, self.get_force(use_force) / 50))
         else:
             return 1
 
@@ -355,10 +441,13 @@ class Hero:
                 else:
                     self.armor[i].life -= 1
 
-    def get_attack(self) -> int:
+    def get_attack(self, use_perks=False) -> int:
         if self.weapon and self.weapon.life > 0:
             self.weapon.life -= 0.5
-            return round(self.calc_attack() * random.uniform(0.85, 1.15))
+            if use_perks and self.perks[3] != '0':
+                return round(self.calc_attack(use_perks) * random.uniform(0.85, 1.15*perk_accur_list[int(self.perks[3])-1]))
+            else:
+                return round(self.calc_attack(use_perks) * random.uniform(0.85, 1.15))
         else:
             self.weapon = None
             return 1
@@ -451,8 +540,8 @@ class Hero:
     def inc_luck(self) -> bool:
         return True if self.luck < 1200 + self.get_dzen_lvl() * 50 else False
 
-    def is_first_hit(self, luck: int) -> int:
-        return random.randint(0, 1000) - 500 < self.get_luck() - luck
+    def is_first_hit(self, luck: int, use_perk: bool = False) -> int:
+        return random.randint(0, 1000) - 500 < self.get_luck(use_perk) - luck
 
     def make_header(self) -> str:
         buffed = "*бафф*" if self.km_buff > 0 else ""
@@ -481,7 +570,7 @@ class Hero:
                     drone_hit = ""
                     drone_dmg = 0
                     if self.drone:
-                        drone_dmg, drone_hit = self.drone.get_attack(mob, self.perks[4])
+                        drone_dmg, drone_hit = self.drone.get_attack(mob, self.perks)
                     att = self.get_attack()
                     if cnt_attack < self.CNT_LOG:
                         out += f"❤️ {round(self.hp)} {self.get_name()} {self.log_hit(text_hit_mob)} 💥{round(att)}\n"
@@ -541,7 +630,7 @@ class Hero:
                     drone_hit = ""
                     drone_dmg = 0
                     if self.drone:
-                        drone_dmg, drone_hit = self.drone.get_attack(mob, self.perks[4])
+                        drone_dmg, drone_hit = self.drone.get_attack(mob, self.perks)
                     att = self.get_attack()
                     if cnt_attack < self.CNT_LOG:
                         out += f"👤Ты {self.log_hit(text_hit_mob)} 💥{round(att)}\n"
@@ -657,7 +746,7 @@ class Hero:
 
     def attack_pvp_wmobs(self, hero: object) -> str:
         out = ""
-        if self.is_first_hit(luck=hero.get_luck()):
+        if self.is_first_hit(luck=hero.get_luck(True), use_perk=True):
             out += self.attack_player_with_mobs(hero)
         else:
             out += hero.attack_player_with_mobs(self)
@@ -694,7 +783,7 @@ class Hero:
     @staticmethod
     def fight_heroes(hero1: object, hero2: object, cnt_attack: int) -> str:
         out = ""
-        if hero1.get_miss(hero2.get_dexterity()):
+        if hero1.get_miss(hero2.get_dexterity(True)):
             if cnt_attack < hero1.CNT_LOG:
                 out += f"❤️ {round(hero1.hp)} {hero1.get_name()} 🌀{hero1.log_hit(text_hero_mis)}\n"
         else:
@@ -702,7 +791,7 @@ class Hero:
             drone_hit_block = ""
             drone_dmg = 0
             if hero1.drone:
-                drone_dmg, drone_hit = hero1.drone.get_attack(hero2, hero1.perks[4])
+                drone_dmg, drone_hit = hero1.drone.get_attack(hero2, hero1.perks)
             if drone_hit != "":
                 out += drone_hit
                 hero2.hp -= drone_dmg
@@ -710,10 +799,10 @@ class Hero:
                     out += f"{hero2.get_name()} повержен\n"
                     return out
 
-            dmg = hero1.get_attack() - hero2.arm_clc
+            dmg = hero1.get_attack(True) - hero2.arm_clc
 
             if hero2.drone:
-                drone_hit_block = hero2.drone.get_hit(dmg, hero2.perks[4])
+                drone_hit_block = hero2.drone.get_hit(dmg, hero2.perks)
                 if hero2.drone.hp <= 0:
                     hero2.drone = None
 
@@ -735,11 +824,11 @@ class Hero:
 
     def attack_player(self, hero: object) -> str:
         out = ""
-        self.arm_clc = self.calc_armor()
-        hero.arm_clc = hero.calc_armor()
+        self.arm_clc = self.calc_armor(True)
+        hero.arm_clc = hero.calc_armor(True)
         cnt_attack = 0
         is_first = False
-        if self.is_first_hit(luck=hero.get_luck()):
+        if self.is_first_hit(luck=hero.get_luck(True), use_perk=True):
             is_first = True
 
         while round(self.hp) > 0:
@@ -782,6 +871,7 @@ class Hero:
         self.modul = hero_db.modul
         self.zone = hero_db.zone
         self.dzen = hero_db.dzen
+        self.perks = hero_db.perks
 
     def to_db(self) -> HeroDB:
         return HeroDB(name=self.name, user_id=self.id,
@@ -791,4 +881,4 @@ class Hero:
                       accuracy=self.accuracy, materials=self.materials,
                       coins=self.coins, hungry=self.hungry, km=self.km, mob="",
                       all_km=self.all_km, modul=self.modul, zone=self.zone, dzen=self.dzen,
-                      band_id=self.band_id, band_name = self.band_name)
+                      band_id=self.band_id, band_name=self.band_name, perks=self.perks)

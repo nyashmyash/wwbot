@@ -79,6 +79,7 @@ class HeroDB(Base):
     modul = Column(Integer)
     zone = Column(Integer)
     dzen = Column(Integer)
+    perks = Column(String)
 
     def copy_val(self, hero: object) -> None:
         self.name = hero.name
@@ -100,3 +101,4 @@ class HeroDB(Base):
         self.dzen = hero.dzen
         self.band_id = hero.band_id
         self.band_name = hero.band_name
+        self.perks = hero.perks

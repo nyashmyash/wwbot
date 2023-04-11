@@ -87,6 +87,7 @@ async def get_hero(update):
             hero.armor.append(copy.copy(armor_all[2][0]))
             hero.stock.used_stuff = {}
             hero.coins = 1000
+            hero.perks = "000000"
             await add_hero_db(async_session, hero)
             await add_hero_armor_db(async_session, h)
             await add_hero_weapon_db(async_session, h)
@@ -95,6 +96,8 @@ async def get_hero(update):
             hero_db = db_hero_fetch[0]
             db_hero_wp = await get_hero_weapon_db(async_session, hero_db)
             hero.from_db(hero_db)
+            if hero.perks == '0':
+                hero.perks ="000000"
             if hero.coins < 0:
                 hero.coins = 1000
             if not hero.weapon:
@@ -879,7 +882,7 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             if h.id == hero.base_id:
                 p = k
             if 5 > k or k > len(all) - 5:
-                data += f"{k+1}. {h.get_name()} || {h.max_hp}\n"
+                data += f"{k+1}. {h.name} || {h.max_hp}\n"
             if k == 5:
                 data += "------------\n"
             k += 1
@@ -896,7 +899,7 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             if h.id == hero.base_id:
                 p = k
             if 5 > k or k > len(all) - 5:
-                data += f"{k+1}. {h.get_name()} || {h.all_km}\n"
+                data += f"{k+1}. {h.name} || {h.all_km}\n"
             if k == 5:
                 data += "------------\n"
             k += 1
@@ -913,7 +916,7 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             if h.id == hero.base_id:
                 p = k
             if 5 > k or k > len(all) - 5:
-                data += f"{k+1}. {h.get_name()} || {h.coins}\n"
+                data += f"{k+1}. {h.name} || {h.coins}\n"
             if k == 5:
                 data += "------------\n"
             k += 1
@@ -929,7 +932,7 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             if h.id == hero.base_id:
                 p = k
             if 5 > k or k > len(all) - 5:
-                data += f"{k+1}. {h.get_name()} || {h.max_hp + h.force + h.accuracy + h.luck + h.dexterity + h.charisma}\n"
+                data += f"{k+1}. {h.name} || {h.max_hp + h.force + h.accuracy + h.luck + h.dexterity + h.charisma}\n"
             if k == 5:
                 data += "------------\n"
             k += 1
@@ -1155,6 +1158,22 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             data = "Мобы в команде:\n"
             for m in hero.mobs:
                 data += f"{m.get_name()}\n"
+    elif "/perks" == msg_txt:
+        data = hero.return_perks()
+    elif "/perk_" in msg_txt and hero.free_perks():
+        if msg_txt == "/perk_force":
+            data = hero.inc_perk(0)
+        if msg_txt == "/perk_arm":
+            data = hero.inc_perk(1)
+        if msg_txt == "/perk_dex":
+            data = hero.inc_perk(2)
+        if msg_txt == "/perk_accur":
+            data = hero.inc_perk(3)
+        if msg_txt == "/perk_char":
+            data = hero.inc_perk(4)
+        if msg_txt == "/perk_luck":
+            data = hero.inc_perk(5)
+
 
     if data != "":
         if hero.in_dange <= 0:
