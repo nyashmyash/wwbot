@@ -30,12 +30,12 @@ class Drone():
 
     def get_hit(self, dmg:int, perk: str) -> str:
         chanse = self.chanse
-        if perk[4] != '0':
+        if perk[4] != '0': #000040
             chanse = round(chanse * perk_drone_list[int(perk[4])-1])
         if self.hp > 0 and chanse > random.randint(0, 100):
             hit = round(dmg / self.coeff) // 8
             hit = hit if hit > 0 else 1
-            self.hp -= hit
+            #self.hp -= hit
             if self.hp > 0:
                 return f"🛰{self.get_name()} заблокировал урон 🛡{hit}\n"
             else:
@@ -72,5 +72,5 @@ class Drone():
 
 all_drones = [Drone(1, 100, "drone1", 10, 15, 200000, [0, 0, 0, 10], 15),
               Drone(2, 150, "drone2", 10, 15, 500000, [0, 20, 0, 10], 20),
-              Drone(3, 250, "drone3", 10, 15, 1000000, [0, 20, 40, 40], 25),
-              Drone(4, 400, "drone4", 10, 15, 1500000, [0, 40, 40, 40], 35)]
+              Drone(3, 250, "drone3", 10, 20, 1000000, [0, 20, 40, 40], 25),
+              Drone(4, 400, "drone4", 10, 25, 1500000, [0, 40, 40, 40], 30)]

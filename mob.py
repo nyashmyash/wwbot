@@ -60,10 +60,13 @@ class Mob:
         return self.attack * random.uniform(0.85, 1.15)
 
     def get_miss(self, dex: int) -> bool:  # dex шанс уворота для героя 0.1%
-        if random.randint(0, 1000) < dex - self.accuracy:
-            return True
-        else:
-            return False
+        #if random.randint(0, 1000) < dex - self.accuracy:
+        #    return True
+        #else:
+        #    return False
+        if dex / self.accuracy >= 4.9:
+            return random.randint(0, 15) != 5
+        return random.randint(0, 1000) < 200 * dex / self.accuracy
 
     def is_first_hit(self, luck: int) -> bool:
         if random.randint(0, 1000) - 500 < self.luck - luck:
@@ -422,13 +425,13 @@ list_mobs70_75 = [
     Mob(name='🪝крюк потрошителя', hp=1565, attack=900, dexterity=720, luck=520, accuracy=720, coins=350),
     Mob(name='🗿каменный голем (легендарный🌟🌟)', hp=1600, attack=900, dexterity=720, luck=520, accuracy=720,
         coins=350),
-    Mob(name='Дарт Вейдер (переходи на темную сторону🌟🌟)', hp=1600, attack=900, dexterity=720, luck=520, accuracy=720,
+    Mob(name='🦹🏿‍♂️Дарт Вейдер (переходи на темную сторону🌟🌟)', hp=1600, attack=900, dexterity=720, luck=520, accuracy=720,
             coins=400),
-    Mob(name='Люк Скайуокер (махает световым мечом🌟🌟)', hp=1600, attack=900, dexterity=720, luck=520, accuracy=720,
+    Mob(name='🧑🏼‍💼Люк Скайуокер (махает световым мечом🌟🌟)', hp=1600, attack=900, dexterity=720, luck=520, accuracy=720,
             coins=400),
-    Mob(name='Лея Органа (убьет сексуальностью🌟🌟)', hp=1600, attack=900, dexterity=720, luck=520, accuracy=720,
+    Mob(name='👰🏼‍♀️Лея Органа (убьет сексуальностью🌟🌟)', hp=1600, attack=900, dexterity=720, luck=520, accuracy=720,
             coins=400),
-    Mob(name='Йода (леветирует и ебашит🌟🌟)', hp=1600, attack=900, dexterity=720, luck=520, accuracy=720,
+    Mob(name='🐢Йода (леветирует и ебашит🌟🌟)', hp=1600, attack=900, dexterity=720, luck=520, accuracy=720,
             coins=400),
 ]
 

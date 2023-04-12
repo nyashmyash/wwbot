@@ -300,7 +300,7 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
                                             + f"вам выпало {w.get_name()}",
                                             reply_markup=menu_go())
         else:
-            if random.randint(0, 15) == 1 and 100 < hero.modul < 100000:
+            if random.randint(0, 15) == 1 and 10**2 < hero.modul < 10**5:
                 hero.add_module()
                 name = hero.get_str_modul()
                 await update.message.reply_text(hero.make_header()
@@ -327,9 +327,16 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
                                             + f"вам выпало {w.get_name()}",
                                             reply_markup=menu_go())
         else:
-            await update.message.reply_text(hero.make_header()
-                                            + "вам выпало нихуя",
-                                            reply_markup=menu_go())
+            if random.randint(0, 15) == 1 and 10**6 < hero.modul < 10**7:
+                hero.add_module()
+                name = hero.get_str_modul()
+                await update.message.reply_text(hero.make_header()
+                                                + f"вам выпал модуль {name}",
+                                                reply_markup=menu_go())
+            else:
+                await update.message.reply_text(hero.make_header()
+                                                + "вам выпало нихуя",
+                                                reply_markup=menu_go())
 
     if hero.km == 70:
         r = random.randint(0, 8)

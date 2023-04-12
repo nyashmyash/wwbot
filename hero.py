@@ -11,15 +11,18 @@ from drone import all_drones, perk_drone_list
 
 all_modules = {
     1: [25, "📥модуль силы"],
-    2: [50, "📥модуль ловкости"],
+    2: [100, "📥модуль ловкости"],
     3: [50, "📥модуль удачи"],
     4: [50, "📥модуль точности"],
     5: [5, "📥модуль хп"],
-    6: [15, "📥модуль дохода"]
+    6: [15, "📥модуль дохода"],
+    7: [5, "📥модуль вампиризма"]
 }
-
-perk_luck_list = perk_force_list = perk_arm_list = perk_dex_list = [1.1, 1.2, 1.3, 1.5]
-perk_accur_list = [1.1, 1.3, 1.5, 1.7]
+perk_dex_list = [1.2, 1.5, 1.8, 2.3]
+perk_arm_list = [1.2, 1.5, 1.7, 2]
+perk_luck_list = [1.2, 1.4, 1.6, 2]
+perk_force_list = [1.2, 1.3, 1.4, 1.5]
+perk_accur_list = [1.2, 1.4, 1.6, 2]
 
 
 text_mess_go = ["Вы обследовали разрушенный дом, но ничего интересного не обнаружили.",
@@ -381,7 +384,7 @@ class Hero:
         if self.perks[4] != '0':
             data += f"харизматичный (эффективность дронов) {self.perks[4]}, коэф {perk_drone_list[int(self.perks[4]) - 1]}\n"
         if self.perks[5] != '0':
-            data += f"удачливый (увеличение шанса ударить первым) {self.perks[5]}, коэф {perk_arm_list[int(self.perks[5]) - 1]}\n"
+            data += f"удачливый (увеличение шанса ударить первым и шанс регенерации) {self.perks[5]}, коэф {perk_arm_list[int(self.perks[5]) - 1]}\n"
         if data == "ваши умения:\n":
             return "у вас нет умений!"
 
@@ -452,10 +455,16 @@ class Hero:
             self.weapon = None
             return 1
 
-    def get_miss(self, dex: int) -> bool:  # dex шанс уворота для героя 0.1%
-        if dex - self.get_accuracy() < 0 or dex - self.get_accuracy() > 1000:
-            return random.randint(0, 100) == 1
-        return random.randint(0, 1000) < dex - self.get_accuracy()
+    def get_miss(self, dex: int) -> bool:
+        # if dex - self.get_accuracy() < 0 or dex - self.get_accuracy() > 1000:
+        #     return random.randint(0, 100) == 1
+        # return random.randint(0, 1000) < dex - self.get_accuracy()
+        if dex / self.get_accuracy() >= 4.9:
+            return random.randint(0, 15) != 5
+
+        return random.randint(0, 1000) < 200 * dex/self.get_accuracy()
+
+
 
     def calc_cost(self, val: int) -> int:
         out = 13 * val - 3 * self.charisma
@@ -632,8 +641,18 @@ class Hero:
                     if self.drone:
                         drone_dmg, drone_hit = self.drone.get_attack(mob, self.perks)
                     att = self.get_attack()
+                    regen_mod = self.get_module(7)
+                    regen_str = ""
+                    if regen_mod and self.hp < self.max_hp:
+                        if att < hp_mob:
+                            self.hp += att*regen_mod/100
+                            regen_str = f"❤+{round(att*regen_mod/100)}"
+                        else:
+                            self.hp += hp_mob * regen_mod / 100
+                            regen_str = f"❤+{round(hp_mob*regen_mod/100)}"
+
                     if cnt_attack < self.CNT_LOG:
-                        out += f"👤Ты {self.log_hit(text_hit_mob)} 💥{round(att)}\n"
+                        out += f"❤ {round(self.hp)} 👤Ты {self.log_hit(text_hit_mob)} 💥{round(att)} {regen_str}\n"
                         out += drone_hit
                     hp_mob -= att + drone_dmg
                     if hp_mob <= 0:
@@ -707,8 +726,8 @@ class Hero:
                         if self.drone.hp <= 0:
                             self.drone = None
                     if drone_hit == "":
-                        out += f"{self.log_hit(text_att_mob)} 💔-{round(dmg)}\n"
                         self.hp -= dmg
+                        out += f"{self.log_hit(text_att_mob)} 💔-{round(dmg)}\n"
                         self.get_hit_armor()
                     else:
                         out += drone_hit
@@ -813,6 +832,12 @@ class Hero:
 
                 hero2.hp -= dmg
                 hero2.get_hit_armor()
+                if hero2.perks[5] != '0' and hero2.hp < hero2.max_hp:
+                    coef = perk_luck_list[int(hero2.perks[5]) - 1] #2
+                    if random.randint(0, 100) < coef*20:
+                        hero2.hp += hero2.max_hp*0.3
+                        out += f"❤️ {round(hero2.hp)} {hero1.get_name()} сработал навык счастливчик ❤️ +{hero2.max_hp*0.3} \n"
+
                 if hero2.hp <= 0:
                     if cnt_attack > hero1.CNT_LOG:
                         out += " ......... ....... ....\n"
