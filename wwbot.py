@@ -189,7 +189,7 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
     hero.in_dange = -1
     if hero.km == 10:
         r = random.randint(0, 7)
-        logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
+        #logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
         if r == 1:
             i = random.randint(4, 6)
             hero.stock.add_item(weapons_all[i])
@@ -203,7 +203,7 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
 
     if hero.km == 20:
         r = random.randint(0, 7)
-        logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
+        #logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
         if r == 2:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][5])
@@ -216,7 +216,7 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
                                             reply_markup=menu_go())
     if hero.km == 30:
         r = random.randint(0, 6)
-        logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
+        #logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
         if r == 3:
             r = random.randint(7, 8)
             hero.stock.add_item(weapons_all[r])
@@ -237,7 +237,7 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
 
     if hero.km == 35:
         r = random.randint(0, 6)
-        logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
+        #logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
         if r == 3:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][6])
@@ -259,7 +259,7 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
 
     if hero.km == 40:
         r = random.randint(0, 6)
-        logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
+        #logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
         if r == 4:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][7])
@@ -286,7 +286,7 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
 
     if hero.km == 50:
         r = random.randint(0, 7)
-        logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
+        #logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
         if r == 4:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][8])
@@ -313,7 +313,7 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
 
     if hero.km == 60:
         r = random.randint(0, 7)
-        logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
+        #logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
         if r == 4:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][9])
@@ -340,7 +340,7 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
 
     if hero.km == 70:
         r = random.randint(0, 8)
-        logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
+        #logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
         if r == 4:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][10])
@@ -359,7 +359,7 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
                                             reply_markup=menu_go())
     if hero.km == 80:
         r = random.randint(0, 9)
-        logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
+        #logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
         if r == 4:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][11])
@@ -512,19 +512,19 @@ async def msgs_in_camp(update: Update, msg_txt:str, hero: Hero) -> None:
         await update.message.reply_text(out, reply_markup=menu_lomb())
     elif msg_txt == "Продать 1/2 коробок":
         hero.coins += round(hero.materials / 20)
-        hero.materials = round(hero.materials / 2)
+        hero.materials -= round(hero.materials / 2)
         out = f"📦×{hero.materials}\n"
         out += hero.stock.get_data_lombard()
         await update.message.reply_text(out, reply_markup=menu_lomb())
     elif msg_txt == "Продать 1/4 коробок":
         hero.coins += round(hero.materials / 40)
-        hero.materials = round(hero.materials / 4)
+        hero.materials -= round(hero.materials / 4)
         out = f"📦×{hero.materials}\n"
         out += hero.stock.get_data_lombard()
         await update.message.reply_text(out, reply_markup=menu_lomb())
     elif msg_txt == "Продать 1/8 коробок":
         hero.coins += round(hero.materials / 80)
-        hero.materials = round(hero.materials / 8)
+        hero.materials -= round(hero.materials / 8)
         out = f"📦×{hero.materials}\n"
         out += hero.stock.get_data_lombard()
         await update.message.reply_text(out, reply_markup=menu_lomb())
@@ -967,8 +967,6 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             for h in all:
                 if h.id != hero.base_id and hero.band_name == h.band_name:
                     data += f"{h.name}\n"
-    elif msg_txt == "/test":
-        await update.message.reply_text("*hello*")
 
     elif msg_txt.startswith("/msgall"):
         msg = msg_txt.replace("/msgall", "")
@@ -1000,7 +998,8 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if len(code) > 100:
             return
         data_ = hero.stock.use_stuff(int(code), hero)
-        await menu_sel(update, hero, data_)
+        await update.message.reply_text(data_)
+        #await menu_sel(update, hero, data_)
 
     elif "/drop" == msg_txt:
         data = hero.stock.get_delete()

@@ -27,20 +27,20 @@ perk_accur_list = [1.2, 1.4, 1.6, 2]
 
 text_mess_go = ["Вы обследовали разрушенный дом, но ничего интересного не обнаружили.",
                 "Выбежала дикая собака, но вы на нее крикнули и она поджав хвост спряталась. Вы заметили проем в заборе.",
-                "Пройдя около обугленных машин вы посмотрели на кости которые остались от водителя и пассажира. Страшное зрелище, лучше идти дальше.",
+                "Пройдя около обугленных машин, вы посмотрели на кости, которые остались от водителя и пассажира. Страшное зрелище, лучше идти дальше.",
                 "Вы увидели разрушенный дом, облазили его и там ничего интересного.",
-                "Вы прошли по небольшому парку от которого остались только обугленные пеньки деревьев и искареженные статуи и аттракционы."
+                "Вы прошли по небольшому парку, от которого остались только обугленные пеньки деревьев и искареженные статуи и аттракционы."
                 "Пробираясь по чаще вы встретили мутанта, который забоялся вас и побежал по своим делам.",
-                "Кто-то стал кричать за домом, возможно это опасный монстр или бандит приманивающий жертву, лучше идите дальше.",
+                "Кто-то стал кричать за домом, возможно, это опасный монстр или бандит приманивающий жертву, лучше идите дальше.",
                 "Вы спокойно прошли по тропинке и отдохнули возле большого дерева",
-                "Пройдя пару шагов на вас набросился какой-то псих, но получив по шее, он сбежал выкрикивая непонятные фразы.",
+                "Пройдя пару шагов, на вас набросился какой-то псих, но получив по шее, он сбежал выкрикивая непонятные фразы.",
                 "Вы зашли в остатки от банка, полазили по шкафчикам, но денег там давно нет.",
                 "Насвистывая песенку вы подошли к школе, что там может быть интересного не понятно. Но вы решили заглянуть туда. Там только лазил свинокрыс и ел что-то.",
                 "Возле вас просвистела пуля, это какой-то снайпер. Вы легли на землю и перекатились в кусты пережидая опасность.",
                 "Гулять хорошо, но и отдыхать надо иногда. Вы перевели дух и выпили воды.",
                 "Вы проголодались и сели в разрушенном кафе перекусить радиоактивной картошкой.",
                 "Идя возле разрушенного дома, вы попробовали зайти в нутрь, но на вас набросился свинокрыс. Вы метко ему пробили бошку и исследовав дом побрели дальше",
-                "Кажется машина которую вы нашли на ходу, можно поехать. Но когда двигатель завелся, он взорвался, туда залез какой-то опасный рад-таракан. Обидно.",
+                "Кажется, машина которую вы нашли на ходу, можно поехать. Но когда двигатель завелся, он взорвался, туда залез какой-то опасный рад-таракан. Обидно.",
                 "Что-то издает крик. По звуку похоже на летающего мутанта, лучше ускориться и идти дальше.",
                 "В дали вы увидели радиоактивного скунза, лучше надеть противогаз и держаться от него подальше.",
                 "Где-то слышна стрельба, наверное это разборки местных банд. Надо свернуть.",
@@ -176,7 +176,7 @@ class Hero:
     mob_fight = None
     in_dange = 0
     stock = None
-    CNT_LOG = 10
+    CNT_LOG = 30
     buffs = None
     km_buff = 0
     modul = 0  # 11111 есть 5 модулей
@@ -359,32 +359,38 @@ class Hero:
         return "перк успешно увеличен"
 
     def return_perks(self) -> str:
+        text_data = ["силач (увеличение силы)",
+                     "бронированный (усил-ние брони)",
+                     "ловкач (увеличение ловкости)",
+                     "меткий (разброс урона значительно увеличивается)",
+                     "харизматичный (эффективность дронов)",
+                     "удачливый (увеличение шанса ударить первым и шанс регенерации 30% от хп)"]
         data = "ваши умения:\n"
         cnt_free = self.free_perks()
         if cnt_free > 0:
             data += f"у вас есть свободные очки: {cnt_free}\n"
             data += "список куда можно использовать очки:\n"
-            data += f"силач   /perk_force\n"
-            data += f"бронь   /perk_arm\n"
-            data += f"ловкач  /perk_dex\n"
-            data += f"меткий  /perk_accur\n"
-            data += f"харя    /perk_char\n"
-            data += f"лаки    /perk_luck\n"
+            data += f"/perk_force  {text_data[0]}\n"
+            data += f"/perk_arm  {text_data[1]}\n"
+            data += f"/perk_dex  {text_data[2]}\n"
+            data += f"/perk_accur  {text_data[3]}\n"
+            data += f"/perk_char  {text_data[4]}\n"
+            data += f"/perk_luck  {text_data[5]}\n"
         else:
             data += f"количество bm до перка {1250*self.ret_cnt_perks() - self.get_bm()}\n"
 
         if self.perks[0] != '0':
-            data += f"силач (увеличение силы) {self.perks[0]}, коэф {perk_force_list[int(self.perks[0])-1]}\n"
+            data += f"{text_data[0]}  {self.perks[0]}, коэф {perk_force_list[int(self.perks[0])-1]}\n"
         if self.perks[1] != '0':
-            data += f"бронированный (усил-ние брони) {self.perks[1]}, коэф {perk_arm_list[int(self.perks[1])-1]}\n"
+            data += f"{text_data[1]}  {self.perks[1]}, коэф {perk_arm_list[int(self.perks[1])-1]}\n"
         if self.perks[2] != '0':
-            data += f"ловкач (увеличение ловкости) {self.perks[2]}, коэф {perk_dex_list[int(self.perks[2]) - 1]}\n"
+            data += f"{text_data[2]}  {self.perks[2]}, коэф {perk_dex_list[int(self.perks[2]) - 1]}\n"
         if self.perks[3] != '0':
-            data += f"меткий (разброс урона значительно увеличивается) {self.perks[3]}, коэф {perk_accur_list[int(self.perks[3]) - 1]}\n"
+            data += f"{text_data[3]}  {self.perks[3]}, коэф {perk_accur_list[int(self.perks[3]) - 1]}\n"
         if self.perks[4] != '0':
-            data += f"харизматичный (эффективность дронов) {self.perks[4]}, коэф {perk_drone_list[int(self.perks[4]) - 1]}\n"
+            data += f"{text_data[4]}  {self.perks[4]}, коэф {perk_drone_list[int(self.perks[4]) - 1]}\n"
         if self.perks[5] != '0':
-            data += f"удачливый (увеличение шанса ударить первым и шанс регенерации) {self.perks[5]}, коэф {perk_arm_list[int(self.perks[5]) - 1]}\n"
+            data += f"{text_data[5]}  {self.perks[5]}, коэф {perk_arm_list[int(self.perks[5]) - 1]}\n"
         if data == "ваши умения:\n":
             return "у вас нет умений!"
 
@@ -420,9 +426,9 @@ class Hero:
                            round(self.coins), self.hungry, self.calc_attack(),
                            armor, self.km, self.all_km, self.get_str_modul(), drone, dzen, band_name)
 
-    @staticmethod
-    def generate_name() -> str:
-        return "hero.." + "".join(sample(ascii_lowercase, 5))
+    #@staticmethod
+    #def generate_name() -> str:
+    #    return "hero.." + "".join(sample(ascii_lowercase, 5))
 
     def arm_str(self, arm) -> str:
         return arm.get_data_hero() if arm else "нет брони"
@@ -444,9 +450,10 @@ class Hero:
                 else:
                     self.armor[i].life -= 1
 
-    def get_attack(self, use_perks=False) -> int:
+    def get_attack(self, use_perks: bool = False, test: bool = False) -> int:
         if self.weapon and self.weapon.life > 0:
-            self.weapon.life -= 0.5
+            if not test:
+                self.weapon.life -= 0.5
             if use_perks and self.perks[3] != '0':
                 return round(self.calc_attack(use_perks) * random.uniform(0.85, 1.15*perk_accur_list[int(self.perks[3])-1]))
             else:
@@ -456,21 +463,15 @@ class Hero:
             return 1
 
     def get_miss(self, dex: int) -> bool:
-        # if dex - self.get_accuracy() < 0 or dex - self.get_accuracy() > 1000:
-        #     return random.randint(0, 100) == 1
-        # return random.randint(0, 1000) < dex - self.get_accuracy()
-        if dex / self.get_accuracy() >= 4.9:
-            return random.randint(0, 15) != 5
-
-        return random.randint(0, 1000) < 200 * dex/self.get_accuracy()
-
-
+        acc = self.get_accuracy()
+        k = 4 if dex / acc >= 4 else dex / acc
+        return random.randint(0, 1000) < 200 * k
 
     def calc_cost(self, val: int) -> int:
         out = 13 * val - 3 * self.charisma
         return 10 if out < 10 else round(13 * val - 3 * self.charisma)
 
-    def sel_mob_from_zone(self, mobs_zone):
+    def sel_mob_from_zone(self, mobs_zone: list) -> None:
         r = random.randint(0, 100)
         k = len(mobs_zone) - 1
         while k > 0 and r % k != 0:
@@ -558,6 +559,89 @@ class Hero:
         zoned = "☠️" if self.zone == 2 else zoned
         zoned = "🤡️" if self.zone == 3 else zoned
         return f"{zoned}❤️ {round(self.hp)}\{self.max_hp} 🍗{self.hungry}% {buffed} 👣{self.km} \n"
+
+    def attack_boss_1rnd(self, mob: Mob, test:bool = False) -> str:
+        out = ""
+        armor = self.calc_armor()
+        is_first = True
+        if random.randint(0, 1) == 1:
+            is_first = False
+
+        if is_first:
+            if self.get_miss(mob.dexterity):
+                if not test:
+                    out += f"❤️ {round(self.hp)} {self.get_name()} ➰ {self.log_hit(text_hero_mis)}\n"
+            else:
+                drone_hit = ""
+                drone_dmg = 0
+                if self.drone:
+                    drone_dmg, drone_hit = self.drone.get_attack(mob, self.perks)
+                att = self.get_attack(test=test)
+                if not test:
+                    out += f"❤️ {round(self.hp)} {self.get_name()} {self.log_hit(text_hit_mob)} 💥{round(att)}\n"
+                    out += drone_hit
+                mob.hp -= att + drone_dmg
+            if mob.hp <= 0:
+                if not test:
+                    out += f"{mob.get_name()} повержен\n"
+                return out
+        else:
+            if mob.get_miss(self.get_dexterity()):
+                if not test:
+                    out += f"❤️ {mob.hp} 🌀{mob.get_name()} {self.log_hit(text_mob_mis)}\n"
+            else:
+                dmg = mob.get_attack() - armor
+                dmg = dmg if dmg > 0 else 1
+                drone_hit = ""
+                if self.drone:
+                    drone_hit = self.drone.get_hit(dmg, self.perks, test=test)
+                    if self.drone.hp <= 0:
+                       self.drone = None
+                if drone_hit == "":
+                    if not test:
+                        out += f"❤️ {mob.hp} {mob.get_name()} {self.log_hit(text_att_mob)} {self.get_name()} 💔-{round(dmg)}\n"
+                    self.hp -= dmg
+                    if not test:
+                        self.get_hit_armor()
+                else:
+                    out += drone_hit
+
+        if round(self.hp) <= 0:
+            if not test:
+                out += f"{self.get_name()} {self.log_hit(text_hero_dead)}\n"
+                self.died_hero()
+        return out
+
+    @staticmethod
+    def attack_boss(list_heroes: list, boss: Mob) -> str:
+        out = ""
+        boss_round = 0
+        while boss.hp > 0:
+            cnt_dead = 0
+            boss_round += 1
+            out += f"раунд {boss_round}\n❤️ {boss.hp} босс {boss.name}\n"
+            for i in range(0, len(list_heroes)):
+                if list_heroes[i].km!=0:
+                    out += list_heroes[i].attack_boss_1rnd(boss)
+                    if boss.hp <=0:
+                        out += f"босс повержен игроком {list_heroes[i].name}\n"
+                        coins = round(boss.calc_mob_coins(list_heroes[i].km))*10
+                        mats = round(boss.calc_mob_mat(list_heroes[i].km))*10
+                        list_heroes[i].coins += coins
+                        list_heroes[i].materials += mats
+                        out += f"получено 🕳 {coins} 📦 {mats}\n"
+                        rkey, ritem = get_random_item(True)
+                        out += f"💉💉вам выпал {ritem['name']} /ustf_{rkey}💉💉\n"
+                        list_heroes[i].stock.add_stuff(rkey)
+                        return out
+                else:
+                    cnt_dead+=1
+
+            if cnt_dead == len(list_heroes):
+                out += "все сdохли, лол\n"
+                return out
+        out += "босс повержен"
+        return out
 
     def attack_mob_pvp(self, mob: Mob) -> str:
         out = f"❤️ {round(self.hp)} {self.get_name()} vs {mob.get_name()} ❤{round(mob.hp)}\n"
@@ -656,7 +740,7 @@ class Hero:
                         out += drone_hit
                     hp_mob -= att + drone_dmg
                     if hp_mob <= 0:
-                        if cnt_attack > self.CNT_LOG:
+                        if cnt_attack >= self.CNT_LOG:
                             out += " ......... ....... ....\n"
                         out += f"{mob.get_name()} повержен\n"
                         bonus_mod = self.get_module(6)
@@ -716,7 +800,8 @@ class Hero:
             else:
                 is_first = True
                 if mob.get_miss(self.get_dexterity()):
-                    out += f"🌀{self.log_hit(text_mob_mis)}\n"
+                    if cnt_attack < self.CNT_LOG:
+                        out += f"🌀{self.log_hit(text_mob_mis)}\n"
                 else:
                     dmg = mob.get_attack() - armor
                     dmg = dmg if dmg > 0 else 1
@@ -727,12 +812,14 @@ class Hero:
                             self.drone = None
                     if drone_hit == "":
                         self.hp -= dmg
-                        out += f"{self.log_hit(text_att_mob)} 💔-{round(dmg)}\n"
+                        if cnt_attack < self.CNT_LOG:
+                            out += f"{self.log_hit(text_att_mob)} 💔-{round(dmg)}\n"
                         self.get_hit_armor()
                     else:
-                        out += drone_hit
+                        if cnt_attack < self.CNT_LOG:
+                            out += drone_hit
 
-        if cnt_attack > self.CNT_LOG:
+        if cnt_attack >= self.CNT_LOG:
             out += " ......... ....... ....\n"
 
         if round(self.hp) <= 0:
@@ -836,7 +923,7 @@ class Hero:
                     coef = perk_luck_list[int(hero2.perks[5]) - 1] #2
                     if random.randint(0, 100) < coef*20:
                         hero2.hp += hero2.max_hp*0.3
-                        out += f"❤️ {round(hero2.hp)} {hero1.get_name()} сработал навык счастливчик ❤️ +{hero2.max_hp*0.3} \n"
+                        out += f"❤️ {round(hero2.hp)} {hero2.get_name()} сработал навык счастливчик ❤️ +{hero2.max_hp*0.3} \n"
 
                 if hero2.hp <= 0:
                     if cnt_attack > hero1.CNT_LOG:

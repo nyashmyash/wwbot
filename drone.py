@@ -28,14 +28,15 @@ class Drone():
     def get_name(self) -> str:
         return self.name
 
-    def get_hit(self, dmg:int, perk: str) -> str:
+    def get_hit(self, dmg:int, perk: str, test: bool = False) -> str:
         chanse = self.chanse
         if perk[4] != '0': #000040
             chanse = round(chanse * perk_drone_list[int(perk[4])-1])
         if self.hp > 0 and chanse > random.randint(0, 100):
             hit = round(dmg / self.coeff) // 8
             hit = hit if hit > 0 else 1
-            #self.hp -= hit
+            if not test:
+                self.hp -= hit
             if self.hp > 0:
                 return f"🛰{self.get_name()} заблокировал урон 🛡{hit}\n"
             else:

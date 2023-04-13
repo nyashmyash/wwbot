@@ -60,13 +60,8 @@ class Mob:
         return self.attack * random.uniform(0.85, 1.15)
 
     def get_miss(self, dex: int) -> bool:  # dex шанс уворота для героя 0.1%
-        #if random.randint(0, 1000) < dex - self.accuracy:
-        #    return True
-        #else:
-        #    return False
-        if dex / self.accuracy >= 4.9:
-            return random.randint(0, 15) != 5
-        return random.randint(0, 1000) < 200 * dex / self.accuracy
+        k = 4 if dex / self.accuracy >= 4 else dex / self.accuracy
+        return random.randint(0, 1000) < 200 * k
 
     def is_first_hit(self, luck: int) -> bool:
         if random.randint(0, 1000) - 500 < self.luck - luck:
@@ -108,7 +103,7 @@ class Mob:
                     if cnt_attack < self.CNT_LOG:
                         out += f"❤️ {round(self.hp)} {self.name} {self.log_hit(text_att_mob)} {mob.name} 💔-{round(att)}\n"
                     if mob.hp <= 0:
-                        if cnt_attack > self.CNT_LOG:
+                        if cnt_attack >= self.CNT_LOG:
                             out += " ......... ....... ....\n"
                         out += f"{mob.name} повержен\n"
                         return out
@@ -262,6 +257,15 @@ list_mobs5_10 = [
     Mob(name='🐸жаба (злится)', hp=19, attack=13, dexterity=10, luck=100, accuracy=10, coins=40),
     Mob(name='☃️☃️☃️𝚃𝙷𝙴𝙻𝚄𝙸𝙳𝙴𝙽☃️☃️☃️ (46 dzen >:)', hp=19, attack=13, dexterity=10, luck=100, accuracy=10,
         coins=30),
+    Mob(name='👩🏻‍🦰Собчак (любит конь)', hp=19, attack=13, dexterity=10, luck=100, accuracy=10,
+            coins=30),
+    Mob(name='🤡Нэвэльный (блэд)', hp=19, attack=13, dexterity=10, luck=100, accuracy=10,
+            coins=30),
+    Mob(name='🧔‍♂️Джигурда (выебет и коня)', hp=19, attack=13, dexterity=10, luck=100, accuracy=10,
+            coins=30),
+    Mob(name='👱🏻‍♂️Кличко (смотрит в завтрашний день)', hp=19, attack=13, dexterity=10, luck=100, accuracy=10,
+            coins=30),
+
 ]
 
 list_mobs10_15 = [
@@ -465,6 +469,10 @@ list_mobs90 = [
     Mob(name='моб92', hp=4540, attack=1600, dexterity=1020, luck=20, accuracy=1320, coins=650),
     Mob(name='моб93', hp=4565, attack=1600, dexterity=1020, luck=20, accuracy=1320, coins=650),
     Mob(name='моб94', hp=4570, attack=1600, dexterity=1020, luck=20, accuracy=1320, coins=650)
+]
+
+list_boss = [
+    Mob(name='Некрогигант', hp=5000, attack=200, dexterity=50, luck=120, accuracy=1000, coins=400),
 ]
 
 list_mobs = [list_mobs1_5, list_mobs5_10,
