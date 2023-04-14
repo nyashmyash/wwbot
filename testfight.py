@@ -7,8 +7,9 @@ from mob import *
 from stock import Stock
 
 x = 200
-hp = 300
+hp = 400
 h1 = Hero()
+h1.go_boss = True
 h1.km = 37
 h1.buffs = [0, 0, 0, 0]
 h1.coins = 1000
@@ -20,15 +21,15 @@ h1.luck = x
 h1.dexterity = x
 h1.accuracy = x
 h1.charisma = x
-h1.weapon = copy.copy(weapons_all[9])
+h1.weapon = copy.copy(weapons_all[10])
 h1.weapon.use = 1
 h1.id = 1
 h1.band_id = 0
 h1.name = "111"
 h1.armor = []
-h1.armor.append(copy.copy(armor_all[0][6]))
-h1.armor.append(copy.copy(armor_all[1][6]))
-h1.armor.append(copy.copy(armor_all[2][6]))
+h1.armor.append(copy.copy(armor_all[0][5]))
+h1.armor.append(copy.copy(armor_all[1][5]))
+h1.armor.append(copy.copy(armor_all[2][5]))
 h1.stock = Stock()
 h1.stock.used_stuff = {}
 # увеличение брони в 2.1 раза
@@ -40,9 +41,9 @@ h2.weapon = copy.copy(weapons_all[9])
 h2.perks = "004000"
 h2.name = "222"
 h2.armor = []
-h2.armor.append(copy.copy(armor_all[0][6]))
-h2.armor.append(copy.copy(armor_all[1][6]))
-h2.armor.append(copy.copy(armor_all[2][6]))
+h2.armor.append(copy.copy(armor_all[0][8]))
+h2.armor.append(copy.copy(armor_all[1][8]))
+h2.armor.append(copy.copy(armor_all[2][8]))
 h1.dexterity = x
 h2.force = x # увеличение силы в 1.5 раза?
 h2.drone = copy.copy(all_drones[3])
@@ -56,9 +57,9 @@ h3.weapon = copy.copy(weapons_all[9])
 h3.weapon.use = 1
 h3.name = "333"
 h3.armor = []
-h3.armor.append(copy.copy(armor_all[0][6]))
-h3.armor.append(copy.copy(armor_all[1][6]))
-h3.armor.append(copy.copy(armor_all[2][6]))
+h3.armor.append(copy.copy(armor_all[0][5]))
+h3.armor.append(copy.copy(armor_all[1][5]))
+h3.armor.append(copy.copy(armor_all[2][5]))
 h3.stock = Stock()
 h3.stock.used_stuff = {}
 # увеличение брони в 2.1 раза
@@ -71,9 +72,9 @@ h4.weapon = copy.copy(weapons_all[9])
 h4.weapon.use = 1
 h4.name = "444"
 h4.armor = []
-h4.armor.append(copy.copy(armor_all[0][6]))
-h4.armor.append(copy.copy(armor_all[1][6]))
-h4.armor.append(copy.copy(armor_all[2][6]))
+h4.armor.append(copy.copy(armor_all[0][5]))
+h4.armor.append(copy.copy(armor_all[1][5]))
+h4.armor.append(copy.copy(armor_all[2][5]))
 h4.stock = Stock()
 h4.stock.used_stuff = {}
 # увеличение брони в 2.1 раза
@@ -83,13 +84,13 @@ h4.perks = "000004"
 
 h5 = Hero()
 h5 = copy.copy(h1)
-h5.weapon = copy.copy(weapons_all[13])
+h5.weapon = copy.copy(weapons_all[9])
 h5.weapon.use = 1
 h5.name = "555"
 h5.armor = []
-h5.armor.append(copy.copy(armor_all[0][6]))
-h5.armor.append(copy.copy(armor_all[1][6]))
-h5.armor.append(copy.copy(armor_all[2][6]))
+h5.armor.append(copy.copy(armor_all[0][5]))
+h5.armor.append(copy.copy(armor_all[1][5]))
+h5.armor.append(copy.copy(armor_all[2][5]))
 h5.stock = Stock()
 h5.stock.used_stuff = {}
 # увеличение брони в 2.1 раза
@@ -99,9 +100,16 @@ h5.perks = "000004"
 
 list_boss[0].attack = 250
 print(h1.calc_armor())
-print(h1.get_attack())
-print(Hero.attack_boss([h1, h2, h3, h4, h5], list_boss[0]))
-
+print(h1.calc_attack())
+heroes = [h1, h2, h3, h4, h5]
+Hero.attack_boss(heroes, list_boss[0])
+print(h1.text_out_boss)
+print(h2.text_out_boss)
+print(h3.text_out_boss)
+print(h4.text_out_boss)
+print(h5.text_out_boss)
+for h in heroes:
+    print(f'{round(h.hp)}, {h.coins}, {len(h.stock.used_stuff)}')
 # mob = list_mobs75_80[4]
 # res = h1.attack_mob(list_dange70[0]) +"\n"
 # res += h1.attack_mob(list_dange70[1])+"\n"

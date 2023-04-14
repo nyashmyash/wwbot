@@ -186,6 +186,9 @@ class Hero:
     mobs = None
     perks = '0'*6
     arm_clc = 0
+    text_out_boss = ""
+    go_boss = False
+    ef_chat = None
 
     def go(self) -> None:
         self.km += 1
@@ -560,7 +563,7 @@ class Hero:
         zoned = "🤡️" if self.zone == 3 else zoned
         return f"{zoned}❤️ {round(self.hp)}\{self.max_hp} 🍗{self.hungry}% {buffed} 👣{self.km} \n"
 
-    def attack_boss_1rnd(self, mob: Mob, test:bool = False) -> str:
+    def attack_boss_1rnd(self, mob: Mob, test: bool = False) -> str:
         out = ""
         armor = self.calc_armor()
         is_first = True
@@ -577,6 +580,9 @@ class Hero:
                 if self.drone:
                     drone_dmg, drone_hit = self.drone.get_attack(mob, self.perks)
                 att = self.get_attack(test=test)
+                if self.calc_attack() > 250:
+                    att = round(250 * random.uniform(0.85, 1.15))
+
                 if not test:
                     out += f"❤️ {round(self.hp)} {self.get_name()} {self.log_hit(text_hit_mob)} 💥{round(att)}\n"
                     out += drone_hit
@@ -588,9 +594,14 @@ class Hero:
         else:
             if mob.get_miss(self.get_dexterity()):
                 if not test:
-                    out += f"❤️ {mob.hp} 🌀{mob.get_name()} {self.log_hit(text_mob_mis)}\n"
+                    out += f"❤️ {round(mob.hp)} 🌀{mob.get_name()} {self.log_hit(text_mob_mis)}\n"
             else:
+                if armor > 100:
+                    armor = 100
+                if self.max_hp > 400:
+                    armor = 0
                 dmg = mob.get_attack() - armor
+
                 dmg = dmg if dmg > 0 else 1
                 drone_hit = ""
                 if self.drone:
@@ -599,49 +610,57 @@ class Hero:
                        self.drone = None
                 if drone_hit == "":
                     if not test:
-                        out += f"❤️ {mob.hp} {mob.get_name()} {self.log_hit(text_att_mob)} {self.get_name()} 💔-{round(dmg)}\n"
+                        out += f"❤️ {round(mob.hp)} {mob.get_name()} {self.log_hit(text_att_mob)} {self.get_name()} 💔-{round(dmg)}\n"
                     self.hp -= dmg
                     if not test:
                         self.get_hit_armor()
                 else:
                     out += drone_hit
-
-        if round(self.hp) <= 0:
-            if not test:
-                out += f"{self.get_name()} {self.log_hit(text_hero_dead)}\n"
-                self.died_hero()
         return out
 
     @staticmethod
-    def attack_boss(list_heroes: list, boss: Mob) -> str:
+    def attack_boss(list_heroes: list, boss: Mob, test: bool = False) -> None:
         out = ""
         boss_round = 0
+        cnt_dead = 0
         while boss.hp > 0:
-            cnt_dead = 0
             boss_round += 1
-            out += f"раунд {boss_round}\n❤️ {boss.hp} босс {boss.name}\n"
+            if not test:
+                out += f"раунд {boss_round}\n❤️ {boss.hp} босс {boss.name}\n"
             for i in range(0, len(list_heroes)):
-                if list_heroes[i].km!=0:
-                    out += list_heroes[i].attack_boss_1rnd(boss)
-                    if boss.hp <=0:
-                        out += f"босс повержен игроком {list_heroes[i].name}\n"
-                        coins = round(boss.calc_mob_coins(list_heroes[i].km))*10
-                        mats = round(boss.calc_mob_mat(list_heroes[i].km))*10
-                        list_heroes[i].coins += coins
-                        list_heroes[i].materials += mats
-                        out += f"получено 🕳 {coins} 📦 {mats}\n"
+                if list_heroes[i].go_boss == True:
+                    out += list_heroes[i].attack_boss_1rnd(boss, test)
+                    if boss.hp <= 0:
+                        break
+                    if list_heroes[i].hp < 0:
+                        out_new = out
+                        out_new += f"{list_heroes[i].get_name()} {list_heroes[i].log_hit(text_hero_dead)}\n"
+                        out_new += f"потеряно: 🕳 {round(list_heroes[i].coins * 0.5)}\n"
+                        list_heroes[i].coins *= 0.5
+                        list_heroes[i].text_out_boss = out_new
+                        list_heroes[i].go_boss = False
+                        cnt_dead += 1
+                        out += f"💀{list_heroes[i].name}\n"
+
+            if boss.hp <= 0:
+                #out += f"босс повержен игроком {list_heroes[i].name}\n"
+                coins = round(boss.calc_mob_coins(31)) * 3
+                mats = round(boss.calc_mob_mat(31)) * 3
+                for j in range(0, len(list_heroes)):
+                    if list_heroes[j].go_boss:
+                        out_new = out
+                        list_heroes[j].coins += coins
+                        list_heroes[j].materials += mats
+                        out_new += f"получено 🕳 {coins} 📦 {mats}\n"
                         rkey, ritem = get_random_item(True)
-                        out += f"💉💉вам выпал {ritem['name']} /ustf_{rkey}💉💉\n"
-                        list_heroes[i].stock.add_stuff(rkey)
-                        return out
-                else:
-                    cnt_dead+=1
+                        out_new += f"💉💉вам выпал {ritem['name']} /ustf_{rkey}💉💉\n"
+                        list_heroes[j].stock.add_stuff(rkey)
+                        list_heroes[j].text_out_boss = out_new
+                        list_heroes[j].go_boss = False
+                break
 
             if cnt_dead == len(list_heroes):
-                out += "все сdохли, лол\n"
-                return out
-        out += "босс повержен"
-        return out
+                break
 
     def attack_mob_pvp(self, mob: Mob) -> str:
         out = f"❤️ {round(self.hp)} {self.get_name()} vs {mob.get_name()} ❤{round(mob.hp)}\n"

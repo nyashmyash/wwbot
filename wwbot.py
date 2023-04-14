@@ -157,19 +157,18 @@ async def get_hero(update):
             else:
                 if not hero.stock.used_stuff:
                     hero.stock.used_stuff = {}
-
-        all_data[update.effective_user.id] = [hero, update.effective_chat]
+        hero.ef_chat = update.effective_chat
+        all_data[update.effective_user.id] = hero
         return hero
     else:
-        return rslt[0]
+        return rslt
 
 
 async def me_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     hero = await get_hero(update)
-    if hero.mob_fight:
-        await update.message.reply_text(f"на вас напал моб {hero.mob_fight.get_name()}", reply_markup=menu_attack())
-    else:
-        await update.message.reply_text(hero.return_data(), reply_markup=menu_pip())
+    #if hero.mob_fight:
+    #    await update.message.reply_text(f"на вас напал моб {hero.mob_fight.get_name()}", reply_markup=menu_attack())
+    await update.message.reply_text(hero.return_data(), reply_markup=menu_pip())
 
 rad_zones = [15, 25, 34, 45, 55, 65, 75, 85]
 
@@ -300,7 +299,7 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
                                             + f"вам выпало {w.get_name()}",
                                             reply_markup=menu_go())
         else:
-            if random.randint(0, 15) == 1 and 10**2 < hero.modul < 10**5:
+            if random.randint(0, 15) == 1 and 2 <= len(str(hero.modul)) <= 5:
                 hero.add_module()
                 name = hero.get_str_modul()
                 await update.message.reply_text(hero.make_header()
@@ -327,7 +326,7 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
                                             + f"вам выпало {w.get_name()}",
                                             reply_markup=menu_go())
         else:
-            if random.randint(0, 15) == 1 and 10**6 < hero.modul < 10**7:
+            if random.randint(0, 15) == 1 and len(str(hero.modul)) == 6:
                 hero.add_module()
                 name = hero.get_str_modul()
                 await update.message.reply_text(hero.make_header()
@@ -560,9 +559,9 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             if msg_txt == "🔪Напасть" and hero.km != 0:
                 fight = False
                 for h in all_data:
-                    hero_h = all_data[h][0]
+                    hero_h = all_data[h]
                     if update.effective_user.id != h and hero_h.km == hero.km and hero_h.in_dange <= 0 and hero.zone == hero_h.zone:
-                        chat = all_data[h][1]
+                        chat = all_data[h].ef_chat
                         fight = True
                         out = hero.attack_pvp_wmobs(hero_h)
 
@@ -625,10 +624,12 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if msg_txt == "🔥Зайти в данж" and hero.km in danges.keys() and hero.in_dange == 0:
             hero.mob_fight = danges[hero.km][0]
             hero.in_dange = 1
-            await update.message.reply_text(f"на вас напал моб {hero.mob_fight.get_name()}",
+            header = hero.make_header()
+            await update.message.reply_text(header + f"на вас напал моб {hero.mob_fight.get_name()}",
                                             reply_markup=menu_go_dange())
         elif hero.mob_fight and msg_txt != "⚔️Дать отпор" and msg_txt != "🏃Дать деру":
-            await update.message.reply_text(f"на вас напал моб {hero.mob_fight.get_name()}",
+            header = hero.make_header()
+            await update.message.reply_text(header + f"на вас напал моб {hero.mob_fight.get_name()}",
                                             reply_markup=menu_attack())
         elif not hero.mob_fight and msg_txt == "⛺️В лагерь":
             if hero.zone ==2 or hero.zone == 3:
@@ -638,6 +639,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 await update.message.reply_text(hero.return_data(), reply_markup=menu_camp())
         elif msg_txt == "📟Пип-бой":
             await update.message.reply_text(hero.return_data(), reply_markup=menu_pip())
+            return
 
         elif msg_txt == "👣Пустошь" and hero.zone == 0:
             hero.go()
@@ -794,11 +796,13 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             await update.message.reply_text(hero.stock.get_data(), reply_markup=menu_pip())
         else:
             await update.message.reply_text(hero.stock.get_data(), reply_markup=menu_go_dange())
+        return
     elif msg_txt == "🔝Топы":
         data = "/topkm  - топ игроков по километрам\n/topcoins" + \
                " - топ игроков по монетам\n/tophp - топ игроков" + \
                "по hp\n/topbm - топ игроков по сумме характеристик"
         await update.message.reply_text(data, reply_markup=menu_pip())
+        return
 
     logger.info(update.effective_chat.first_name + f"  {msg_txt}  {hero.km}km")
 
@@ -807,7 +811,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             if hero.km != 0 or msg_txt == "🔎Осмотреться":
                 out = ""
                 for h in all_data:
-                    hero_h = all_data[h][0]
+                    hero_h = all_data[h]
                     if update.effective_user.id != h and hero_h.km == hero.km and hero.zone == hero_h.zone:
                         zone = "☢" if hero_h.zone == 1 else ""
                         if hero.km!=27:
@@ -852,6 +856,12 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             await update.message.reply_text("Можно отдохнуть /deeprest", reply_markup=menu_go())
             return
 
+        if hero.km == 31 and hero.zone == 1:
+            await update.message.reply_text("Можно записаться на босса, если у вас больше 100 брони она будет "
+                                            "приведена к 100, если больше 400 хп "
+                                            "броня приравнивается к 0. Всего игроков 5. удачи))))\n/goboss", reply_markup=menu_go())
+            return
+
         if hero.km in rad_zones and hero.zone in [0, 1]:
             if hero.zone == 1:
                 await update.message.reply_text("Можно выйти из радиоактивной пустоши", reply_markup=menu_rad_quit())
@@ -866,7 +876,7 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     data = ""
     if "/savebase" == msg_txt:
         for k in all_data:
-            h = all_data[k][0]
+            h = all_data[k]
             await upd_hero_db(async_session, h)
             await delete_hero_weapon_db(async_session, h)
             await delete_hero_armor_db(async_session, h)
@@ -957,7 +967,7 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             hero.drone.name = msg_txt.replace("/name_drone", "")
     elif "/online" == msg_txt:
         for h in all_data:
-            hero_h = all_data[h][0]
+            hero_h = all_data[h]
             if hero_h.id != hero.id:
                 data += f"{hero_h.get_name()} {hero_h.km}\n"
     elif "/band" == msg_txt:
@@ -971,9 +981,9 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     elif msg_txt.startswith("/msgall"):
         msg = msg_txt.replace("/msgall", "")
         for h in all_data:
-            hero_h = all_data[h][0]
+            hero_h = all_data[h]
             if hero_h.id != hero.id:
-                chat = all_data[h][1]
+                chat = all_data[h].ef_chat
                 await chat.send_message(msg)
     # elif "/cheatgg" in msg_txt:
     #     x = int(msg_txt.replace("/cheatgg", ""))
@@ -993,6 +1003,59 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         data = hero.stock.print_stuff(1)
     elif msg_txt == "/buff":
         data = hero.stock.print_stuff(2)
+    elif msg_txt == "/boss":
+        cnt_boss = 0
+        for h in all_data:
+            hero_h = all_data[h]
+            if hero_h.go_boss:
+                cnt_boss += 1
+        await update.message.reply_text(f"записано на босса {cnt_boss}")
+
+    elif msg_txt == "/startboss":
+        cnt_boss = 0
+        list_heroes = []
+        for h in all_data:
+            hero_h = all_data[h]
+            if hero_h.go_boss:
+                cnt_boss += 1
+                list_heroes.append(hero_h)
+        Hero.attack_boss(list_heroes, list_boss[0])
+
+        str_heroes = "\n"
+        for i in range(0, len(list_heroes)):
+            if list_heroes[i].hp <= 0:
+                str_heroes += f"💀{list_heroes[i].name}\n"
+            else:
+                str_heroes += f"🏆{list_heroes[i].name}\n"
+
+        for i in range(0, len(list_heroes)):
+            if list_heroes[i].hp <= 0:
+                list_heroes[i].died_hero()
+                await list_heroes[i].ef_chat.send_message(list_heroes[i].text_out_boss + str_heroes, reply_markup=menu_camp())
+            else:
+                await list_heroes[i].ef_chat.send_message(list_heroes[i].text_out_boss + str_heroes)
+
+
+    elif msg_txt == "/goboss" and hero.km == 31 and hero.zone == 1:
+        cnt_boss = 0
+        list_heroes = []
+        for h in all_data:
+            hero_h = all_data[h]
+            if hero_h.id != hero.id and hero_h.go_boss:
+                cnt_boss += 1
+                list_heroes.append(hero_h)
+        if cnt_boss == 4:
+            list_heroes.append(hero)
+            Hero.attack_boss(list_heroes, list_boss[0])
+            for i in range(0, len(list_heroes)):
+                if list_heroes[i].hp <=0:
+                    list_heroes[i].died_hero()
+                await list_heroes[i].ef_chat.send_message(list_heroes[i].text_out_boss)
+        else:
+            hero.go_boss = True
+            await update.message.reply_text("вы записались на босса")
+
+
     elif "/ustf_" in msg_txt:
         code = msg_txt.replace("/ustf_", "")
         if len(code) > 100:
@@ -1148,7 +1211,7 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     elif msg_txt.startswith("/add_band") and hero.km == 27 and hero.zone <= 1:
         iduser = int(msg_txt.replace("/add_band", ""))
         for h in all_data:
-            hero_h = all_data[h][0]
+            hero_h = all_data[h]
             if hero_h.all_km == iduser and (hero_h.band_name == None or hero_h.band_name == ""):
                 hero_h.band_name = hero.band_name
                 data = f"вы взяли игрока{hero_h.get_name()} в банду {hero.band_name}!!"

@@ -166,11 +166,11 @@ def menu_pvp() -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("🔪Напасть"),
-            InlineKeyboardButton("🔎Осмотреться"),
+            InlineKeyboardButton("👣Идти дaльше"),
         ],
         [
+            InlineKeyboardButton("🔎Осмотреться"),
             InlineKeyboardButton("⛺️В лагерь"),
-            InlineKeyboardButton("👣Идти дaльше"),
         ]
     ]
 

@@ -472,7 +472,7 @@ list_mobs90 = [
 ]
 
 list_boss = [
-    Mob(name='Некрогигант', hp=5000, attack=200, dexterity=50, luck=120, accuracy=1000, coins=400),
+    Mob(name='Некрогигант', hp=3500, attack=200, dexterity=50, luck=120, accuracy=1000, coins=400),
 ]
 
 list_mobs = [list_mobs1_5, list_mobs5_10,
