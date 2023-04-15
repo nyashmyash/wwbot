@@ -89,8 +89,8 @@ async def get_hero(update):
             hero.coins = 1000
             hero.perks = "000000"
             await add_hero_db(async_session, hero)
-            await add_hero_armor_db(async_session, h)
-            await add_hero_weapon_db(async_session, h)
+            await add_hero_armor_db(async_session, hero)
+            await add_hero_weapon_db(async_session, hero)
 
         else:
             hero_db = db_hero_fetch[0]
@@ -536,7 +536,9 @@ async def msgs_in_camp(update: Update, msg_txt:str, hero: Hero) -> None:
 async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     hero = await get_hero(update)
     msg_txt = update.message.text
-
+    out = ""
+    pvp = False
+    pvp_end = False
     if hero.band_name == "введите имя банды":
         if len(msg_txt) < 5:
             await update.message.reply_text(f"название банды должно быть больше 5 символов - {msg_txt}", reply_markup=menu_go())
@@ -569,24 +571,24 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                         hdr2 = f"Сражение с {hero_h.get_name()}\n"
                         if hero_h.hp <= 0:
                             hero_h.died_hero()  # -10%
-                            hero_h.coins -= round(hero_h.coins * (0.1 + hero.get_module(6) / 100))
-                            hero.coins += round(hero_h.coins * (0.09 + hero.get_module(6) / 100))
-                            await update.message.reply_text(hdr2 + out +
-                                                            f"Вы выиграли!!!\n получено: 🕳 {round(hero_h.coins * 0.09)}",
-                                                            reply_markup=menu_go())
+                            hero_h.coins -= round(hero_h.coins * (0.25 + hero.get_module(6) / 100))
+                            hero.coins += round(hero_h.coins * (0.23 + hero.get_module(6) / 100))
                             await chat.send_message(hdr1 + out +
-                                                    f"Вы проиграли:((((\n потеряно: 🕳 {round(hero_h.coins * 0.1)}",
+                                                    f"Вы проиграли:((((\n потеряно: 🕳 {round(hero_h.coins * 0.25)}",
                                                     reply_markup=menu_camp())
+                            await update.message.reply_text(hdr2 + out +f"Вы выиграли!!!\n получено: 🕳 {round(hero_h.coins * 0.23)}")
+                            pvp_end = True
                         if hero.hp <= 0:
                             hero.died_hero()
-                            hero.coins -= round(hero.coins * (0.1 + hero_h.get_module(6) / 100))
-                            hero_h.coins += round(hero.coins * (0.09 + hero_h.get_module(6) / 100))
+                            hero.coins -= round(hero.coins * (0.25 + hero_h.get_module(6) / 100))
+                            hero_h.coins += round(hero.coins * (0.23 + hero_h.get_module(6) / 100))
                             await update.message.reply_text(hdr2 + out +
-                                                            f"Вы лузер!!!!\n потеряно: 🕳 {round(hero.coins * 0.1)}",
+                                                            f"Вы лузер!!!!\n потеряно: 🕳 {round(hero.coins * 0.25)}",
                                                             reply_markup=menu_camp())
                             await chat.send_message(
-                                hdr1 + out + f"Вы выиграли!!!\n получено: 🕳 {round(hero.coins * 0.09)}",
-                                reply_markup=menu_go())
+                                hdr1 + out + f"Вы выиграли!!!\n получено: 🕳 {round(hero.coins * 0.23)}")
+                        out = ""
+
                         break
                 if not fight:
                     await update.message.reply_text("противник ушел")
@@ -614,12 +616,25 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 if hero.mob_fight:
                     await update.message.reply_text(
                         header + "вы отправились в блядский цирк, вернуться в лагерь нельзя")
-                    # await update.message.reply_text(f"на вас напал моб {hero.mob_fight.name}",
-                    #                                 reply_markup=menu_attack())
                 else:
                     await update.message.reply_text(
                         header + "вы отправились в блядский цирк, вернуться в лагерь нельзя",
                         reply_markup=menu_go_dead())
+
+            if msg_txt == "🔪️painkiller🔪️" and hero.km == 47:
+                hero.zone = 4
+                hero.go()
+                header = hero.make_header()
+                hero.select_mob()
+                if hero.mob_fight:
+                    await update.message.reply_text(
+                        header + "вы отправились в 🔪️painkiller🔪️ зону, вернуться в лагерь нельзя")
+                else:
+                    await update.message.reply_text(
+                        header + "вы отправились в 🔪️painkiller🔪️ зону, вернуться в лагерь нельзя",
+                        reply_markup=menu_go_dead())
+
+
 
         if msg_txt == "🔥Зайти в данж" and hero.km in danges.keys() and hero.in_dange == 0:
             hero.mob_fight = danges[hero.km][0]
@@ -632,9 +647,12 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             await update.message.reply_text(header + f"на вас напал моб {hero.mob_fight.get_name()}",
                                             reply_markup=menu_attack())
         elif not hero.mob_fight and msg_txt == "⛺️В лагерь":
-            if hero.zone ==2 or hero.zone == 3:
+            if hero.zone >= 2:
                 await update.message.reply_text("☠☠в лагерь нельзя☠☠", reply_markup=menu_go_dead())
             else:
+                if hero.get_module(7):
+                    if hero.hp > hero.max_hp:
+                        hero.hp = hero.max_hp
                 hero.km = 0
                 await update.message.reply_text(hero.return_data(), reply_markup=menu_camp())
         elif msg_txt == "📟Пип-бой":
@@ -728,6 +746,10 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             if hero.km == 44 and hero.zone == 3:
                 hero.zone = 1
                 await update.message.reply_text("Вы покинули блядский цирк")
+
+            if hero.km == 59 and hero.zone == 4:
+                hero.zone = 1
+                await update.message.reply_text("Вы покинули painkiller zone")
             hero.go()
             if hero.hungry < 100:
                 if not hero.zone:
@@ -757,7 +779,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                         hero.stock.add_stuff(rkey)
                     if hero.zone <= 1:
                         await update.message.reply_text(header + text_go, reply_markup=menu_go())
-                    elif hero.zone == 2 or hero.zone == 3:
+                    elif hero.zone >= 2:
                         await update.message.reply_text(header + text_go, reply_markup=menu_go_dead())
 
             else:
@@ -805,7 +827,6 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         return
 
     logger.info(update.effective_chat.first_name + f"  {msg_txt}  {hero.km}km")
-
     if not hero.mob_fight:
         if hero.in_dange == 0:
             if hero.km != 0 or msg_txt == "🔎Осмотреться":
@@ -820,32 +841,42 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                             out += f"{hero_h.get_name()}  /add_band{hero_h.all_km}\n"
 
                 if out != "":
+                    pvp = True
                     out = "возле вас игроки:\n" + out
                     if hero.km != 0:
                         if hero.zone >= 1:
-                            if hero.km!=27:
-                                await update.message.reply_text(out, reply_markup=menu_pvp())
-                            else:
+                            if hero.km==27:
                                 await update.message.reply_text(out, reply_markup=menu_go())
-                        elif hero.zone == 0:
-                            await update.message.reply_text(out, reply_markup=menu_go())
+                                return
+                        if hero.zone == 0:
+                            pvp = False
+                        await update.message.reply_text(out, reply_markup=menu_go(pvp))
                     else:
                         await update.message.reply_text(out, reply_markup=menu_camp())
+                        return
+                else:
+                    pvp = False
+
+
 
         if hero.km in danges.keys() and hero.in_dange == 0 and hero.zone == 0:
             await update.message.reply_text("Перед вами вход в пещеру", reply_markup=menu_dange())
             return
 
         if hero.km == 30 and hero.zone == 1:
-            await update.message.reply_text(f"Можно изучить дзен, всего заполнено 🕳{hero.get_in_dzen()}\nПоместить крышки в дзен /dzen", reply_markup=menu_go())
+            await update.message.reply_text(f"Можно изучить дзен, всего заполнено 🕳{hero.get_in_dzen()}\nПоместить крышки в дзен /dzen", reply_markup=menu_go(pvp))
             return
 
         if hero.km == 20 and hero.zone == 1:
-            await update.message.reply_text("Можно войти в пустошь смерти", reply_markup=menu_dead())
+            await update.message.reply_text("Можно войти в пустошь смерти", reply_markup=menu_dead(pvp))
             return
 
         if hero.km == 33 and hero.zone == 1:
-            await update.message.reply_text("Можно войти в пустошь где жизнь это цирк🤡🤡🤡", reply_markup=menu_clown())
+            await update.message.reply_text("Можно войти в пустошь где жизнь это цирк🤡🤡🤡", reply_markup=menu_clown(pvp))
+            return
+
+        if hero.km == 47 and hero.zone == 1:
+            await update.message.reply_text("Можно войти в пустошь painkiller🔪", reply_markup=menu_painkiller(pvp))
             return
 
         if hero.km == 27 and hero.zone <= 1:
@@ -853,20 +884,51 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             return
 
         if hero.km == 52:
-            await update.message.reply_text("Можно отдохнуть /deeprest", reply_markup=menu_go())
+            await update.message.reply_text("Можно отдохнуть /deeprest", reply_markup=menu_go(pvp))
             return
 
-        if hero.km == 31 and hero.zone == 1:
+        if (hero.km == 31 or hero.km == 16) and hero.zone == 1:
             await update.message.reply_text("Можно записаться на босса, если у вас больше 100 брони она будет "
                                             "приведена к 100, если больше 400 хп "
-                                            "броня приравнивается к 0. Всего игроков 5. удачи))))\n/goboss", reply_markup=menu_go())
+                                            "броня приравнивается к 0. Всего игроков 5. удачи))))\n/goboss", reply_markup=menu_go(pvp))
             return
 
         if hero.km in rad_zones and hero.zone in [0, 1]:
             if hero.zone == 1:
-                await update.message.reply_text("Можно выйти из радиоактивной пустоши", reply_markup=menu_rad_quit())
+                await update.message.reply_text("Можно выйти из радиоактивной пустоши", reply_markup=menu_rad_quit(pvp))
             else:
-                await update.message.reply_text("Можно войти в радиактивную пустошь", reply_markup=menu_rad())
+                await update.message.reply_text("Можно войти в радиактивную пустошь", reply_markup=menu_rad(pvp))
+            return
+
+        if pvp_end and out == "":
+            await update.message.reply_text("вы в пустоши", reply_markup=menu_go())
+
+
+
+async def boss_fight(boss_id: int = 0) -> None:
+    if not boss_id:
+        return
+    list_heroes = []
+    for h in all_data:
+        hero_h = all_data[h]
+        if hero_h.go_boss == boss_id:
+            list_heroes.append(hero_h)
+    Hero.attack_boss(list_heroes, list_boss[boss_id-1], boss_id=boss_id)
+
+    str_heroes = "\n"
+    for i in range(0, len(list_heroes)):
+        if list_heroes[i].hp <= 0:
+            str_heroes += f"💀{list_heroes[i].name}\n"
+        else:
+            str_heroes += f"🏆{list_heroes[i].name}\n"
+
+    for i in range(0, len(list_heroes)):
+        if list_heroes[i].hp <= 0:
+            list_heroes[i].died_hero()
+            await list_heroes[i].ef_chat.send_message(list_heroes[i].text_out_boss + str_heroes,
+                                                      reply_markup=menu_camp())
+        else:
+            await list_heroes[i].ef_chat.send_message(list_heroes[i].text_out_boss + str_heroes)
 
 
 async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -1007,53 +1069,36 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         cnt_boss = 0
         for h in all_data:
             hero_h = all_data[h]
-            if hero_h.go_boss:
+            if hero.go_boss and hero_h.go_boss == hero.go_boss:
                 cnt_boss += 1
-        await update.message.reply_text(f"записано на босса {cnt_boss}")
+        if cnt_boss:
+            await update.message.reply_text(f"записано на босса {list_boss[hero.go_boss-1].name} {cnt_boss}")
+        else:
+            await update.message.reply_text(f"никого нет на босса")
 
     elif msg_txt == "/startboss":
-        cnt_boss = 0
-        list_heroes = []
-        for h in all_data:
-            hero_h = all_data[h]
-            if hero_h.go_boss:
-                cnt_boss += 1
-                list_heroes.append(hero_h)
-        Hero.attack_boss(list_heroes, list_boss[0])
-
-        str_heroes = "\n"
-        for i in range(0, len(list_heroes)):
-            if list_heroes[i].hp <= 0:
-                str_heroes += f"💀{list_heroes[i].name}\n"
-            else:
-                str_heroes += f"🏆{list_heroes[i].name}\n"
-
-        for i in range(0, len(list_heroes)):
-            if list_heroes[i].hp <= 0:
-                list_heroes[i].died_hero()
-                await list_heroes[i].ef_chat.send_message(list_heroes[i].text_out_boss + str_heroes, reply_markup=menu_camp())
-            else:
-                await list_heroes[i].ef_chat.send_message(list_heroes[i].text_out_boss + str_heroes)
-
-
-    elif msg_txt == "/goboss" and hero.km == 31 and hero.zone == 1:
-        cnt_boss = 0
-        list_heroes = []
-        for h in all_data:
-            hero_h = all_data[h]
-            if hero_h.id != hero.id and hero_h.go_boss:
-                cnt_boss += 1
-                list_heroes.append(hero_h)
-        if cnt_boss == 4:
-            list_heroes.append(hero)
-            Hero.attack_boss(list_heroes, list_boss[0])
-            for i in range(0, len(list_heroes)):
-                if list_heroes[i].hp <=0:
-                    list_heroes[i].died_hero()
-                await list_heroes[i].ef_chat.send_message(list_heroes[i].text_out_boss)
+        if hero.go_boss:
+            await boss_fight(hero.go_boss)
         else:
-            hero.go_boss = True
-            await update.message.reply_text("вы записались на босса")
+            await update.message.reply_text(f"никого нет на босса")
+
+    elif msg_txt == "/goboss" and (hero.km == 31 or hero.km == 16) and hero.zone == 1:
+        if not hero.go_boss:
+            if hero.km == 16:
+                hero.go_boss = 2
+            if hero.km == 31:
+                hero.go_boss = 1
+            cnt_boss = 0
+            for h in all_data:
+                hero_h = all_data[h]
+                if hero_h.go_boss == hero.go_boss:
+                    cnt_boss += 1
+            if cnt_boss == 5:
+                await boss_fight(hero.go_boss)
+            else:
+                await update.message.reply_text("вы записались на босса")
+        else:
+            await update.message.reply_text("уже записаны на босса")
 
 
     elif "/ustf_" in msg_txt:

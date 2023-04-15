@@ -1,13 +1,13 @@
 import random
 
 
-text_att_mob =["ебнул по яйцам",
+text_att_mob =["противник ебнул по яйцам",
                "мерзкое существо хуйнуло в глаз",
                "брызнул слизью",
                "монстр метко дал в печень",
                "уворачиваясь, тварь ударила в живот",
                "атака монстра достигла героя",
-               "жахнула по голове очень больно",
+               "мразота жахнула по голове очень больно",
                "монстр неожиданно подкрался и ударил",
                "злобное существо укусило",
                "монстр вгрызся в плоть",
@@ -37,8 +37,9 @@ class Mob:
     coins = 20
     materials = 40
     CNT_LOG = 10
+    km = 0
 
-    def __init__(self, name: str, hp: int, attack: int, dexterity: int, luck: int, accuracy: int, coins: int):
+    def __init__(self, name: str, hp: int, attack: int, dexterity: int, luck: int, accuracy: int, coins: int, km: int = 0):
         self.name = name
         self.hp = hp
         self.attack = attack
@@ -46,6 +47,7 @@ class Mob:
         self.luck = luck
         self.accuracy = accuracy
         self.coins = coins
+        self.km = km
 
     def get_name(self) -> str:
         return self.name
@@ -227,6 +229,40 @@ list_mob_clown_zone = [
     Mob(name='🎅🏻️Карабас-барабас (отпиздит тебя плеткой⭐️⭐️)', hp=1500, attack=600, dexterity=720, luck=320,
         accuracy=320, coins=210)
 ]
+
+list_mob_painkiller_zone = [
+    Mob(name='🏍Адский байкер 🏵🏵', hp=750, attack=425, dexterity=620, luck=320, accuracy=320, coins=210),
+    Mob(name='😷Прокаженный 🏵🏵', hp=750, attack=425, dexterity=620, luck=320, accuracy=320, coins=210),
+    Mob(name='👩‍🦽Ампутант 🏵🏵', hp=750, attack=425, dexterity=620, luck=320, accuracy=320, coins=210),
+    Mob(name='🐶Анубис 🏵🏵', hp=900, attack=480, dexterity=630, luck=320, accuracy=320, coins=210),
+    Mob(name='🦾Биомеханоид ⭐️', hp=900, attack=480, dexterity=620, luck=320, accuracy=320, coins=210),
+    Mob(name='😇Ангел ада ⭐️', hp=1000, attack=550, dexterity=620, luck=320, accuracy=320,
+        coins=210),
+    Mob(name='🏴‍☠️Пират ⭐️', hp=1000, attack=550, dexterity=620, luck=320, accuracy=320,
+        coins=210),
+    Mob(name='🤯Пожиратель мозгов ⭐️⭐️', hp=1300, attack=590, dexterity=620, luck=320, accuracy=320, coins=310),
+    Mob(name='🧑‍🦽Безногий урод ⭐️⭐️', hp=1300, attack=590, dexterity=620, luck=320, accuracy=320, coins=310),
+    Mob(name='🧛Архивампир ⭐️⭐️', hp=1500, attack=600, dexterity=620, luck=320, accuracy=320, coins=310),
+    Mob(name='😈Черный демон ⭐️⭐️' , hp=1500, attack=680, dexterity=720, luck=320,
+        accuracy=320, coins=310),
+    Mob(name='💀Череп ⭐️⭐️', hp=1500, attack=680, dexterity=720, luck=320,
+        accuracy=320, coins=310),
+    Mob(name='🔪Палач 🌟', hp=1600, attack=325, dexterity=680, luck=320, accuracy=320, coins=310),
+    Mob(name='🐙Щупальцевый монстр 🌟', hp=1600, attack=680, dexterity=720, luck=320,
+        accuracy=320, coins=310),
+    Mob(name='🤪Безумный культист 🌟', hp=1700, attack=680, dexterity=720, luck=320,
+        accuracy=320, coins=310),
+    Mob(name='👹Панцирный демон 🌟', hp=1700, attack=680, dexterity=720, luck=320,
+        accuracy=320, coins=410),
+    Mob(name='👺Магмовый демон 🌟', hp=1800, attack=750, dexterity=720, luck=320,
+        accuracy=320, coins=410),
+    Mob(name='🧛Колоссальный вампир 🌟🌟', hp=2000, attack=850, dexterity=720, luck=320,
+        accuracy=320, coins=410)
+
+]
+
+
+
 
 list_mobs1_5 = [
     Mob(name='🐶крысакот (любопытный)', hp=1, attack=2, dexterity=5, luck=5, accuracy=5, coins=20),
@@ -472,7 +508,8 @@ list_mobs90 = [
 ]
 
 list_boss = [
-    Mob(name='Некрогигант', hp=3500, attack=200, dexterity=50, luck=120, accuracy=1000, coins=400),
+    Mob(name='Некрогигант', hp=3500, attack=200, dexterity=50, luck=120, accuracy=1000, coins=400, km=31),
+    Mob(name='Мрачный жнец', hp=3000, attack=170, dexterity=50, luck=120, accuracy=1000, coins=400, km=16),
 ]
 
 list_mobs = [list_mobs1_5, list_mobs5_10,

@@ -15,7 +15,7 @@ def menu_go_dange():
     return reply_markup
 
 
-def menu_rad() -> ReplyKeyboardMarkup:
+def menu_rad(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("👣☢Рад-️Пустошь"),
@@ -27,12 +27,13 @@ def menu_rad() -> ReplyKeyboardMarkup:
             InlineKeyboardButton("👣Идти дaльше"),
         ]
     ]
-
+    if add_fight:
+        keyboard[0].insert(0, InlineKeyboardButton("🔪Напасть"))
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     return reply_markup
 
 
-def menu_clown() -> ReplyKeyboardMarkup:
+def menu_clown(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("👣️🎪 Зайти в блядский цирк🎪 ️"),
@@ -44,12 +45,33 @@ def menu_clown() -> ReplyKeyboardMarkup:
             InlineKeyboardButton("👣Идти дaльше"),
         ]
     ]
+    if add_fight:
+        keyboard[0].insert(0, InlineKeyboardButton("🔪Напасть"))
 
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     return reply_markup
 
 
-def menu_dead() -> ReplyKeyboardMarkup:
+def menu_painkiller(add_fight: bool = False) -> ReplyKeyboardMarkup:
+    keyboard = [
+        [
+            InlineKeyboardButton("🔪️painkiller🔪️"),
+            InlineKeyboardButton("🔎Осмотреться"),
+
+        ],
+        [
+            InlineKeyboardButton("⛺️В лагерь"),
+            InlineKeyboardButton("👣Идти дaльше"),
+        ]
+    ]
+    if add_fight:
+        keyboard[0].insert(0, InlineKeyboardButton("🔪Напасть"))
+
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    return reply_markup
+
+
+def menu_dead(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("👣️☠️Пустошь смерти☠️"),
@@ -61,12 +83,13 @@ def menu_dead() -> ReplyKeyboardMarkup:
             InlineKeyboardButton("👣Идти дaльше"),
         ]
     ]
-
+    if add_fight:
+        keyboard[0].insert(0, InlineKeyboardButton("🔪Напасть"))
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     return reply_markup
 
 
-def menu_dange() -> ReplyKeyboardMarkup:
+def menu_dange(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("🔥Зайти в данж"),
@@ -77,12 +100,14 @@ def menu_dange() -> ReplyKeyboardMarkup:
             InlineKeyboardButton("👣Идти дaльше")
         ]
     ]
+    if add_fight:
+        keyboard[0].insert(0, InlineKeyboardButton("🔪Напасть"))
 
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     return reply_markup
 
 
-def menu_rad_quit() -> ReplyKeyboardMarkup:
+def menu_rad_quit(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("☢Покинуть Рад-️Пустошь☢"),
@@ -93,6 +118,8 @@ def menu_rad_quit() -> ReplyKeyboardMarkup:
             InlineKeyboardButton("👣Идти дaльше")
         ]
     ]
+    if add_fight:
+        keyboard[0].insert(0, InlineKeyboardButton("🔪Напасть"))
 
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     return reply_markup
@@ -131,7 +158,7 @@ def menu_attack() -> ReplyKeyboardMarkup:
     return reply_markup
 
 
-def menu_go() -> ReplyKeyboardMarkup:
+def menu_go(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("📟Пип-бой"),
@@ -142,6 +169,8 @@ def menu_go() -> ReplyKeyboardMarkup:
             InlineKeyboardButton("⛺️В лагерь")
         ]
     ]
+    if add_fight:
+        keyboard[0].insert(0, InlineKeyboardButton("🔪Напасть"))
 
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     return reply_markup

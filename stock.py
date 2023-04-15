@@ -89,12 +89,13 @@ class Stock:
             hp = used_items[code].get("hp", 0)
             hero.hp += hp
             force = dex = luck = accur = 0
-            if code // 100 != 1:
+            if code // 100 == 2:
                 force = used_items[code].get("force", 0)
                 dex = used_items[code].get("dexterity", 0)
                 luck = used_items[code].get("luck", 0)
                 accur = used_items[code].get("accuracy", 0)
                 hero.km_buff = used_items[code].get("km", 0)
+            if code // 100 == 3:
                 hero.km_heal = used_items[code].get("km_heal", 0)
             outstr = ""
             if hun:
