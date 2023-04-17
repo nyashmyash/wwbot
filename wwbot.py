@@ -69,6 +69,7 @@ async def get_hero(update):
         stock = Stock()
         hero.stock = stock
         hero.buffs = [0, 0, 0, 0]
+        hero.danges = []
         stock.equip = OrderedDict()
         if not len(db_hero_fetch):
             # for i in range(0, 5):
@@ -174,6 +175,9 @@ rad_zones = [15, 25, 34, 45, 55, 65, 75, 85]
 
 
 async def menu_sel(update: Update, hero: Hero, data_:str) -> None:
+    if hero.km == 0:
+        await update.message.reply_text(data_)
+        return
     if hero.in_dange <= 0:
         if hero.zone <= 1:
             await update.message.reply_text(data_, reply_markup=menu_go())
@@ -637,6 +641,9 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
         if msg_txt == "🔥Зайти в данж" and hero.km in danges.keys() and hero.in_dange == 0:
+            if hero.km in hero.danges:
+                await update.message.reply_text("вы уже были в данже, идите в лагерь")
+                return
             hero.mob_fight = danges[hero.km][0]
             hero.in_dange = 1
             header = hero.make_header()
@@ -654,6 +661,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     if hero.hp > hero.max_hp:
                         hero.hp = hero.max_hp
                 hero.km = 0
+                hero.danges = []
                 await update.message.reply_text(hero.return_data(), reply_markup=menu_camp())
         elif msg_txt == "📟Пип-бой":
             await update.message.reply_text(hero.return_data(), reply_markup=menu_pip())
@@ -739,6 +747,45 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
                 hero.mob_fight = None
 
+        elif msg_txt == "👣Идти к лагерю":
+            if hero.zone > 1:
+                await update.message.reply_text("Нельзя идти тут назад!")
+                return
+            if hero.km <= 1:
+                hero.km = 0
+                await update.message.reply_text(hero.return_data(), reply_markup=menu_camp())
+                return
+            hero.go(True)
+
+            if hero.hungry < 100:
+                if not hero.zone:
+                    hero.hungry += 2
+                else:
+                    hero.hungry += 3
+            else:
+                hero.hp -= round(hero.max_hp / 5)
+            if hero.hungry > 100:
+                hero.hungry = 100
+            if hero.hp > 0:
+                if hero.hungry > 96:
+                    await update.message.reply_text("⭐️⚡вы голодны, скоро начнете умирать⭐️\n/food ⚡")
+                header = hero.make_header()
+                if random.randint(0, 10) > 8:
+                    hero.mob_fight = copy.copy(list_boss[0])
+                    hero.mob_fight.attack = 1000
+                    hero.mob_fight.hp = 4000
+                else:
+                    hero.select_mob()
+                if hero.mob_fight:
+                    await update.message.reply_text(header + f"на вас напал моб {hero.mob_fight.get_name()}",
+                                                    reply_markup=menu_attack())
+                else:
+                    text_go = text_mess_go[random.randint(0, len(text_mess_go)-1)]
+                    await update.message.reply_text(header + text_go, reply_markup=menu_go())
+            else:
+                out = hero.died_hero_mob()
+                await update.message.reply_text("⭐️⚡ты сдох от голода((((⭐️⚡\n" + out, reply_markup=menu_camp())
+
         elif msg_txt == "👣Идти дaльше":
             if hero.km == 34 and hero.zone == 2:
                 hero.zone = 1
@@ -796,6 +843,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             if hero.in_dange >= len(danges[hero.km]):
                 await danges_fin_msg(update, hero)
                 hero.hungry += 2
+                hero.danges.append(hero.km)
             else:
                 mob = hero.mob_fight
                 if mob:
@@ -830,6 +878,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not hero.mob_fight:
         if hero.in_dange == 0:
             if hero.km != 0 or msg_txt == "🔎Осмотреться":
+            #if hero.km != 0:
                 out = ""
                 for h in all_data:
                     hero_h = all_data[h]
@@ -1225,8 +1274,11 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     data = "не хватило денег для покупки"
     elif msg_txt.startswith("/module") and hero.km == 0:
         i_mod = msg_txt.replace("/module", "")
-        if i_mod in list('123456'):
-            data = hero.activate_module(int(i_mod))
+        try:
+            if 0 <= int(i_mod) <= 7:
+                data = hero.activate_module(int(i_mod))
+        except Exception as e:
+            pass
     elif "/buy_dr_1" == msg_txt and hero.km == 0:
         if hero.coins > 200000:
             hero.drone = copy.copy(all_drones[0])

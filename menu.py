@@ -19,12 +19,13 @@ def menu_rad(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("👣☢Рад-️Пустошь"),
-            InlineKeyboardButton("🔎Осмотреться"),
+            InlineKeyboardButton("👣Идти дaльше"),
 
         ],
         [
+            InlineKeyboardButton("👣Идти к лагерю"),
             InlineKeyboardButton("⛺️В лагерь"),
-            InlineKeyboardButton("👣Идти дaльше"),
+            InlineKeyboardButton("📟Пип-бой"),
         ]
     ]
     if add_fight:
@@ -37,12 +38,12 @@ def menu_clown(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("👣️🎪 Зайти в блядский цирк🎪 ️"),
-            InlineKeyboardButton("🔎Осмотреться"),
-
+            InlineKeyboardButton("👣Идти дaльше"),
         ],
         [
+            InlineKeyboardButton("👣Идти к лагерю"),
             InlineKeyboardButton("⛺️В лагерь"),
-            InlineKeyboardButton("👣Идти дaльше"),
+            InlineKeyboardButton("📟Пип-бой"),
         ]
     ]
     if add_fight:
@@ -56,12 +57,12 @@ def menu_painkiller(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("🔪️painkiller🔪️"),
-            InlineKeyboardButton("🔎Осмотреться"),
-
+            InlineKeyboardButton("👣Идти дaльше"),
         ],
         [
+            InlineKeyboardButton("👣Идти к лагерю"),
             InlineKeyboardButton("⛺️В лагерь"),
-            InlineKeyboardButton("👣Идти дaльше"),
+            InlineKeyboardButton("📟Пип-бой"),
         ]
     ]
     if add_fight:
@@ -75,12 +76,12 @@ def menu_dead(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("👣️☠️Пустошь смерти☠️"),
-            InlineKeyboardButton("🔎Осмотреться"),
-
+            InlineKeyboardButton("👣Идти дaльше"),
         ],
         [
+            InlineKeyboardButton("👣Идти к лагерю"),
             InlineKeyboardButton("⛺️В лагерь"),
-            InlineKeyboardButton("👣Идти дaльше"),
+            InlineKeyboardButton("📟Пип-бой"),
         ]
     ]
     if add_fight:
@@ -93,11 +94,12 @@ def menu_dange(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("🔥Зайти в данж"),
-            InlineKeyboardButton("🔎Осмотреться"),
+            InlineKeyboardButton("👣Идти дaльше")
         ],
         [
+            InlineKeyboardButton("👣Идти к лагерю"),
             InlineKeyboardButton("⛺️В лагерь"),
-            InlineKeyboardButton("👣Идти дaльше")
+            InlineKeyboardButton("📟Пип-бой")
         ]
     ]
     if add_fight:
@@ -111,11 +113,12 @@ def menu_rad_quit(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("☢Покинуть Рад-️Пустошь☢"),
-            InlineKeyboardButton("🔎Осмотреться"),
+            InlineKeyboardButton("👣Идти дaльше")
         ],
         [
+            InlineKeyboardButton("👣Идти к лагерю"),
             InlineKeyboardButton("⛺️В лагерь"),
-            InlineKeyboardButton("👣Идти дaльше")
+            InlineKeyboardButton("📟Пип-бой"),
         ]
     ]
     if add_fight:
@@ -150,7 +153,7 @@ def menu_attack() -> ReplyKeyboardMarkup:
 
         ],
         [
-            InlineKeyboardButton("🔎Осмотреться")
+            InlineKeyboardButton("📟Пип-бой")
         ]
     ]
 
@@ -165,7 +168,8 @@ def menu_go(add_fight: bool = False) -> ReplyKeyboardMarkup:
             InlineKeyboardButton("👣Идти дaльше"),
         ],
         [
-            InlineKeyboardButton("🔎Осмотреться"),
+            #InlineKeyboardButton("🔎Осмотреться"),
+            InlineKeyboardButton("👣Идти к лагерю"),
             InlineKeyboardButton("⛺️В лагерь")
         ]
     ]
@@ -198,7 +202,8 @@ def menu_pvp() -> ReplyKeyboardMarkup:
             InlineKeyboardButton("👣Идти дaльше"),
         ],
         [
-            InlineKeyboardButton("🔎Осмотреться"),
+            InlineKeyboardButton("📟Пип-бой"),
+            InlineKeyboardButton("👣Идти к лагерю"),
             InlineKeyboardButton("⛺️В лагерь"),
         ]
     ]

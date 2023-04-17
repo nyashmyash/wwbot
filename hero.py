@@ -189,9 +189,15 @@ class Hero:
     text_out_boss = ""
     go_boss = 0
     ef_chat = None
+    danges = None
 
-    def go(self) -> None:
-        self.km += 1
+    def go(self, reverse=False) -> None:
+        if reverse:
+            if self.km < 1:
+                return
+            self.km -= 1
+        else:
+            self.km += 1
         self.all_km += 1
 
         if self.km_heal > 0:
@@ -402,7 +408,7 @@ class Hero:
     def return_data(self) -> str:
         data = """
         👤{0} {21}
-        ├ 🤟{22}
+        ├ 🤟{22}       умения /perks
         ├ ❤ {1}/{2}  🍗{14}% | ⚔️{15} | 🛡 {16} 
         ├ 👣{17}
         ├ 💪{3} | 🤸🏽‍♂️{4} | 🗣{5} 
@@ -490,7 +496,9 @@ class Hero:
             if self.zone == 3:
                 self.sel_mob_from_zone(list_mob_clown_zone)
             elif self.zone == 4:
-                self.sel_mob_from_zone(list_mob_painkiller_zone)
+                #self.sel_mob_from_zone(list_mob_painkiller_zone)
+                i = random.randint(0, len(list_mob_painkiller_zone) - 1)
+                self.mob_fight = copy.copy(list_mob_painkiller_zone[i])
             else:
                 k = self.km // 5
                 if k >= len(list_mobs):
@@ -881,6 +889,7 @@ class Hero:
         self.hp = 1
         self.zone = 0
         self.mob_fight = None
+        self.danges = []
 
     def log_hit(self, texts_list) -> str:
         return texts_list[random.randint(0, len(texts_list) - 1)]
@@ -970,7 +979,7 @@ class Hero:
         return out
 
     def attack_player(self, hero: object) -> str:
-        out = ""
+        out = "\n"
         self.arm_clc = self.calc_armor(True)
         hero.arm_clc = hero.calc_armor(True)
         cnt_attack = 0
