@@ -1,5 +1,5 @@
 from db.models import WeaponDB
-
+from stock import used_items
 
 class Weapon:
     name = ""
@@ -11,6 +11,7 @@ class Weapon:
     z = 0
     upgrade_lvl = 0
     use = 0
+    mod = 0
 
     def __init__(self, name, dmg, life=500, max_life=500, cost=0, mats=0):
         self.name = name
@@ -23,17 +24,28 @@ class Weapon:
     def get_data_drop(self) -> str:
         return self.get_data("drw_")
 
+    def dmg_mod(self):
+        mod = ""
+        if self.mod:
+            mod = "+" + str(used_items[self.mod].get("damage"))
+        return mod
+
     def get_data(self, code="eqw_") -> str:
-        out = f"▪️ {self.get_name()} ⚡️{self.dmg} 🔧{round(100 * self.life / self.max_life)} % /{code}{self.dmg}z{self.z}"
+
+        out = f"▪️ {self.get_name()} ⚡️{self.dmg}{self.dmg_mod()} 🔧{round(100 * self.life / self.max_life)} % /{code}{self.dmg}z{self.z}"
+        return out
+
+    def get_data_mod(self, mod=100) -> str:
+        out = f"▪️ {self.get_name()} ⚡️{self.dmg} 🔧{round(100 * self.life / self.max_life)} % /mod_{self.dmg}z{self.z}m{mod}"
         return out
 
     def get_data_cost(self) -> str:
-        out = f"▪️ {self.get_name()} ⚡️{self.dmg} 🔧{round(100 * self.life / self.max_life)} % 📦 {self.calc_cost()} /sw_{self.dmg}z{self.z}"
+        out = f"▪️ {self.get_name()} ⚡️{self.dmg_mod()} 🔧{round(100 * self.life / self.max_life)} % 📦 {self.calc_cost()} /sw_{self.dmg}z{self.z}"
 
         return out
 
     def get_buy(self) -> str:
-        out = f"▪️ {self.get_name()} ⚡️{self.dmg} 🕳{self.calc_cost()} /bw_{self.dmg}"
+        out = f"▪️ {self.get_name()} ⚡{self.dmg_mod()} 🕳{self.calc_cost()} /bw_{self.dmg}"
         return out
 
     def calc_cost(self) -> int:
@@ -43,17 +55,19 @@ class Weapon:
             return round(self.cost * self.life / self.max_life)
 
     def get_data_hero(self) -> str:
-        out = f"▪️ {self.get_name()} ⚡️{self.dmg} 🔧{round(100 * self.life / self.max_life)} %"
+        out = f"▪️ {self.get_name()} ⚡️{self.dmg}{self.dmg_mod()} 🔧{round(100 * self.life / self.max_life)} %"
         return out
 
     def get_name(self) -> str:
+        if self.mod:
+            return self.name + "*"
         return self.name
 
     def get_code(self) -> str:
         return f"{self.dmg}z{self.z}"
 
     def to_db(self) -> WeaponDB:
-        return WeaponDB(code=self.get_code(), use=self.use, life=self.life, max_life=self.max_life)
+        return WeaponDB(code=self.get_code(), use=self.use, life=self.life, max_life=self.max_life, mod=self.mod)
 
     def from_db(self, weapon_db) -> None:
         self.life = weapon_db.life
@@ -61,6 +75,7 @@ class Weapon:
         self.use = weapon_db.use
         self.z = int(weapon_db.code.split('z')[1])
         self.dmg = int(weapon_db.code.split('z')[0])
+        self.mod = weapon_db.mod
 
 
 weapons_all = [Weapon("бита", 1, cost=100),  # титановый арбалет, лазерный лук, секира плазмы
@@ -84,7 +99,7 @@ weapons_all = [Weapon("бита", 1, cost=100),  # титановый арбал
                Weapon("🌪лазерное торнадо", 650, life=2000, max_life=2000),
                Weapon("🌀черная дыра", 700, life=2000, max_life=2000), #19
                Weapon("🌀пушка тиранид", 850, life=2000, max_life=2000),
-               Weapon("🔪коса смерти", 666, life=1000, max_life=1000),
-               Weapon("🪓клоунский молоток", 456, life=1000, max_life=1000),
+               Weapon("🔪коса смерти", 666, life=1000, max_life=1000), #21
+               Weapon("🪓клоунский молоток", 456, life=1000, max_life=1000), #22
                Weapon("Посох Шао-Кана", 770, life=1000, max_life=1000),
                ]

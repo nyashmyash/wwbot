@@ -5,7 +5,7 @@ import random
 import copy
 from armor import stack_buff, armor_all
 from weapon import weapons_all
-from stock import get_random_item
+from stock import get_random_item, used_items
 from db.models import HeroDB, WeaponDB
 from drone import all_drones, perk_drone_list
 
@@ -224,6 +224,8 @@ class Hero:
         for i in range(0, 3):
             if self.armor[i]:
                 ret += self.armor[i].arm
+            if self.armor[i].mod:
+                ret += used_items[self.armor[i].mod]["armor"]
         if use_perk and self.perks[1]!='0':
             ret *= perk_arm_list[int(self.perks[1])-1]
         return round(ret)
@@ -234,11 +236,19 @@ class Hero:
         if self.armor[0].type_stack == 0:
             return 0
 
+        perks = ["force", "dexterity", "luck", "accuracy"]
+        eff = 0
+        if self.weapon and self.weapon.mod:
+            eff += used_items[self.weapon.mod].get(perks[index], 0)
+        for i in range(0, 3):
+            if self.armor[i] and self.armor[i].mod:
+                eff += used_items[self.armor[i].mod].get(perks[index], 0)
+
         for i in range(1, 3):
             if self.armor[i] and self.armor[0].type_stack != self.armor[i].type_stack:
-                return 0
+                return eff
 
-        return stack_buff[self.armor[0].type_stack - 1][index]
+        return stack_buff[self.armor[0].type_stack - 1][index] + eff
 
     def get_in_dzen(self) -> int:
         return self.dzen - self.get_dzen_lvl() * 500000
@@ -309,7 +319,11 @@ class Hero:
         stack = self.get_stack(i)
         mod = self.get_module(i + 1, val)
 
-        out += "+" + str(stack) if stack else ""
+        if stack > 0:
+            out += "+" + str(stack)
+        elif stack < 0:
+            out += str(stack)
+
         out += "+" + str(mod) if mod else ""
 
         if self.buffs[i]:
@@ -444,10 +458,13 @@ class Hero:
 
     def calc_attack(self, use_force=False) -> int:
         if self.weapon:
+            dmg = self.weapon.dmg
+            if self.weapon.mod:
+                dmg += used_items[self.weapon.mod]["damage"]
             if self.force < 50:
-                return round(self.weapon.dmg + self.get_force(use_force))
+                return round(dmg + self.get_force(use_force))
             else:
-                return round(50 + self.weapon.dmg * pow(1.03, self.get_force(use_force) / 50))
+                return round(50 + dmg * pow(1.03, self.get_force(use_force) / 50))
         else:
             return 1
 
@@ -531,6 +548,9 @@ class Hero:
                 self.mob_fight.coins *= 2
 
             self.mob_fight.hp = round(self.mob_fight.hp * random.uniform(0.85, 1.15))
+            if not self.in_dange and random.randint(0, 20) == 5:
+                self.mob_fight.enfect = True
+                self.mob_fight.name += " 🦠🦠🦠"
 
     def learn_data(self) -> str:
         out = f"🕳Крышки: {round(self.coins)}\n"
@@ -619,7 +639,7 @@ class Hero:
                        self.drone = None
                 if drone_hit == "":
                     if not test:
-                        out += f"❤️ {round(mob.hp)} {mob.get_name()} {self.log_hit(text_att_mob)} {self.get_name()} 💔-{round(dmg)}\n"
+                        out += f"❤️ {round(mob.hp)} {mob.get_name()} {mob.log_hit_mob()} {self.get_name()} 💔-{round(dmg)}\n"
                     self.hp -= dmg
                     if not test:
                         self.get_hit_armor()
@@ -702,6 +722,7 @@ class Hero:
                     if hp_mob <= 0:
                         if cnt_attack > self.CNT_LOG:
                             out += " ......... ....... ....\n"
+                        self.enfect_hero(mob)
                         out += f"{mob.get_name()} повержен\n"
                         return out
             else:
@@ -717,7 +738,7 @@ class Hero:
                         if self.drone.hp <= 0:
                             self.drone = None
                     if drone_hit == "":
-                        out += f"{mob.get_name()} {self.log_hit(text_att_mob)} {self.get_name()} 💔-{round(dmg)}\n"
+                        out += f"{mob.get_name()} {mob.log_hit_mob()} {self.get_name()} 💔-{round(dmg)}\n"
                         self.hp -= dmg
                         self.get_hit_armor()
                     else:
@@ -732,6 +753,18 @@ class Hero:
         self.km = 0
         return out
 
+    def enfect_hero(self, mob: Mob) -> None:
+        if mob.enfect:
+            i = random.randint(0, 3)
+            if i == 0:
+                self.buffs[i] = -self.force // 2
+            elif i == 1:
+                self.buffs[i] = -self.dexterity // 2
+            elif i == 2:
+                self.buffs[i] = -self.luck // 2
+            elif i == 3:
+                self.buffs[i] = -self.accuracy // 2
+            self.km_buff = random.randint(15, 25)
 
     def attack_mob(self, mob: Mob, is_dange=False) -> str:
         out = f"Сражение с {mob.get_name()} ❤{mob.hp}\n"
@@ -780,6 +813,7 @@ class Hero:
                         coins = round(mob.calc_mob_coins(self.km) * (1 + bonus_mod / 100))
                         mats = round(mob.calc_mob_mat(self.km) * (1 + bonus_mod / 100))
                         if not is_dange:
+                            self.enfect_hero(mob)
                             self.coins += coins
                             self.materials += mats
                             bonus_str = f"+{bonus_mod}%" if bonus_mod else ""
@@ -820,22 +854,29 @@ class Hero:
                                 if random.randint(0, 1000) == 555:
                                     out += f"🛰{all_drones[1].get_name()} возле поверженного моба лежал дрон, теперь можно его использовать\n"
                                     self.drone = copy.copy(all_drones[1])
-                            if self.zone == 2:
+                            if self.zone == 2: #death
+                                if random.randint(0, 700) == 199:
+                                    self.stock.add_stuff(400)
+                                    out += f"Вой вой вам выпало кое-что интересное {used_items[400]['name']}"
                                 if random.randint(0, 1000) == 666:
                                     type = random.randint(0, 2)
                                     self.stock.add_item(armor_all[type][13])
                                     out += f"Вой вой вам выпало кое-что интересное {armor_all[type][13].get_name()}"
                                 if random.randint(0, 1000) == 666:
-                                    self.stock.add_item(weapons_all[22])
-                                    out += f"Вой вой вам выпало кое-что интересное {weapons_all[22].get_name()}"
-                            if self.zone == 3:
+                                    self.stock.add_item(weapons_all[21])
+                                    out += f"Вой вой вам выпало кое-что интересное {weapons_all[21].get_name()}"
+                            if self.zone == 3: #clown
                                 if random.randint(0, 1000) == 777:
                                     type = random.randint(0, 2)
                                     self.stock.add_item(armor_all[type][12])
                                     out += f"Вой вой вам выпало кое-что интересное {armor_all[type][12].get_name()}"
                                 if random.randint(0, 1000) == 777:
-                                    self.stock.add_item(weapons_all[21])
-                                    out += f"Вой вой вам выпало кое-что интересное {weapons_all[21].get_name()}"
+                                    self.stock.add_item(weapons_all[22])
+                                    out += f"Вой вой вам выпало кое-что интересное {weapons_all[22].get_name()}"
+                            if self.zone == 4:
+                                if random.randint(0, 700) == 199:
+                                    self.stock.add_stuff(401)
+                                    out += f"Вой вой вам выпало кое-что интересное {used_items[401]['name']}"
 
                         return out
             else:
@@ -856,7 +897,7 @@ class Hero:
                     if drone_hit == "":
                         self.hp -= dmg
                         if cnt_attack < self.CNT_LOG:
-                            out += f"{self.log_hit(text_att_mob)} 💔-{round(dmg)}\n"
+                            out += f"{mob.log_hit_mob()} 💔-{round(dmg)}\n"
                         self.get_hit_armor()
                     else:
                         if cnt_attack < self.CNT_LOG:

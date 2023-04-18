@@ -25,15 +25,24 @@ used_items = {100: {"name": "сырое мясо", "hungry": 30, "hp": 2},
               202: {"name": "водка", "force": 30, "luck": 50, "km": 30},
               203: {"name": "абсент", "force": 50, "luck": 60, "km": 40},
               204: {"name": "урановая настойка", "force": 70, "luck": 60, "km": 50},
-              205: {"name": "стероиды", "dexterity": 50, 'accuracy': 50, "km": 20},
-              206: {"name": "анаболики", "dexterity": 100, 'accuracy': 100, "km": 30},
-              207: {"name": "мельдоний", "dexterity": 150, 'accuracy': 150, "km": 40},
-              300: {"name": "💉Мед-Х", 'hp': 50},
-              301: {"name": "💌Медпак", 'hp': 80},
-              302: {"name": "🧪Стимбласт", 'hp': 120, "km_heal": 3},
-              303: {"name": "🧪Стимбласт+", 'hp': 150, "km_heal": 5},
-
+              205: {"name": "стероиды", "dexterity": 50, "accuracy": 50, "km": 20},
+              206: {"name": "анаболики", "dexterity": 100, "accuracy": 100, "km": 30},
+              207: {"name": "мельдоний", "dexterity": 150, "accuracy": 150, "km": 40},
+              300: {"name": "💉Мед-Х", "hp": 50},
+              301: {"name": "💌Медпак", "hp": 80},
+              302: {"name": "🧪Стимбласт", "hp": 120, "km_heal": 3},
+              303: {"name": "🧪Стимбласт+", "hp": 150, "km_heal": 5},
+              400: {"name": "☢️модификатор ядерный тип А", "damage": 50, "armor": 25, "dexterity": -100,
+                    "accuracy": -100},
+              401: {"name": "⚛️модификатор тритьевый", "damage": 70, "armor": 35, "dexterity": -150, "accuracy": -150},
+              402: {"name": "☢️модификатор ядерный тип Б", "damage": 75, "armor": 45, "dexterity": -170,
+                    "accuracy": -150},
+              403: {"name": "👽модификатор тирранид", "damage": 100, "armor": 60, "dexterity": -200, "accuracy": -200},
+              404: {"name": "☠️модификатор проклятый", "damage": 110, "armor": 65, "luck": -250, "accuracy": -250},
               }
+
+#"force", "dexterity", "luck", "accuracy", "armory", "damage"
+
 
 
 def get_random_item(med: bool = False) -> (int, dict):
@@ -75,6 +84,14 @@ class Stock:
             self.used_stuff[key] += 1
 
     def use_stuff(self, code: int, hero: object) -> str:
+        if code // 100 == 4:
+            stf = self.used_stuff.get(code, None)
+            if stf:
+                out = "Выбери элемент для улучшения:\n"
+                for w in self.equip:
+                    out += self.equip[w].get_data_mod(code) + "\n"
+                return out
+            return
         stf = self.used_stuff.get(code, None)
         if stf:
             if self.used_stuff[code] == 1:
@@ -90,11 +107,14 @@ class Stock:
             hero.hp += hp
             force = dex = luck = accur = 0
             if code // 100 == 2:
+                for i in range(0, len(hero.buffs)):
+                    hero.buffs[i] = 0
                 force = used_items[code].get("force", 0)
                 dex = used_items[code].get("dexterity", 0)
                 luck = used_items[code].get("luck", 0)
                 accur = used_items[code].get("accuracy", 0)
                 hero.km_buff = used_items[code].get("km", 0)
+
             if code // 100 == 3:
                 hero.km_heal = used_items[code].get("km_heal", 0)
             outstr = ""
@@ -126,6 +146,7 @@ class Stock:
         for k in self.used_stuff:
             if k // 100 == code and self.used_stuff[k]:
                 out += f"{used_items[k].get('name')}({self.used_stuff[k]}) /ustf_{k}\n"
+
         if out == "":
             return " пока ничего \n"
         else:
@@ -152,6 +173,7 @@ class Stock:
         out = "🎒СОДЕРЖИМОЕ РЮКЗАКА\n"
         out += "   Полезное\n"
         out += self.print_stuff(3)
+        out += self.print_stuff(4)
         cnt = len(self.equip)
         out += f"Экипировка ({cnt}/{self.MAX_EQUIP})\n"
         for w in self.equip:

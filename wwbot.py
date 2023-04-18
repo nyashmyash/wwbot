@@ -69,6 +69,7 @@ async def get_hero(update):
         stock = Stock()
         hero.stock = stock
         hero.buffs = [0, 0, 0, 0]
+        #hero.debuffs = [0, 0, 0, 0]
         hero.danges = []
         stock.equip = OrderedDict()
         if not len(db_hero_fetch):
@@ -712,6 +713,18 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 res = hero.attack_mob(mob)
                 hero.mob_fight = None
                 if hero.km != 0:
+                    if mob.enfect:
+                        out_eff = ""
+                        if hero.buffs[0] < 0:
+                            out_eff = f"cила {hero.buffs[0]}\n"
+                        if hero.buffs[1] < 0:
+                            out_eff += f"ловкость {hero.buffs[1]}\n"
+                        if hero.buffs[2] < 0:
+                            out_eff += f"удача {hero.buffs[2]}\n"
+                        if hero.buffs[3] < 0:
+                            out_eff += f"точность {hero.buffs[3]}\n"
+
+                        await update.message.reply_text("Внимание! Вы заражены:\n" + out_eff)
                     await menu_sel(update, hero, hero.make_header() + res)
                 else:
                     hero.hp = 1
@@ -833,11 +846,6 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 out = hero.died_hero_mob()
                 await update.message.reply_text("⭐️⚡ты сдох от голода((((⭐️⚡\n" + out, reply_markup=menu_camp())
 
-        elif msg_txt == "⬅️Назад":
-            if hero.km == 0:
-                await update.message.reply_text(hero.return_data(), reply_markup=menu_camp())
-            else:
-                await menu_sel(update, hero, "Вы в дороге, идите дальше")
     else:
         if msg_txt == "👣Дальше":
             if hero.in_dange >= len(danges[hero.km]):
@@ -860,6 +868,13 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                         hero.in_dange = 0
                         await update.message.reply_text(res)
                         await update.message.reply_text(hero.return_data(), reply_markup=menu_camp())
+
+    if msg_txt == "⬅️Назад":
+        if hero.km == 0:
+            await update.message.reply_text(hero.return_data(), reply_markup=menu_camp())
+            return
+        else:
+            await menu_sel(update, hero, "Вы в дороге, идите дальше")
 
     if msg_txt == "🎒Рюкзак":
         if hero.in_dange <= 0:
@@ -1311,7 +1326,7 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             hero_h = all_data[h]
             if hero_h.all_km == iduser and (hero_h.band_name == None or hero_h.band_name == ""):
                 hero_h.band_name = hero.band_name
-                data = f"вы взяли игрока{hero_h.get_name()} в банду {hero.band_name}!!"
+                data = f"вы взяли игрока {hero_h.get_name()} в банду {hero.band_name}!!"
                 await upd_hero_db(async_session, hero_h)
                 break
 
@@ -1340,6 +1355,25 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if msg_txt == "/perk_luck":
             data = hero.inc_perk(5)
 
+    elif msg_txt.startswith("/mod_"):
+        a = msg_txt.replace("/mod_", "")
+        ap = hero.stock.equip.get(a.split('m')[0], None)
+        data_ = "ошибка"
+        if ap and not ap.mod:
+            code = int(a.split('m')[1])
+            ap.mod = code
+            if hero.accuracy < 300 or hero.luck < 300 or hero.dexterity < 300 :
+                await update.message.reply_text("повысте характеристики точности, ловкости и удачи до 300")
+                return
+            data_ = f"{ap.name} улучшено"
+            stf = hero.stock.used_stuff.get(code, None)
+            if stf:
+                if hero.stock.used_stuff[code] == 1:
+                    hero.stock.used_stuff.pop(code)
+                else:
+                    hero.stock.used_stuff[code] -= 1
+
+        await menu_sel(update, hero, data_)
 
     if data != "":
         if hero.in_dange <= 0:

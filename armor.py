@@ -3,7 +3,7 @@
 # титан t, осмий o, нитрин n
 crafted_weapon = []
 from db.models import ArmorDB
-
+from stock import used_items
 
 class Armor:
     name = ""
@@ -17,6 +17,7 @@ class Armor:
     type = 0  # 0 head 1 body 2 foot
     use = 0
     type_stack = 0
+    mod = 0
 
     def __init__(self, name: str, arm: int, type: int, life: int = 500, max_life: int = 500, cost: int = 0,
                  mats: int = 0, type_stack: int = 0):
@@ -32,9 +33,18 @@ class Armor:
     def get_data_drop(self) -> str:
         return self.get_data("dra_")
 
-    def get_data(self, code: str = "eqa_") -> str:
-        out = f"▪️ {self.get_name()} 🛡 {self.arm} 🔧{round(100 * self.life / self.max_life)} % /{code}{self.type}t{self.arm}z{self.z}"
+    def arm_mod(self):
+        mod = ""
+        if self.mod:
+            mod = "+" + str(used_items[self.mod].get("armor"))
+        return mod
 
+    def get_data(self, code: str = "eqa_") -> str:
+        out = f"▪️ {self.get_name()} 🛡 {self.arm}{self.arm_mod()} 🔧{round(100 * self.life / self.max_life)} % /{code}{self.type}t{self.arm}z{self.z}"
+        return out
+
+    def get_data_mod(self, mod: int = 100) -> str:
+        out = f"▪️ {self.get_name()} 🛡 {self.arm} 🔧{round(100 * self.life / self.max_life)} % /mod_{self.type}t{self.arm}z{self.z}m{mod}"
         return out
 
     def get_data_cost(self) -> str:
@@ -55,22 +65,25 @@ class Armor:
             return round(self.arm * 100 * self.life / self.max_life + self.arm * 200)
 
     def get_name(self) -> str:
+        if self.mod:
+            return self.name + "*"
         return self.name
 
     def get_data_hero(self) -> str:
-        out = f"▪️ {self.get_name()} 🛡 {self.arm} 🔧{round(100 * self.life / self.max_life)} %"
+        out = f"▪️ {self.get_name()} 🛡 {self.arm}{self.arm_mod()} 🔧{round(100 * self.life / self.max_life)} %"
         return out
 
     def get_code(self) -> str:
         return f"{self.type}t{self.arm}z{self.z}"
 
     def to_db(self) -> ArmorDB:
-        return ArmorDB(code=self.get_code(), use=self.use, life=self.life, max_life=self.max_life)
+        return ArmorDB(code=self.get_code(), use=self.use, life=self.life, max_life=self.max_life, mod=self.mod)
 
     def from_db(self, armor_db: ArmorDB) -> None:
         self.life = armor_db.life
         self.max_life = armor_db.max_life
         self.use = armor_db.use
+        self.mod = armor_db.mod
 
 
 # сила ловка удача меткость

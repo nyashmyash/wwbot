@@ -4,6 +4,7 @@ from db.base import Base
 #from weapon import Weapon
 #from armor import Armor
 
+
 class DroneDB(Base):
     __tablename__ = "drones"
     id = Column(Integer, autoincrement=True, primary_key=True, index=True)
@@ -11,6 +12,7 @@ class DroneDB(Base):
     user_id = Column(Integer)
     life = Column(Integer)
     max_life = Column(Integer)
+
 
 class ItemsDB(Base):
     __tablename__ = "items"
@@ -29,13 +31,15 @@ class WeaponDB(Base):
     max_life = Column(Integer)
     use = Column(Integer)
     user_id = Column(Integer)
+    mod = Column(Integer)
 
     def copy_val(self, wp: object) -> None:
         self.use = wp.use
         self.life = wp.life
         self.max_life = wp.max_life
-        self.z = wp.z
+        self.mod = wp.mod
         self.code = wp.get_code()
+
 
 class ArmorDB(Base):
     __tablename__ = "armor"
@@ -46,12 +50,13 @@ class ArmorDB(Base):
     max_life = Column(Integer)
     use = Column(Integer)
     user_id = Column(Integer)
+    mod = Column(Integer)
 
     def copy_val(self, arm: object) -> None:
         self.use = arm.use
         self.life = arm.life
         self.max_life = arm.max_life
-        self.z = arm.z
+        self.mod = arm.mod
         self.code = arm.get_code()
 
 
