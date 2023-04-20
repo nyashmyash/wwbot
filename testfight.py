@@ -6,8 +6,8 @@ from drone import all_drones
 from mob import *
 from stock import Stock
 
-x = 1000
-hp = 1500
+x = 1200
+hp = 1000
 h1 = Hero()
 h1.go_boss = 2
 h1.km = 37
@@ -22,15 +22,15 @@ h1.luck = x
 h1.dexterity = x
 h1.accuracy = x
 h1.charisma = x
-h1.weapon = copy.copy(weapons_all[18])
+h1.weapon = copy.copy(weapons_all[19])
 h1.weapon.use = 1
 h1.id = 1
 h1.band_id = 0
 h1.name = "111"
 h1.armor = []
-h1.armor.append(copy.copy(armor_all[0][7]))
-h1.armor.append(copy.copy(armor_all[1][7]))
-h1.armor.append(copy.copy(armor_all[2][7]))
+h1.armor.append(copy.copy(armor_all[0][10]))
+h1.armor.append(copy.copy(armor_all[1][10]))
+h1.armor.append(copy.copy(armor_all[2][10]))
 h1.stock = Stock()
 h1.stock.used_stuff = {}
 # увеличение брони в 2.1 раза
@@ -111,40 +111,33 @@ h5.perks = "000004"
 # print(h5.text_out_boss)
 # for h in heroes:
 #     print(f'{round(h.hp)}, {h.coins}, {len(h.stock.used_stuff)}')
-mob = list_mobs75_80[4]
-h1.weapon.mod = 401
-h1.armor[0].mod = 401
-h1.armor[1].mod = 401
-print(h1.armor[0].get_data())
+# mob = list_mobs75_80[4]
+# h1.weapon.mod = 403
+#h1.armor[0].mod = 401
+
+# print(h1.armor[0].get_data())
 #h1.armor[2].mod = 403
-print(h1.return_data())
-res = h1.attack_mob(list_dange80[0], True) +"\n"
-res += h1.attack_mob(list_dange80[1], True)+"\n"
-res += h1.attack_mob(list_dange80[2], True)+"\n"
-res += h1.attack_mob(list_dange80[3], True)+"\n"
-res += h1.attack_mob(list_dange80[4], True)+"\n"
-res += h1.attack_mob(list_dange80[5], True)+"\n"
-
-
-
-
-
-
-
-print(res)
-# print(round(h1.hp))
-# h1.perks = "400000"
-# h2.perks = "000004"
-# for i in range(0, 200):
-#     #print(f"{h1.attack_player(h2)}\n")
-#     h1.attack_player(h2)
-#     if h2.hp <= 0:
-#         f += 1
-#     if h1.hp <= 0:
-#         s += 1
-#     h1.hp = hp
-#     h2.hp = hp
-# print(f"win1 {f}\n win2 {s}")
+# print(h1.return_data())
+# res = ""
+#
+# for i in range(0, len(list_dange80)-1):
+#     if h1.hp > 1:
+#         res += h1.attack_mob(list_dange80[i], True) +"\n"
+#
+# print(res)
+# # print(round(h1.hp))
+h1.perks = "400000"
+h2.perks = "040000"
+for i in range(0, 200):
+    print(f"{h1.attack_player(h2)}\n")
+    #h1.attack_player(h2)
+    if h2.hp <= 0:
+        f += 1
+    if h1.hp <= 0:
+        s += 1
+    h1.hp = hp
+    h2.hp = hp
+print(f"win1 {f}\n win2 {s}")
 
 #f = list_mobs75_80[4]
 #for i in range(0, 100):
