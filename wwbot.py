@@ -191,17 +191,24 @@ async def menu_sel(update: Update, hero: Hero, data_:str) -> None:
 async def danges_fin_msg(update: Update, hero: Hero) -> None:
     hero.mob_fight = None
     hero.in_dange = -1
+    mob = list_mobs[hero.km // 5][0]
+    coins = round(mob.calc_mob_coins(hero.km))
+    mats = round(mob.calc_mob_mat(hero.km))
+    hero.coins += coins
+    hero.materials += mats
+    prize_money = f"получено 🕳 {coins} 📦 {mats}\n"
+
     if hero.km == 10:
         r = random.randint(0, 7)
         #logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
         if r == 1:
             i = random.randint(4, 6)
             hero.stock.add_item(weapons_all[i])
-            await update.message.reply_text(hero.make_header()
+            await update.message.reply_text(hero.make_header() + prize_money
                                             + f"вам выпало {weapons_all[i].get_name()}",
                                             reply_markup=menu_go())
         else:
-            await update.message.reply_text(hero.make_header()
+            await update.message.reply_text(hero.make_header() + prize_money
                                             + "вам выпало нихуя",
                                             reply_markup=menu_go())
 
@@ -211,11 +218,11 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
         if r == 2:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][5])
-            await update.message.reply_text(hero.make_header()
+            await update.message.reply_text(hero.make_header()+ prize_money
                                             + f"вам выпало {armor_all[type][5].get_name()}",
                                             reply_markup=menu_go())
         else:
-            await update.message.reply_text(hero.make_header()
+            await update.message.reply_text(hero.make_header()+ prize_money
                                             + "вам выпало нихуя",
                                             reply_markup=menu_go())
     if hero.km == 30:
@@ -224,18 +231,18 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
         if r == 3:
             r = random.randint(7, 8)
             hero.stock.add_item(weapons_all[r])
-            await update.message.reply_text(hero.make_header()
+            await update.message.reply_text(hero.make_header()+ prize_money
                                             + f"вам выпало {weapons_all[r].get_name()}",
                                             reply_markup=menu_go())
         else:
             if random.randint(0, 15) == 1 and hero.modul == 0:
                 hero.add_module()
                 name = hero.get_str_modul()
-                await update.message.reply_text(hero.make_header()
+                await update.message.reply_text(hero.make_header()+ prize_money
                                                 + f"вам выпал модуль {name}",
                                                 reply_markup=menu_go())
             else:
-                await update.message.reply_text(hero.make_header()
+                await update.message.reply_text(hero.make_header()+ prize_money
                                                 + "вам выпало нихуя",
                                                 reply_markup=menu_go())
 
@@ -246,18 +253,18 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][6])
             w = armor_all[type][6]
-            await update.message.reply_text(hero.make_header()
+            await update.message.reply_text(hero.make_header()+ prize_money
                                             + f"вам выпало {w.get_name()}",
                                             reply_markup=menu_go())
         else:
             if random.randint(0, 15) == 1 and hero.modul == 2:
                 hero.add_module()
                 name = hero.get_str_modul()
-                await update.message.reply_text(hero.make_header()
+                await update.message.reply_text(hero.make_header()+ prize_money
                                                 + f"вам выпал модуль {name}",
                                                 reply_markup=menu_go())
             else:
-                await update.message.reply_text(hero.make_header()
+                await update.message.reply_text(hero.make_header()+ prize_money
                                                 + "вам выпало нихуя",
                                                 reply_markup=menu_go())
 
@@ -267,24 +274,24 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
         if r == 4:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][7])
-            await update.message.reply_text(hero.make_header()
+            await update.message.reply_text(hero.make_header()+ prize_money
                                             + f"вам выпало {armor_all[type][7].get_name()}",
                                             reply_markup=menu_go())
         elif r == 5:
             w = weapons_all[10] if random.randint(0, 2) == 1 else weapons_all[9]
             hero.stock.add_item(w)
-            await update.message.reply_text(hero.make_header()
+            await update.message.reply_text(hero.make_header()+ prize_money
                                             + f"вам выпало {w.get_name()}",
                                             reply_markup=menu_go())
         else:
             if random.randint(0, 15) == 1 and hero.modul in [21, 12]:
                 hero.add_module()
                 name = hero.get_str_modul()
-                await update.message.reply_text(hero.make_header()
+                await update.message.reply_text(hero.make_header()+ prize_money
                                                 + f"вам выпал модуль {name}",
                                                 reply_markup=menu_go())
             else:
-                await update.message.reply_text(hero.make_header()
+                await update.message.reply_text(hero.make_header()+ prize_money
                                                 + "вам выпало нихуя",
                                                 reply_markup=menu_go())
 
@@ -294,24 +301,24 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
         if r == 4:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][8])
-            await update.message.reply_text(hero.make_header()
+            await update.message.reply_text(hero.make_header()+ prize_money
                                             + f"вам выпало {armor_all[type][8].get_name()}",
                                             reply_markup=menu_go())
         elif r == 5:
             w = weapons_all[11 + random.randint(0, 2)]
             hero.stock.add_item(w)
-            await update.message.reply_text(hero.make_header()
+            await update.message.reply_text(hero.make_header()+ prize_money
                                             + f"вам выпало {w.get_name()}",
                                             reply_markup=menu_go())
         else:
             if random.randint(0, 15) == 1 and 2 <= len(str(hero.modul)) <= 5:
                 hero.add_module()
                 name = hero.get_str_modul()
-                await update.message.reply_text(hero.make_header()
+                await update.message.reply_text(hero.make_header()+ prize_money
                                                 + f"вам выпал модуль {name}",
                                                 reply_markup=menu_go())
             else:
-                await update.message.reply_text(hero.make_header()
+                await update.message.reply_text(hero.make_header()+ prize_money
                                                 + "вам выпало нихуя",
                                                 reply_markup=menu_go())
 
@@ -321,24 +328,24 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
         if r == 4:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][9])
-            await update.message.reply_text(hero.make_header()
+            await update.message.reply_text(hero.make_header()+ prize_money
                                             + f"вам выпало {armor_all[type][9].get_name()}",
                                             reply_markup=menu_go())
         elif r == 5:
             w = weapons_all[13 + random.randint(0, 3)]
             hero.stock.add_item(w)
-            await update.message.reply_text(hero.make_header()
+            await update.message.reply_text(hero.make_header()+ prize_money
                                             + f"вам выпало {w.get_name()}",
                                             reply_markup=menu_go())
         else:
             if random.randint(0, 15) == 1 and len(str(hero.modul)) == 6:
                 hero.add_module()
                 name = hero.get_str_modul()
-                await update.message.reply_text(hero.make_header()
+                await update.message.reply_text(hero.make_header()+ prize_money
                                                 + f"вам выпал модуль {name}",
                                                 reply_markup=menu_go())
             else:
-                await update.message.reply_text(hero.make_header()
+                await update.message.reply_text(hero.make_header()+ prize_money
                                                 + "вам выпало нихуя",
                                                 reply_markup=menu_go())
 
@@ -348,17 +355,17 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
         if r == 4:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][10])
-            await update.message.reply_text(hero.make_header()
+            await update.message.reply_text(hero.make_header()+ prize_money
                                             + f"вам выпало {armor_all[type][10].get_name()}",
                                             reply_markup=menu_go())
         elif r == 5:
             w = weapons_all[17 + random.randint(0, 2)]
             hero.stock.add_item(w)
-            await update.message.reply_text(hero.make_header()
+            await update.message.reply_text(hero.make_header()+ prize_money
                                             + f"вам выпало {w.get_name()}",
                                             reply_markup=menu_go())
         else:
-            await update.message.reply_text(hero.make_header()
+            await update.message.reply_text(hero.make_header()+ prize_money
                                             + "вам выпало нихуя",
                                             reply_markup=menu_go())
     if hero.km == 80:
@@ -367,17 +374,17 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
         if r == 4:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][11])
-            await update.message.reply_text(hero.make_header()
+            await update.message.reply_text(hero.make_header()+ prize_money
                                             + f"вам выпало {armor_all[type][10].get_name()}",
                                             reply_markup=menu_go())
         elif r == 5:
             w = weapons_all[20]
             hero.stock.add_item(w)
-            await update.message.reply_text(hero.make_header()
+            await update.message.reply_text(hero.make_header()+ prize_money
                                             + f"вам выпало {w.get_name()}",
                                             reply_markup=menu_go())
         else:
-            await update.message.reply_text(hero.make_header()
+            await update.message.reply_text(hero.make_header()+ prize_money
                                             + "вам выпало нихуя",
                                             reply_markup=menu_go())
 
@@ -1048,12 +1055,12 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         for h in all:
             if h.id == hero.base_id:
                 p = k
-            if 5 > k or k > len(all) - 5:
-                data += f"{k+1}. {h.name} || {h.max_hp}\n"
+            if 5 > k or k >= len(all) - 5:
+                data += f"{k+1}. {h.max_hp} || {h.get_name()}\n"
             if k == 5:
                 data += "------------\n"
             k += 1
-        data += f"\n{p+1}. {hero.get_name()} || {hero.max_hp}\n"
+        data += f"\n{p+1}. {hero.max_hp} || {hero.get_name()}\n"
 
     elif msg_txt.startswith("/topkm"):
         def sortf(e):
@@ -1065,12 +1072,12 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         for h in all:
             if h.id == hero.base_id:
                 p = k
-            if 5 > k or k > len(all) - 5:
-                data += f"{k+1}. {h.name} || {h.all_km}\n"
+            if 5 > k or k >= len(all) - 5:
+                data += f"{k+1}. {h.all_km} || {h.get_name()}\n"
             if k == 5:
                 data += "------------\n"
             k += 1
-        data += f"\n{p+1}. {hero.get_name()} || {hero.all_km}\n"
+        data += f"\n{p+1}. {hero.all_km} || {hero.get_name()}\n"
 
 
     elif msg_txt.startswith("/topcoins"):
@@ -1082,12 +1089,12 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         for h in all:
             if h.id == hero.base_id:
                 p = k
-            if 5 > k or k > len(all) - 5:
-                data += f"{k+1}. {h.name} || {h.coins}\n"
+            if 5 > k or k >= len(all) - 5:
+                data += f"{k+1}. {h.coins} || {h.get_name()} \n"
             if k == 5:
                 data += "------------\n"
             k += 1
-        data += f"\n{p+1}. {hero.get_name()} || {hero.coins}\n"
+        data += f"\n{p+1}. {hero.coins} || {hero.get_name()}\n"
 
     elif msg_txt.startswith("/topbm"):
         def sortf(e):
@@ -1098,12 +1105,12 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         for h in all:
             if h.id == hero.base_id:
                 p = k
-            if 5 > k or k > len(all) - 5:
-                data += f"{k+1}. {h.name} || {h.max_hp + h.force + h.accuracy + h.luck + h.dexterity + h.charisma}\n"
+            if 5 > k or k >= len(all) - 5:
+                data += f"{k+1} {h.max_hp + h.force + h.accuracy + h.luck + h.dexterity + h.charisma} || {h.get_name()}\n"
             if k == 5:
-                data += "------------\n"
+                data += "\n"
             k += 1
-        data += f"\n{p+1}. {hero.get_name()} || {hero.max_hp + hero.force + hero.accuracy + hero.luck + hero.dexterity + hero.charisma}\n"
+        data += f"\n{p+1} {hero.max_hp + hero.force + hero.accuracy + hero.luck + hero.dexterity + hero.charisma} || {hero.get_name()}\n"
 
     # elif "/cheatw" in msg_txt:
     #    hero.stock.equip[armor_all[0][6].get_code()] = copy.copy(armor_all[0][6])
@@ -1389,7 +1396,7 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             code = int(a.split('m')[1])
             ap.mod = code
             if hero.accuracy < 300 or hero.luck < 300 or hero.dexterity < 300 :
-                await update.message.reply_text("повысте характеристики точности, ловкости и удачи до 300")
+                await update.message.reply_text("повысьте характеристики точности, ловкости и удачи до 300")
                 return
             data_ = f"{ap.name} улучшено"
             stf = hero.stock.used_stuff.get(code, None)
@@ -1400,12 +1407,14 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     hero.stock.used_stuff[code] -= 1
 
         await menu_sel(update, hero, data_)
-
+    #await update.message.reply_markdown_v2(text=data)
     if data != "":
         if hero.in_dange <= 0:
+            #await update.message.reply_markdown_v2(data, reply_markup=menu_pip())
             await update.message.reply_text(data, reply_markup=menu_pip())
         else:
-            await update.message.reply_text(data, reply_markup=menu_go_dange())
+            #await update.message.reply_markdown_v2(data, reply_markup=menu_go_dange())
+            await update.message.reply_text(data, reply_markup=menu_pip())
 
 
 def main() -> None:

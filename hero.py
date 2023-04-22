@@ -203,6 +203,10 @@ class Hero:
         if self.km_heal > 0:
             self.km_heal -= 1
             self.hp += round(self.max_hp * 0.05)
+            if self.hp > self.max_hp*3 and 500 > self.max_hp > 300:
+                self.hp = self.max_hp*3
+            if self.hp > self.max_hp*2 and self.max_hp > 500:
+                self.hp = self.max_hp*2
 
         heal_hp = round(self.max_hp * self.get_module(5) / 100)
         if heal_hp:
@@ -520,8 +524,8 @@ class Hero:
                 i = random.randint(0, len(list_mob_painkiller_zone) - 1)
                 self.mob_fight = copy.copy(list_mob_painkiller_zone[i])
             elif self.zone == 5:
-                # self.sel_mob_from_zone(list_mob_painkiller_zone)
-                i = random.randint(0, len(list_mk_zone) - 1)
+                k = (self.km - 31)//4
+                i = random.randint(3*k, 3*k + 2)
                 self.mob_fight = copy.copy(list_mk_zone[i])
             else:
                 k = self.km // 5
@@ -571,7 +575,7 @@ class Hero:
         return out
 
     def inc_hp(self) -> bool:
-        return True if self.hp < 1500 + self.get_dzen_lvl()*50 else False
+        return True if self.max_hp < 1500 + self.get_dzen_lvl()*50 else False
 
     def inc_force(self) -> bool:
         return True if self.force < 1300 + self.get_dzen_lvl() * 50 else False
@@ -598,7 +602,11 @@ class Hero:
         zoned = "🤡️" if self.zone == 3 else zoned
         zoned = "🔪" if self.zone == 4 else zoned
         zoned = "👺" if self.zone == 5 else zoned
-        return f"{zoned}❤️ {round(self.hp)}\{self.max_hp} 🍗{self.hungry}% {buffed} 👣{self.km} \n"
+        enfect = ""
+        for buff in self.buffs:
+            if buff < 0:
+                enfect = "🦠"
+        return f"{zoned}❤{enfect}️ {round(self.hp)}\{self.max_hp} 🍗{self.hungry}% {buffed} 👣{self.km} \n"
 
     def attack_boss_1rnd(self, mob: Mob, test: bool = False) -> str:
         out = ""
@@ -844,6 +852,11 @@ class Hero:
                                     out_stuff += f"\n {ritem['name']} /ustf_{rkey}"
                                     self.stock.add_stuff(rkey)
 
+                            if self.km >= 75:
+                                if random.randint(0, 700) == 333:
+                                    self.stock.add_stuff(403)
+                                    out += f"Вой вой вам выпало кое-что интересное {used_items[403]['name']}"
+
                             if 4 <= self.zone:
                                 chanse = random.randint(0, 4)
                                 if chanse == 2:
@@ -866,7 +879,7 @@ class Hero:
                                     out += f"🛰{all_drones[1].get_name()} возле поверженного моба лежал дрон, теперь можно его использовать\n"
                                     self.drone = copy.copy(all_drones[1])
                             if self.zone == 2: #death
-                                if random.randint(0, 800) == 199:
+                                if random.randint(0, 700) == 199:
                                     self.stock.add_stuff(400)
                                     out += f"Вой вой вам выпало кое-что интересное {used_items[400]['name']}"
                                 if random.randint(0, 1000) == 666:
@@ -884,14 +897,20 @@ class Hero:
                                 if random.randint(0, 1000) == 777:
                                     self.stock.add_item(weapons_all[22])
                                     out += f"Вой вой вам выпало кое-что интересное {weapons_all[22].get_name()}"
-                            if self.zone == 4 and not self.drone:
-                                if random.randint(0, 800) == 199:
+                            if self.zone == 4:
+                                if random.randint(0, 700) == 199:
                                     self.stock.add_stuff(401)
                                     out += f"Вой вой вам выпало кое-что интересное {used_items[401]['name']}"
-                                if random.randint(0, 700) == 555:
+                                if random.randint(0, 1000) == 333:
+                                    self.stock.add_stuff(402)
+                                    out += f"Вой вой вам выпало кое-что интересное {used_items[402]['name']}"
+                                if random.randint(0, 700) == 555 and not self.drone:
                                     out += f"🛰{all_drones[2].get_name()} возле поверженного моба лежал дрон, теперь можно его использовать\n"
                                     self.drone = copy.copy(all_drones[2])
                             if self.zone == 5:
+                                if random.randint(0, 1000) == 333:
+                                    self.stock.add_stuff(404)
+                                    out += f"Вой вой вам выпало кое-что интересное {used_items[404]['name']}"
                                 if not self.drone:
                                     if random.randint(0, 400) == 222:
                                         out += f"🛰{all_drones[3].get_name()} возле поверженного моба лежал дрон, теперь можно его использовать\n"

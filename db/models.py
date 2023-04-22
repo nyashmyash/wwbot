@@ -86,6 +86,9 @@ class HeroDB(Base):
     dzen = Column(Integer)
     perks = Column(String)
 
+    def get_name(self):
+        return self.name
+
     def copy_val(self, hero: object) -> None:
         self.name = hero.name
         self.user_id = hero.user_id

@@ -26,7 +26,7 @@ used_items = {100: {"name": "сырое мясо", "hungry": 30, "hp": 2},
               203: {"name": "абсент", "force": 50, "luck": 60, "km": 40},
               204: {"name": "урановая настойка", "force": 70, "luck": 60, "km": 50},
               205: {"name": "стероиды", "dexterity": 50, "accuracy": 50, "km": 20},
-              206: {"name": "анаболики", "dexterity": 100, "accuracy": 100, "km": 30},
+              206: {"name": "психонавт", "dexterity": 100, "accuracy": 100, "km": 30},
               207: {"name": "мельдоний", "dexterity": 150, "accuracy": 150, "km": 40},
               300: {"name": "💉Мед-Х", "hp": 50},
               301: {"name": "💌Медпак", "hp": 80},
@@ -42,9 +42,6 @@ used_items = {100: {"name": "сырое мясо", "hungry": 30, "hp": 2},
               }
 
 #"force", "dexterity", "luck", "accuracy", "armory", "damage"
-
-
-
 def get_random_item(med: bool = False) -> (int, dict):
     if not med:
         if random.randint(0, 1):
@@ -77,7 +74,7 @@ class Stock:
             out += self.equip[w].get_data_cost() + "\n"
         return out
 
-    def add_stuff(self, key) -> None:
+    def add_stuff(self, key: int) -> None:
         if not self.used_stuff.get(key, None):
             self.used_stuff[key] = 1
         else:
@@ -136,7 +133,6 @@ class Stock:
             if accur:
                 outstr += f"🎯+{accur} "
                 hero.buffs[3] = accur
-
 
             return f"вы использовали {used_items[code]['name']}\n {outstr}\n"
         return "нет такого"
