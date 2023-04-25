@@ -581,7 +581,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     if update.effective_user.id != h and hero_h.km == hero.km and hero_h.in_dange <= 0 and hero.zone == hero_h.zone:
                         chat = all_data[h].ef_chat
                         fight = True
-                        out = hero.attack_pvp_wmobs(hero_h)
+                        out = hero.attack_pvp_wmobs(hero_h, hero.min_log)
 
                         hdr1 = f"Сражение с {hero.get_name()}\n"
                         hdr2 = f"Сражение с {hero_h.get_name()}\n"
@@ -730,7 +730,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         elif msg_txt == "⚔️Дать отпор":
             mob = hero.mob_fight
             if mob:
-                res = hero.attack_mob(mob)
+                res = hero.attack_mob(mob, False, hero.min_log)
                 hero.mob_fight = None
                 if hero.km != 0:
                     if mob.enfect:
@@ -806,6 +806,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 if random.randint(0, 10) > 8:
                     hero.mob_fight = copy.copy(list_boss[0])
                     hero.mob_fight.attack = 1000
+                    hero.mob_fight.accuracy = 1700
                     hero.mob_fight.hp = 4000
                 else:
                     hero.select_mob()
@@ -879,7 +880,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             else:
                 mob = hero.mob_fight
                 if mob:
-                    res = hero.attack_mob(mob, True)
+                    res = hero.attack_mob(mob, True, hero.min_log)
                     if hero.km != 0:
                         await update.message.reply_text(res)
                         await update.message.reply_text(hero.make_header() + "продолжаем идти",
@@ -1370,8 +1371,10 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             data = "Мобы в команде:\n"
             for m in hero.mobs:
                 data += f"{m.get_name()}\n"
-    elif "/perksx" == msg_txt:
-        hero.perks = '0' * 6
+    #elif "/perksx" == msg_txt and hero.id == 1:
+    #    hero.perks = '0' * 6
+    elif "/ " == msg_txt:
+        hero.min_log = not hero.min_log
     elif "/perks" == msg_txt:
         data = hero.return_perks()
     elif "/perk_" in msg_txt and hero.free_perks():

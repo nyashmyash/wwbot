@@ -6,8 +6,8 @@ from drone import all_drones
 from mob import *
 from stock import Stock
 
-x = 1200
-hp = 1000
+x = 1400
+hp = 1500
 h1 = Hero()
 h1.go_boss = 2
 h1.km = 37
@@ -118,26 +118,33 @@ h5.perks = "000004"
 # print(h1.armor[0].get_data())
 #h1.armor[2].mod = 403
 # print(h1.return_data())
-# res = ""
-#
-# for i in range(0, len(list_dange80)-1):
-#     if h1.hp > 1:
-#         res += h1.attack_mob(list_dange80[i], True) +"\n"
-#
-# print(res)
+res = ""
+h1.armor[0].mod = h1.armor[1].mod = h1.armor[2].mod = 401
+
+for i in range(0, len(list_dange80)-1):
+    if h1.hp > 1:
+        res += h1.attack_mob(list_dange80[i], True, True) +"\n"
+
+print(res)
+
+
+
+# from rand import randint
+# for i in range(0, 1000):
+#     print(randint(0, 10))
 # # print(round(h1.hp))
-h1.perks = "400000"
-h2.perks = "040000"
-for i in range(0, 200):
-    print(f"{h1.attack_player(h2)}\n")
-    #h1.attack_player(h2)
-    if h2.hp <= 0:
-        f += 1
-    if h1.hp <= 0:
-        s += 1
-    h1.hp = hp
-    h2.hp = hp
-print(f"win1 {f}\n win2 {s}")
+# h1.perks = "400000"
+# h2.perks = "040000"
+# for i in range(0, 200):
+#     print(f"{h1.attack_player(h2)}\n")
+#     #h1.attack_player(h2)
+#     if h2.hp <= 0:
+#         f += 1
+#     if h1.hp <= 0:
+#         s += 1
+#     h1.hp = hp
+#     h2.hp = hp
+# print(f"win1 {f}\nwin2 {s}")
 
 #f = list_mobs75_80[4]
 #for i in range(0, 100):

@@ -32,13 +32,14 @@ used_items = {100: {"name": "сырое мясо", "hungry": 30, "hp": 2},
               301: {"name": "💌Медпак", "hp": 80},
               302: {"name": "🧪Стимбласт", "hp": 120, "km_heal": 3},
               303: {"name": "🧪Стимбласт+", "hp": 150, "km_heal": 5},
-              400: {"name": "☢️модификатор ядерный тип А", "damage": 50, "armor": 25, "dexterity": -100,
+              400: {"name": "☢️модификатор ядерный тип А", "damage": 50, "armor": 45, "dexterity": -100,
                     "accuracy": -100},
-              401: {"name": "⚛️модификатор тритьевый", "damage": 70, "armor": 35, "dexterity": -150, "accuracy": -150},
-              402: {"name": "☢️модификатор ядерный тип Б", "damage": 75, "armor": 45, "dexterity": -170,
+              401: {"name": "⚛️модификатор тритьевый", "damage": 70, "armor": 65, "dexterity": -150, "accuracy": -150},
+              402: {"name": "☢️модификатор ядерный тип Б", "damage": 75, "armor": 85, "dexterity": -170,
                     "accuracy": -150},
-              403: {"name": "👽модификатор тирранид", "damage": 100, "armor": 60, "dexterity": -200, "accuracy": -200},
-              404: {"name": "☠️модификатор проклятый", "damage": 110, "armor": 65, "luck": -250, "accuracy": -250},
+              403: {"name": "👽модификатор тирранид", "damage": 100, "armor": 100, "dexterity": -200, "accuracy": -200},
+              404: {"name": "☠️модификатор проклятый", "damage": 110, "armor": 105, "luck": -250, "accuracy": -250},
+              500: {"name": "Сбрасыватель перков"},
               }
 
 #"force", "dexterity", "luck", "accuracy", "armory", "damage"
@@ -88,6 +89,10 @@ class Stock:
                 for w in self.equip:
                     out += self.equip[w].get_data_mod(code) + "\n"
                 return out
+            return
+        if code == 500:
+            hero.perks = '0' * 6
+            self.used_stuff.pop(code)
             return
         stf = self.used_stuff.get(code, None)
         if stf:

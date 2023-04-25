@@ -1,5 +1,5 @@
 import random
-
+from rand import randint
 
 text_mob_mis = ["тварь смешно упала",
                 "монстр подавился злобой",
@@ -73,34 +73,38 @@ class Mob:
 
     def get_miss(self, dex: int) -> bool:  # dex шанс уворота для героя 0.1%
         k = 4 if dex / self.accuracy >= 4 else dex / self.accuracy
-        return random.randint(0, 1000) < 200 * k
+        return randint(0, 1000) < 200 * k
 
     def is_first_hit(self, luck: int) -> bool:
-        if random.randint(0, 1000) - 500 < self.luck - luck:
+        if randint(0, 1000) - 500 < self.luck - luck:
             return True
         else:
             return False
 
-    def log_hit_mob(self) -> str:
-        mob = name_mob[random.randint(0, len(name_mob) - 1)]
+    def log_hit_mob(self, min_log: bool = False) -> str:
+        if min_log:
+            return ""
+        mob = name_mob[randint(0, len(name_mob) - 1)]
         name = mob[0]
         type = mob[1]
-        if random.randint(0, 10) == 1:
+        if randint(0, 10) == 1:
             out = f"{self.log_hit(type_mob[type])} {name} {self.log_hit(type_custm[type])}"
             return out
 
-        fuck_mob = self.log_hit(type_mob[type]) + " " if random.randint(0, 5) > 2 else ""
+        fuck_mob = self.log_hit(type_mob[type]) + " " if randint(0, 5) > 2 else ""
         out = fuck_mob + f"{name} "
-        type_attack = self.log_hit(type_att_str) + " " if random.randint(0, 5) > 2 else ""
+        type_attack = self.log_hit(type_att_str) + " " if randint(0, 5) > 2 else ""
 
         out += f"{self.log_hit(type_att[type])} {type_attack}{self.log_hit(type_att_hero)}"
 
         return out
 
-    def log_hit(self, texts_list) -> str:
-        return texts_list[random.randint(0, len(texts_list) - 1)]
+    def log_hit(self, texts_list, min_log: bool = False) -> str:
+        if min_log:
+            return ""
+        return texts_list[randint(0, len(texts_list) - 1)]
 
-    def attack_mob(self, mob: object) -> str:
+    def attack_mob(self, mob: object, min_log: bool = False) -> str:
         out = f"❤{round(self.hp)} {self.name} vs {mob.name} ❤{round(mob.hp)}\n"
         cnt_attack = self.CNT_LOG
         is_first = True
@@ -113,23 +117,23 @@ class Mob:
                 is_first = False
                 if mob.get_miss(self.dexterity):
                     if cnt_attack < self.CNT_LOG:
-                        out += f"❤️ {round(mob.hp)} {mob.name} 🌀{self.log_hit(text_mob_mis)}\n"
+                        out += f"❤️ {round(mob.hp)} {mob.name} 🌀{self.log_hit(text_mob_mis, min_log)}\n"
                 else:
                     dmg = mob.get_attack()
                     if cnt_attack < self.CNT_LOG:
-                        out += f"❤️ {round(mob.hp)} {mob.name} {self.log_hit_mob()} {self.name} 💔-{round(dmg)}\n"
+                        out += f"❤️ {round(mob.hp)} {mob.name} {self.log_hit_mob(min_log)} {self.name} 💔-{round(dmg)}\n"
                     self.hp -= dmg
 
             else:
                 is_first = True
                 if self.get_miss(mob.dexterity):
                     if cnt_attack < self.CNT_LOG:
-                        out += f"❤️ {round(self.hp)} {self.name} 🌀{self.log_hit(text_mob_mis)}\n"
+                        out += f"❤️ {round(self.hp)} {self.name} 🌀{self.log_hit(text_mob_mis, min_log)}\n"
                 else:
                     att = self.get_attack()
                     mob.hp -= att
                     if cnt_attack < self.CNT_LOG:
-                        out += f"❤️ {round(self.hp)} {self.name} {self.log_hit_mob()} {mob.name} 💔-{round(att)}\n"
+                        out += f"❤️ {round(self.hp)} {self.name} {self.log_hit_mob(min_log)} {mob.name} 💔-{round(att)}\n"
                     if mob.hp <= 0:
                         if cnt_attack >= self.CNT_LOG:
                             out += " ......... ....... ....\n"
@@ -206,22 +210,22 @@ list_dange60 = [
 ]
 
 list_dange70 = [
-    Mob(name='🦂Заразитель (некроморф хитрец)', hp=1000, attack=350, dexterity=710, luck=510, accuracy=910, coins=30),
-    Mob(name='🦎Сталкер (некроморф следит)', hp=1250, attack=400, dexterity=710, luck=510, accuracy=910, coins=30),
-    Mob(name='🐍Расчленитель (некроморф режущий)', hp=1260, attack=500, dexterity=510, luck=510, accuracy=910,
+    Mob(name='🦂Заразитель (некроморф хитрец)', hp=1000, attack=350, dexterity=810, luck=710, accuracy=910, coins=30),
+    Mob(name='🦎Сталкер (некроморф следит)', hp=1250, attack=400, dexterity=810, luck=710, accuracy=910, coins=30),
+    Mob(name='🐍Расчленитель (некроморф режущий)', hp=1260, attack=500, dexterity=810, luck=710, accuracy=910,
         coins=30),
-    Mob(name='🦖Охотник (некроморф тебя ищет)', hp=1480, attack=530, dexterity=710, luck=510, accuracy=910, coins=30),
-    Mob(name='🐊Левиафан (некроморф босс)', hp=1520, attack=650, dexterity=710, luck=510, accuracy=910, coins=30),
+    Mob(name='🦖Охотник (некроморф тебя ищет)', hp=1480, attack=530, dexterity=810, luck=710, accuracy=910, coins=30),
+    Mob(name='🐊Левиафан (некроморф босс)', hp=1520, attack=650, dexterity=810, luck=710, accuracy=910, coins=30),
     None
 ]
 
 list_dange80 = [
-    Mob(name='🐍Потрошитель ⚡️⚡️', hp=2010, attack=700, dexterity=1220, luck=520, accuracy=1320, coins=400),
-    Mob(name='🦀Тервигон ⚡️⚡️', hp=2210, attack=800, dexterity=1220, luck=520, accuracy=1320, coins=400),
-    Mob(name='🦖Доминатрикс ⚡️⚡️', hp=2510, attack=900, dexterity=1220, luck=520, accuracy=1320, coins=400),
-    Mob(name='🛡Стражи тирана ⚡️⚡️', hp=2610, attack=900, dexterity=1220, luck=520, accuracy=1320, coins=400),
-    Mob(name='🦐Красный Ужас ⚡️⚡️', hp=3010, attack=1000, dexterity=1220, luck=520, accuracy=1320, coins=400),
-    Mob(name='👿Повелитель роя ⚡️⚡️', hp=3010, attack=1300, dexterity=1220, luck=520, accuracy=1320, coins=400),
+    Mob(name='🐍Потрошитель ⚡️⚡️', hp=2010, attack=700, dexterity=1220, luck=1020, accuracy=1320, coins=400),
+    Mob(name='🦀Тервигон ⚡️⚡️', hp=2210, attack=800, dexterity=1220, luck=1020, accuracy=1320, coins=400),
+    Mob(name='🦖Доминатрикс ⚡️⚡️', hp=2510, attack=900, dexterity=1220, luck=1020, accuracy=1320, coins=400),
+    Mob(name='🛡Стражи тирана ⚡️⚡️', hp=2610, attack=900, dexterity=1220, luck=1020, accuracy=1320, coins=400),
+    Mob(name='🦐Красный Ужас ⚡️⚡️', hp=3010, attack=1000, dexterity=1220, luck=1020, accuracy=1320, coins=400),
+    Mob(name='👿Повелитель роя ⚡️⚡️', hp=3010, attack=1300, dexterity=1220, luck=1020, accuracy=1320, coins=400),
     None
 ]
 danges = {10: list_dange10, 20: list_dange20,
@@ -230,19 +234,19 @@ danges = {10: list_dange10, 20: list_dange20,
 
 
 list_mk_zone = [
-    Mob(name="🧙‍♀️Кунг лао (шапкой закидает🌟🌟)", hp=1710, attack=600, dexterity=720, luck=520, accuracy=1020, coins=450),
-    Mob(name="⚡️Рейден (получи шок🌟🌟)", hp=1710, attack=600, dexterity=720, luck=520, accuracy=1020, coins=450),
-    Mob(name='👊Лю Кэнг (переебет тебе в щи🌟🌟)', hp=1810, attack=600, dexterity=720, luck=520, accuracy=1020, coins=450),
-    Mob(name='❄️Саб-Зиро (отморозит тебе все🌟🌟)', hp=1910, attack=700, dexterity=720, luck=520, accuracy=1020, coins=450),
-    Mob(name='🦂Скорпион (ядовитое🌟🌟)', hp=1910, attack=700, dexterity=720, luck=520, accuracy=1020, coins=450),
-    Mob(name='🦾Джакс (🌟🌟)', hp=1910, attack=700, dexterity=720, luck=520, accuracy=1020, coins=450),
-    Mob(name='🦚Китана (о веер прикольно🌟🌟)', hp=2010, attack=800, dexterity=720, luck=520, accuracy=1020, coins=450),
-    Mob(name='🥷Джейд (сучка тебя уничтожит🌟🌟)', hp=2010, attack=800, dexterity=720, luck=520, accuracy=1020, coins=450),
-    Mob(name='🥷Нубсайбот (🌟🌟)', hp=2010, attack=800, dexterity=720, luck=520, accuracy=1020,
+    Mob(name="🧙‍♀️Кунг лао (шапкой закидает🌟🌟)", hp=1710, attack=600, dexterity=720, luck=1020, accuracy=1020, coins=450),
+    Mob(name="⚡️Рейден (получи шок🌟🌟)", hp=1710, attack=600, dexterity=720, luck=1020, accuracy=1020, coins=450),
+    Mob(name='👊Лю Кэнг (переебет тебе в щи🌟🌟)', hp=1810, attack=600, dexterity=720, luck=1020, accuracy=1020, coins=450),
+    Mob(name='❄️Саб-Зиро (отморозит тебе все🌟🌟)', hp=1910, attack=700, dexterity=720, luck=1020, accuracy=1020, coins=450),
+    Mob(name='🦂Скорпион (ядовитое🌟🌟)', hp=1910, attack=700, dexterity=720, luck=1020, accuracy=1020, coins=450),
+    Mob(name='🦾Джакс (🌟🌟)', hp=1910, attack=700, dexterity=720, luck=1020, accuracy=1020, coins=450),
+    Mob(name='🦚Китана (о веер прикольно🌟🌟)', hp=2010, attack=800, dexterity=720, luck=1020, accuracy=1020, coins=450),
+    Mob(name='🥷Джейд (сучка тебя уничтожит🌟🌟)', hp=2010, attack=800, dexterity=720, luck=1020, accuracy=1020, coins=450),
+    Mob(name='🥷Нубсайбот (🌟🌟)', hp=2010, attack=800, dexterity=720, luck=1020, accuracy=1020,
         coins=450),
-    Mob(name='🔪Барака (острые когти🌟🌟)', hp=2110, attack=900, dexterity=1020, luck=520, accuracy=1020, coins=450),
-    Mob(name='💪Горо (много рук🌟🌟)', hp=2110, attack=900, dexterity=1020, luck=520, accuracy=1020, coins=450),
-    Mob(name='👹Шао-Кан (твоя смертушка 🌟🌟)', hp=2210, attack=1000, dexterity=1020, luck=520, accuracy=1020, coins=450),
+    Mob(name='🔪Барака (острые когти🌟🌟)', hp=2110, attack=900, dexterity=1020, luck=1020, accuracy=1020, coins=450),
+    Mob(name='💪Горо (много рук🌟🌟)', hp=2110, attack=900, dexterity=1020, luck=1020, accuracy=1020, coins=450),
+    Mob(name='👹Шао-Кан (твоя смертушка 🌟🌟)', hp=2210, attack=1000, dexterity=1020, luck=1020, accuracy=1020, coins=450),
 ]
 
 
@@ -497,7 +501,10 @@ list_mobs55_60 = [
         coins=250),
     Mob(name='👨‍🎓бакалавр (с шизой⭐️)', hp=665, attack=400, dexterity=520, luck=520, accuracy=520, coins=250),
     Mob(name='🧕моджахедка (с бомбой⭐️)', hp=670, attack=400, dexterity=520, luck=520, accuracy=520, coins=250),
-    Mob(name='🐸жаба (шизоидная⭐️)', hp=670, attack=400, dexterity=520, luck=520, accuracy=520, coins=270)
+    Mob(name='🐸жаба (шизоидная⭐️)', hp=670, attack=400, dexterity=520, luck=520, accuracy=520, coins=270),
+    Mob(name='🐻вонни (т прнс?⭐️)', hp=720, attack=420, dexterity=520, luck=520, accuracy=520, coins=280),
+    Mob(name='🐷потачок (нт⭐️)', hp=720, attack=420, dexterity=520, luck=520, accuracy=520, coins=280),
+    Mob(name='🦆долан (с уважением⭐️)', hp=670, attack=400, dexterity=520, luck=520, accuracy=520, coins=270),
 ]
 
 list_mobs60_65 = [
@@ -508,7 +515,15 @@ list_mobs60_65 = [
     Mob(name='🧙‍♀️маг (объелся мухоморов⭐️⭐️)', hp=840, attack=600, dexterity=620, luck=620, accuracy=620, coins=300),
     Mob(name='🧛‍♀️вампир (кровушки бы⭐️⭐️)', hp=865, attack=600, dexterity=620, luck=620, accuracy=620, coins=300),
     Mob(name='💁‍♀️твоя бывшая', hp=870, attack=600, dexterity=620, luck=620, accuracy=620, coins=300),
-    Mob(name='🐸жаба (️твоя бывшая⭐️⭐️)', hp=870, attack=600, dexterity=620, luck=620, accuracy=620, coins=330)
+    Mob(name='🐸жаба (️твоя бывшая⭐️⭐️)', hp=870, attack=600, dexterity=620, luck=620, accuracy=620, coins=330),
+    Mob(name='🐇кролик Роджер  (подставленный ️⭐️⭐️)', hp=870, attack=600, dexterity=620, luck=620, accuracy=620, coins=330),
+    Mob(name='🐺верволф (кибернетический ️⭐️⭐️)', hp=870, attack=600, dexterity=620, luck=620, accuracy=620, coins=330),
+    Mob(name='🦊лиса (и гязная норка ️⭐️⭐️)', hp=870, attack=650, dexterity=620, luck=620, accuracy=620, coins=330),
+    Mob(name='🐿белка (и ее очень большое дупло ️⭐️⭐️)', hp=870, attack=650, dexterity=620, luck=620, accuracy=620, coins=330),
+    Mob(name='🐦дятел (долбит шишки ️⭐️⭐️)', hp=870, attack=650, dexterity=620, luck=620, accuracy=620,
+        coins=330),
+    Mob(name='🌚колобок-негр (️от дедушки ушел⭐️⭐️)', hp=900, attack=650, dexterity=720, luck=720, accuracy=720, coins=340),
+    Mob(name='🌝колобок (️от бабушки ушел⭐️⭐️)', hp=900, attack=700, dexterity=720, luck=720, accuracy=720, coins=340),
 ]
 
 list_mobs65_70 = [
@@ -526,28 +541,28 @@ list_mobs65_70 = [
 ]
 
 list_mobs70_75 = [
-    Mob(name='🐲дракон (механизированный🌟🌟)', hp=1500, attack=900, dexterity=720, luck=520, accuracy=720, coins=350),
-    Mob(name='🦑кальмар (мистический🌟🌟)', hp=1520, attack=900, dexterity=720, luck=520, accuracy=720, coins=350),
-    Mob(name='⚓якорь (проклятый🌟🌟)', hp=1540, attack=900, dexterity=720, luck=520, accuracy=720, coins=350),
-    Mob(name='🪝крюк потрошителя', hp=1565, attack=900, dexterity=720, luck=520, accuracy=720, coins=350),
-    Mob(name='🗿каменный голем (легендарный🌟🌟)', hp=1600, attack=900, dexterity=720, luck=520, accuracy=720,
+    Mob(name='🐲дракон (механизированный🌟🌟)', hp=1500, attack=900, dexterity=720, luck=520, accuracy=1020, coins=350),
+    Mob(name='🦑кальмар (мистический🌟🌟)', hp=1520, attack=900, dexterity=720, luck=520, accuracy=1020, coins=350),
+    Mob(name='⚓якорь (проклятый🌟🌟)', hp=1540, attack=900, dexterity=720, luck=520, accuracy=1020, coins=350),
+    Mob(name='🪝крюк потрошителя', hp=1565, attack=900, dexterity=720, luck=520, accuracy=1020, coins=350),
+    Mob(name='🗿каменный голем (легендарный🌟🌟)', hp=1600, attack=900, dexterity=720, luck=520, accuracy=1020,
         coins=350),
-    Mob(name='🦹🏿‍♂️Дарт Вейдер (переходи на темную сторону🌟🌟)', hp=1600, attack=900, dexterity=820, luck=720, accuracy=820,
+    Mob(name='🦹🏿‍♂️Дарт Вейдер (переходи на темную сторону🌟🌟)', hp=1600, attack=900, dexterity=820, luck=720, accuracy=1020,
             coins=400),
-    Mob(name='🧑🏼‍💼Люк Скайуокер (махает световым мечом🌟🌟)', hp=1600, attack=900, dexterity=820, luck=720, accuracy=820,
+    Mob(name='🧑🏼‍💼Люк Скайуокер (махает световым мечом🌟🌟)', hp=1600, attack=900, dexterity=820, luck=720, accuracy=1020,
             coins=400),
-    Mob(name='👰🏼‍♀️Лея Органа (убьет сексуальностью🌟🌟)', hp=1600, attack=900, dexterity=820, luck=720, accuracy=820,
+    Mob(name='👰🏼‍♀️Лея Органа (убьет сексуальностью🌟🌟)', hp=1600, attack=900, dexterity=820, luck=720, accuracy=1020,
             coins=400),
-    Mob(name='🐢Йода (леветирует и ебашит🌟🌟)', hp=1600, attack=900, dexterity=820, luck=720, accuracy=820,
+    Mob(name='🐢Йода (леветирует и ебашит🌟🌟)', hp=1600, attack=900, dexterity=820, luck=720, accuracy=1020,
             coins=400),
 ]
 
 list_mobs75_80 = [
-    Mob(name='🧞Джин (ужасающий⚡️⚡ )️', hp=2010, attack=900, dexterity=1020, luck=720, accuracy=820, coins=370),
+    Mob(name='🧞Джин (ужасающий⚡️⚡ )️', hp=2010, attack=900, dexterity=1020, luck=720, accuracy=1020, coins=370),
     Mob(name='🧜🏿‍♀️Русалка (Нетфликс⚡⚡ )️️', hp=2150, attack=1000, dexterity=820, luck=720, accuracy=1020, coins=370),
-    Mob(name='🧚🏻‍♀️Фея (твоих кошмарных снов⚡⚡ )️️', hp=2200, attack=1100, dexterity=1020, luck=720, accuracy=920, coins=370),
-    Mob(name='🧜🏾‍♂️Тритон (Бог⚡⚡ )️️', hp=2200, attack=1100, dexterity=1020, luck=720, accuracy=920, coins=370),
-    Mob(name='🧜🏻Тритон (кибертрон⚡️⚡️ )', hp=2300, attack=1200, dexterity=1020, luck=720, accuracy=920, coins=370),
+    Mob(name='🧚🏻‍♀️Фея (твоих кошмарных снов⚡⚡ )️️', hp=2200, attack=1100, dexterity=1020, luck=720, accuracy=1020, coins=370),
+    Mob(name='🧜🏾‍♂️Тритон (Бог⚡⚡ )️️', hp=2200, attack=1100, dexterity=1020, luck=720, accuracy=1020, coins=370),
+    Mob(name='🧜🏻Тритон (кибертрон⚡️⚡️ )', hp=2300, attack=1200, dexterity=1020, luck=720, accuracy=1020, coins=370),
     Mob(name='🔳Разум (кибнетический⚡️⚡️ )', hp=2300, attack=1200, dexterity=1020, luck=720, accuracy=1020, coins=370),
     Mob(name='🧞‍♂️Джин (колоссальный⚡️⚡️ )', hp=2300, attack=1200, dexterity=1020, luck=720, accuracy=1020, coins=370),
     Mob(name='🧞‍♀Джин (фантастический⚡️⚡️ )', hp=2500, attack=1200, dexterity=1020, luck=720, accuracy=1020, coins=370),
