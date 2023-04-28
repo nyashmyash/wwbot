@@ -15,6 +15,7 @@ from mob import *
 from menu import *
 from drone import *
 from collections import OrderedDict
+from sethook import token
 #from telegram.constants import ParseMode
 
 from multiprocessing import Queue
@@ -200,7 +201,6 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
 
     if hero.km == 10:
         r = random.randint(0, 7)
-        #logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
         if r == 1:
             i = random.randint(4, 6)
             hero.stock.add_item(weapons_all[i])
@@ -214,7 +214,6 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
 
     if hero.km == 20:
         r = random.randint(0, 7)
-        #logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
         if r == 2:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][5])
@@ -227,7 +226,6 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
                                             reply_markup=menu_go())
     if hero.km == 30:
         r = random.randint(0, 6)
-        #logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
         if r == 3:
             r = random.randint(7, 8)
             hero.stock.add_item(weapons_all[r])
@@ -248,7 +246,6 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
 
     if hero.km == 35:
         r = random.randint(0, 6)
-        #logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
         if r == 3:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][6])
@@ -270,7 +267,6 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
 
     if hero.km == 40:
         r = random.randint(0, 6)
-        #logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
         if r == 4:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][7])
@@ -297,7 +293,6 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
 
     if hero.km == 50:
         r = random.randint(0, 7)
-        #logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
         if r == 4:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][8])
@@ -324,7 +319,6 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
 
     if hero.km == 60:
         r = random.randint(0, 7)
-        #logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
         if r == 4:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][9])
@@ -351,7 +345,6 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
 
     if hero.km == 70:
         r = random.randint(0, 8)
-        #logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
         if r == 4:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][10])
@@ -370,15 +363,32 @@ async def danges_fin_msg(update: Update, hero: Hero) -> None:
                                             reply_markup=menu_go())
     if hero.km == 80:
         r = random.randint(0, 9)
-        #logger.info(update.effective_chat.first_name + f" dange {hero.km}km {r}")
         if r == 4:
             type = random.randint(0, 2)
             hero.stock.add_item(armor_all[type][11])
             await update.message.reply_text(hero.make_header()+ prize_money
-                                            + f"вам выпало {armor_all[type][10].get_name()}",
+                                            + f"вам выпало {armor_all[type][11].get_name()}",
                                             reply_markup=menu_go())
         elif r == 5:
             w = weapons_all[20]
+            hero.stock.add_item(w)
+            await update.message.reply_text(hero.make_header()+ prize_money
+                                            + f"вам выпало {w.get_name()}",
+                                            reply_markup=menu_go())
+        else:
+            await update.message.reply_text(hero.make_header()+ prize_money
+                                            + "вам выпало нихуя",
+                                            reply_markup=menu_go())
+    if hero.km == 90:
+        r = random.randint(0, 7)
+        if r == 4:
+            type = random.randint(0, 2)
+            hero.stock.add_item(armor_all[type][15])
+            await update.message.reply_text(hero.make_header()+ prize_money
+                                            + f"вам выпало {armor_all[type][15].get_name()}",
+                                            reply_markup=menu_go())
+        elif r == 5:
+            w = weapons_all[24]
             hero.stock.add_item(w)
             await update.message.reply_text(hero.make_header()+ prize_money
                                             + f"вам выпало {w.get_name()}",
@@ -686,7 +696,10 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                         hero.hp = hero.max_hp
                 hero.km = 0
                 hero.danges = []
-                await update.message.reply_text(hero.return_data(), reply_markup=menu_camp())
+
+                text_camp = "Приветствую в лагере! \nЧат по игре: https://t.me/+l1OjhV7mzwc1MGIy\n" \
+                            "Наверное никто не задумывался насчет того, кто такие свинокрысы, а свинокрыс - это выдуманный персонаж из русской народной сказки. Это существо с объедками, которое было создано для того, чтобы пугать детей и заставлять их быть послушными. В некоторых версиях сказки свинокрыс описывается как полу-свинья, полу-крыса, которая может ходить на задних лапах и даже разговаривать на человеческом языке. В сказках обычно говорится, что свинокрыс живет в печи, в подвале или на чердаке и тайно прислушивается к разговорам или делает что-то плохое."
+                await update.message.reply_text(text_camp, reply_markup=menu_camp())
 
         elif msg_txt == "👣Пустошь" and hero.zone == 0:
             hero.go()
@@ -727,6 +740,18 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     await update.message.reply_text(header + "вы покинули радиоактивную пустошь",
                                                     reply_markup=menu_go())
 
+        elif msg_txt == "️☠Покинуть пустошь смерти☠" and hero.zone == 2:
+            hero.zone = 1
+            hero.go()
+            header = hero.make_header()
+            hero.select_mob()
+            if hero.mob_fight:
+                await update.message.reply_text(header + "вы покинули пустошь смерти")
+                await update.message.reply_text(f"на вас напал моб {hero.mob_fight.get_name()}",
+                                                reply_markup=menu_attack())
+            else:
+                await update.message.reply_text(header + "вы покинули пустошь смерти",
+                                                reply_markup=menu_go())
         elif msg_txt == "⚔️Дать отпор":
             mob = hero.mob_fight
             if mob:
@@ -805,9 +830,9 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 header = hero.make_header()
                 if random.randint(0, 10) > 8:
                     hero.mob_fight = copy.copy(list_boss[0])
-                    hero.mob_fight.attack = 1000
-                    hero.mob_fight.accuracy = 1700
-                    hero.mob_fight.hp = 4000
+                    hero.mob_fight.attack = 1500
+                    hero.mob_fight.accuracy = 5000
+                    hero.mob_fight.hp = 3000
                 else:
                     hero.select_mob()
                 if hero.mob_fight:
@@ -825,9 +850,6 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 hero.zone = 1
                 await update.message.reply_text("Вы покинули арену! Поздравляем!")
 
-            if hero.km == 34 and hero.zone == 2:
-                hero.zone = 1
-                await update.message.reply_text("Вы вышли из пустоши смерти")
             if hero.km == 44 and hero.zone == 3:
                 hero.zone = 1
                 await update.message.reply_text("Вы покинули блядский цирк")
@@ -987,6 +1009,10 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
         if hero.km == 52:
             await update.message.reply_text("Можно отдохнуть /deeprest", reply_markup=menu_go(pvp))
+            return
+
+        if hero.km in [34, 44, 54] and hero.zone == 2:
+            await update.message.reply_text("Можно выйти из пустоши смерти", reply_markup=menu_dead_quit(pvp))
             return
 
         if hero.km in rad_zones and hero.zone <= 1:
@@ -1373,7 +1399,7 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 data += f"{m.get_name()}\n"
     #elif "/perksx" == msg_txt and hero.id == 1:
     #    hero.perks = '0' * 6
-    elif "/ " == msg_txt:
+    elif "/min_log" == msg_txt:
         hero.min_log = not hero.min_log
     elif "/perks" == msg_txt:
         data = hero.return_perks()
@@ -1423,7 +1449,7 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 def main() -> None:
     """Start the bot."""
     # Create the Application and pass it your bot's token.
-    application = Application.builder().token("6292699351:AAFvNZB5A11o0unUoBSmteO9K4JY6hnmC54").build()
+    application = Application.builder().token(token).build()
 
     # on different commands - answer in Telegram
     application.add_handler(CommandHandler("start", start))

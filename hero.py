@@ -233,8 +233,8 @@ class Hero:
         for i in range(0, 3):
             if self.armor[i]:
                 ret += self.armor[i].arm
-            if self.armor[i].mod:
-                ret += used_items[self.armor[i].mod]["armor"]
+                if self.armor[i].mod:
+                    ret += used_items[self.armor[i].mod]["armor"]
         if use_perk and self.perks[1]!='0':
             ret *= perk_arm_list[int(self.perks[1])-1]
         return round(ret)
@@ -260,24 +260,17 @@ class Hero:
         return stack_buff[self.armor[0].type_stack - 1][index] + eff
 
     def get_in_dzen(self) -> int:
-        return self.dzen - (self.get_dzen_lvl() + 1) * self.get_dzen_lvl() * 250000
+        return round(self.dzen) - self.calc_sum(self.get_dzen_lvl()) * 500000
+
+    def calc_sum(self, val: int) -> int:
+        return ((val + 1) * val) // 2
 
     def get_dzen_lvl(self) -> int:
-        s = i = 0
         k = self.dzen // 500000
-        if not k:
-            return 0
-        while s < k:
-            s += i
-            i = i + 1
-        return i - 1
+        return int(1 / 2 * (-1 + pow(1 + 8 * k, 1 / 2)))
 
     def get_coins_to_dzen(self) -> int:
         return (self.get_dzen_lvl() + 1) * 500000
-
-    # def get_perk(self, i: int) -> int:
-    #     perks = list(self.perks)
-    #     return int(perks[i])
 
     def get_module(self, i: int = 0, value: int = 0) -> int:
         k, mod = self.get_act_modul()
@@ -523,6 +516,7 @@ class Hero:
         else:
             r = round(200 - self.km * 1.3) if self.km < 80 else 100
         if randint(0, 400) < r or self.mob_km > 3:
+            coef = 2
             self.mob_km = 0
             if self.zone == 3:
                 self.sel_mob_from_zone(list_mob_clown_zone)
@@ -539,14 +533,19 @@ class Hero:
                 if k >= len(list_mobs):
                     k = len(list_mobs) - 1
                 if self.zone == 2:
-                    list_m = list_mobs[k+5]
+                    if random.randint(0, 1):
+                        list_m = list_mobs[k+5]
+                    else:
+                        list_m = list_mobs[k]
+                        coef = 8
+
                 else:
                     list_m = list_mobs[k]
                 i = randint(0, len(list_m) - 1)
                 self.mob_fight = copy.copy(list_m[i])
 
             if 3 > self.zone > 0:
-                self.mob_fight.hp *= 2
+
                 if self.zone == 1:
                     if ")" in self.mob_fight.get_name():
                         self.mob_fight.name = self.mob_fight.get_name().replace(")", "☢️)")
@@ -559,11 +558,15 @@ class Hero:
                     else:
                         self.mob_fight.name = self.mob_fight.get_name() + "☠"
 
-                self.mob_fight.attack *= 2
-                self.mob_fight.dexterity *= 2
-                self.mob_fight.luck *= 2
-                self.mob_fight.accuracy *= 2
-                self.mob_fight.coins *= 2
+                self.mob_fight.hp *= coef
+                self.mob_fight.attack *= coef
+                self.mob_fight.dexterity *= coef
+                self.mob_fight.luck *= coef
+                self.mob_fight.accuracy *= coef
+                if coef == 2:
+                    self.mob_fight.coins *= 2
+                else:
+                    self.mob_fight.coins *= 3
 
             self.mob_fight.hp = round(self.mob_fight.hp * random.uniform(0.85, 1.15))
             if not self.in_dange and randint(0, 20) == 5:

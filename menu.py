@@ -146,6 +146,25 @@ def menu_rad_quit(add_fight: bool = False) -> ReplyKeyboardMarkup:
     return reply_markup
 
 
+def menu_dead_quit(add_fight: bool = False) -> ReplyKeyboardMarkup:
+    keyboard = [
+        [
+            InlineKeyboardButton("️☠Покинуть пустошь смерти☠"),
+            InlineKeyboardButton("👣Идти дaльше")
+        ],
+        [
+            InlineKeyboardButton("👣Идти к лагерю"),
+            InlineKeyboardButton("⛺️В лагерь"),
+            InlineKeyboardButton("📟Пип-бой"),
+        ]
+    ]
+    if add_fight:
+        keyboard[0].insert(0, InlineKeyboardButton("🔪Напасть"))
+
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    return reply_markup
+
+
 def menu_lomb() -> ReplyKeyboardMarkup:
     keyboard = [
         [
