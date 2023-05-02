@@ -27,7 +27,8 @@ class Weapon:
     def dmg_mod(self):
         mod = ""
         if self.mod:
-            mod = "+" + str(used_items[self.mod].get("damage"))
+            dmg = used_items[self.mod].get("damage")
+            mod = "+" + str(dmg) if dmg > 0 else str(dmg)
         return mod
 
     def get_data(self, code="eqw_") -> str:
@@ -98,7 +99,7 @@ weapons_all = [Weapon("бита", 1, cost=100),  # титановый арбал
                Weapon("🔆ядерный уничтожитель", 600, life=2000, max_life=2000),
                Weapon("🌪лазерное торнадо", 650, life=2000, max_life=2000),
                Weapon("🌀черная дыра", 700, life=2000, max_life=2000), #19
-               Weapon("🌀пушка тиранид", 750, life=2000, max_life=2000),
+               Weapon("✴️пушка тиранид", 750, life=2000, max_life=2000),
                Weapon("🔪коса смерти", 666, life=1000, max_life=1000), #21
                Weapon("🪓клоунский молоток", 456, life=1000, max_life=1000), #22
                Weapon("🦯Посох Шао-Кана", 730, life=1000, max_life=1000),

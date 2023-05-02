@@ -32,13 +32,16 @@ used_items = {100: {"name": "сырое мясо", "hungry": 30, "hp": 2},
               301: {"name": "💌Медпак", "hp": 80},
               302: {"name": "🧪Стимбласт", "hp": 120, "km_heal": 3},
               303: {"name": "🧪Стимбласт+", "hp": 150, "km_heal": 5},
-              400: {"name": "☢️модификатор ядерный тип А", "damage": 50, "armor": 45, "dexterity": -100,
+              400: {"name": "☢️модификатор ядерный тип А", "damage": 50, "armor": 55, "dexterity": -100,
                     "accuracy": -100},
-              401: {"name": "⚛️модификатор тритьевый", "damage": 70, "armor": 65, "dexterity": -150, "accuracy": -150},
+              401: {"name": "⚛️модификатор тритьевый", "damage": 70, "armor": 75, "dexterity": -150, "accuracy": -150},
               402: {"name": "☢️модификатор ядерный тип Б", "damage": 75, "armor": 85, "dexterity": -170,
                     "accuracy": -150},
-              403: {"name": "👽модификатор тирранид", "damage": 100, "armor": 100, "dexterity": -200, "accuracy": -200},
-              404: {"name": "☠️модификатор проклятый", "damage": 110, "armor": 105, "luck": -250, "accuracy": -250},
+              403: {"name": "👽модификатор тирранид", "damage": 100, "armor": 110, "dexterity": -200, "accuracy": -200},
+              404: {"name": "☠️модификатор проклятый", "damage": 110, "armor": 120, "dexterity": -100, "luck": -250, "accuracy": -250},
+              405: {"name": "модификатор ловкач А", "damage": -20, "armor": -30, "dexterity": 150, "accuracy": 150},
+              406: {"name": "модификатор безумец Б", "damage": -30, "armor": -40, "dexterity": 200, "accuracy": 200},
+              407: {"name": "️модификатор глупец В", "damage": -50, "armor": -50, "dexterity": 300, "accuracy": 300},
               500: {"name": "Сбрасыватель перков"},
               }
 
@@ -144,9 +147,21 @@ class Stock:
 
     def print_stuff(self, code: int = 1) -> str:
         out = ""
-        for k in self.used_stuff:
+        for k in sorted(self.used_stuff):
             if k // 100 == code and self.used_stuff[k]:
-                out += f"{used_items[k].get('name')}({self.used_stuff[k]}) /ustf_{k}\n"
+                if code == 4:
+                    luck = used_items[k].get('luck', 0)
+                    arm = used_items[k].get('armor')
+                    dmg = used_items[k].get('damage')
+                    dex = used_items[k].get('dexterity')
+                    acc = used_items[k].get('accuracy')
+                    if luck:
+                        luck = f"👼{luck}"
+                    else:
+                        luck = ""
+                    out += f"{used_items[k].get('name')}({self.used_stuff[k]}) 🛡{arm}|⚔️{dmg} 🎯{acc} 🤸🏽‍♂️{dex} {luck} /ustf_{k}\n"
+                else:
+                    out += f"{used_items[k].get('name')}({self.used_stuff[k]}) /ustf_{k}\n"
 
         if out == "":
             return " пока ничего \n"
@@ -179,5 +194,5 @@ class Stock:
         out += f"Экипировка ({cnt}/{self.MAX_EQUIP})\n"
         for w in self.equip:
             out += self.equip[w].get_data() + "\n"
-        out += "\nеда /food \nбаффы /buff \nвыкинуть /drop\nмобы в команде /mobs"
+        out += "\nеда /food \nбаффы /buff \nвыкинуть /drop\nмобы в команде /mobs убрать мобов /clr_mobs"
         return out

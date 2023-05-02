@@ -1,7 +1,7 @@
 import random
 from db.models import WeaponDB
 
-perk_drone_list = [1.15, 1.30, 1.4, 1.7]
+perk_drone_list = [1.2, 1.3, 1.4, 1.6]
 
 class Drone():
     index = 0

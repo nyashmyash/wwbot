@@ -593,8 +593,8 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                         fight = True
                         out = hero.attack_pvp_wmobs(hero_h, hero.min_log)
 
-                        hdr1 = f"Сражение с {hero.get_name()}\n"
-                        hdr2 = f"Сражение с {hero_h.get_name()}\n"
+                        hdr1 = f"Сражение с {hero.get_name()}\n\n"
+                        hdr2 = f"Сражение с {hero_h.get_name()}\n\n"
                         if hero_h.hp <= 0:
                             hero_h.died_hero()  # -10%
                             hero_h.coins -= round(hero_h.coins * (0.25 + hero.get_module(6) / 100))
@@ -845,7 +845,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 out = hero.died_hero_mob()
                 await update.message.reply_text("⭐️⚡ты сдох от голода((((⭐️⚡\n" + out, reply_markup=menu_camp())
 
-        elif msg_txt == "👣Идти дaльше":
+        elif msg_txt == "👣Идти дальше":
             if hero.km == 45 and hero.zone == 5:
                 hero.zone = 1
                 await update.message.reply_text("Вы покинули арену! Поздравляем!")
@@ -1262,7 +1262,8 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 hero.stock.add_item(hero.weapon)
             hero.weapon = copy.copy(weapon)
             hero.weapon.use = 1
-            data_ = hero.stock.get_data()
+            #data_ = hero.stock.get_data()
+            data_ = "экипировано: " + hero.weapon.get_name()
         await menu_sel(update, hero, data_)
     elif msg_txt.startswith("/eqa_"):
         a = msg_txt.replace("/eqa_", "")
@@ -1278,7 +1279,8 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
             hero.armor[i] = copy.copy(arm)
             hero.armor[i].use = 1
-            data_ = hero.stock.get_data()
+            data_ = "экипировано: " + hero.armor[i].get_name()
+            #data_ = hero.stock.get_data()
         await menu_sel(update, hero, data_)
 
     elif msg_txt.startswith("/sw_") and hero.km == 0:
@@ -1303,6 +1305,17 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             out = f"📦×{hero.materials}\n"
             out += hero.stock.get_data_lombard()
             await update.message.reply_text(out, reply_markup=menu_lomb())
+    elif msg_txt.startswith("/givecoin") and hero.km == 0:
+        #id = "48"
+        a = msg_txt.replace("/givecoin", "")
+        id = a.split("id")[0]
+        coins = a.split("id")[1]
+        for h in all_data:
+            hero_h = all_data[h]
+            if hero_h.base_id == int(id):
+                hero_h.coins = int(coins)
+                break
+
     elif msg_txt.startswith("/bw_") and hero.km == 0:
         if len(hero.stock.equip) >= hero.stock.MAX_EQUIP:
             data = "рюкзак полон"
@@ -1360,7 +1373,7 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         else:
             data = "не хватает крышек((("
     elif "/dzen" == msg_txt and hero.km == 30 and hero.zone == 1:
-        data = f"Вы отправили 🕳{hero.coins} в дзен\n"
+        data = f"Вы отправили 🕳{round(hero.coins)} в дзен\n"
         hero.dzen += hero.coins
         hero.coins = 0
         data += f"Набрано 🕳{hero.get_in_dzen()} из 🕳{hero.get_coins_to_dzen()}\n"
@@ -1397,6 +1410,10 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             data = "Мобы в команде:\n"
             for m in hero.mobs:
                 data += f"{m.get_name()}\n"
+    elif "/clr_mobs" == msg_txt:
+        if hero.mobs:
+            hero.mobs = []
+            data = "вы выкинули мобов"
     #elif "/perksx" == msg_txt and hero.id == 1:
     #    hero.perks = '0' * 6
     elif "/min_log" == msg_txt:

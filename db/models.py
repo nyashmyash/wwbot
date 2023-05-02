@@ -81,7 +81,7 @@ class HeroDB(Base):
     km = Column(Integer)
     mob = Column(String)
     all_km = Column(Integer)
-    modul = Column(Integer)
+    moduls = Column(String)
     zone = Column(Integer)
     dzen = Column(Integer)
     perks = Column(String)
@@ -104,7 +104,7 @@ class HeroDB(Base):
         self.hungry = hero.hungry
         self.km = hero.km
         self.all_km = hero.all_km
-        self.modul = hero.modul
+        self.moduls = hero.moduls
         self.zone = hero.zone
         self.dzen = hero.dzen
         self.band_id = hero.band_id

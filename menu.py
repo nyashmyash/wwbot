@@ -19,7 +19,7 @@ def menu_rad(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("👣☢Рад-️Пустошь"),
-            InlineKeyboardButton("👣Идти дaльше"),
+            InlineKeyboardButton("👣Идти дальше"),
 
         ],
         [
@@ -38,7 +38,7 @@ def menu_clown(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("👣️🎪 Зайти в блядский цирк🎪 ️"),
-            InlineKeyboardButton("👣Идти дaльше"),
+            InlineKeyboardButton("👣Идти дальше"),
         ],
         [
             InlineKeyboardButton("👣Идти к лагерю"),
@@ -57,7 +57,7 @@ def menu_painkiller(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("🔪️painkiller🔪️"),
-            InlineKeyboardButton("👣Идти дaльше"),
+            InlineKeyboardButton("👣Идти дальше"),
         ],
         [
             InlineKeyboardButton("👣Идти к лагерю"),
@@ -76,7 +76,7 @@ def menu_dead(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("👣️☠️Пустошь смерти☠️"),
-            InlineKeyboardButton("👣Идти дaльше"),
+            InlineKeyboardButton("👣Идти дальше"),
         ],
         [
             InlineKeyboardButton("👣Идти к лагерю"),
@@ -94,7 +94,7 @@ def menu_mk(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("👣️👹Смертельная арена👹"),
-            InlineKeyboardButton("👣Идти дaльше"),
+            InlineKeyboardButton("👣Идти дальше"),
         ],
         [
             InlineKeyboardButton("👣Идти к лагерю"),
@@ -112,7 +112,7 @@ def menu_dange(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("🔥Зайти в данж"),
-            InlineKeyboardButton("👣Идти дaльше")
+            InlineKeyboardButton("👣Идти дальше")
         ],
         [
             InlineKeyboardButton("👣Идти к лагерю"),
@@ -131,7 +131,7 @@ def menu_rad_quit(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("☢Покинуть Рад-️Пустошь☢"),
-            InlineKeyboardButton("👣Идти дaльше")
+            InlineKeyboardButton("👣Идти дальше")
         ],
         [
             InlineKeyboardButton("👣Идти к лагерю"),
@@ -150,7 +150,7 @@ def menu_dead_quit(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("️☠Покинуть пустошь смерти☠"),
-            InlineKeyboardButton("👣Идти дaльше")
+            InlineKeyboardButton("👣Идти дальше")
         ],
         [
             InlineKeyboardButton("👣Идти к лагерю"),
@@ -202,7 +202,7 @@ def menu_go(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("📟Пип-бой"),
-            InlineKeyboardButton("👣Идти дaльше"),
+            InlineKeyboardButton("👣Идти дальше"),
         ],
         [
             #InlineKeyboardButton("🔎Осмотреться"),
@@ -221,7 +221,7 @@ def menu_go_dead() -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("📟Пип-бой"),
-            InlineKeyboardButton("👣Идти дaльше"),
+            InlineKeyboardButton("👣Идти дальше"),
         ],
         [
             InlineKeyboardButton("🔎Осмотреться"),
@@ -236,7 +236,7 @@ def menu_pvp() -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("🔪Напасть"),
-            InlineKeyboardButton("👣Идти дaльше"),
+            InlineKeyboardButton("👣Идти дальше"),
         ],
         [
             InlineKeyboardButton("📟Пип-бой"),

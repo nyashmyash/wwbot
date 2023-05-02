@@ -36,7 +36,8 @@ class Armor:
     def arm_mod(self):
         mod = ""
         if self.mod:
-            mod = "+" + str(used_items[self.mod].get("armor"))
+            arm = used_items[self.mod].get("armor")
+            mod = "+" + str(arm) if arm > 0 else str(arm)
         return mod
 
     def get_data(self, code: str = "eqa_") -> str:

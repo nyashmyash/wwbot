@@ -72,8 +72,13 @@ class Mob:
         return self.attack * random.uniform(0.85, 1.15)
 
     def get_miss(self, dex: int) -> bool:  # dex шанс уворота для героя 0.1%
+        # k = 1.7 if dex / self.accuracy >= 1.7 else dex / self.accuracy
+        # return randint(0, 1000) < 500 * k
+        r = randint(0, 50)
         k = 4 if dex / self.accuracy >= 4 else dex / self.accuracy
-        return randint(0, 1000) < 200 * k
+        print(f'{r} < {10 * k} mob {self.name}')
+        return r < 10 * k
+
 
     def is_first_hit(self, luck: int) -> bool:
         if randint(0, 1000) - 500 < self.luck - luck:
@@ -316,13 +321,13 @@ list_mob_painkiller_zone = [
 
 list_mob_dino_zone = [
     Mob(name='🦤Птеродактиль ⭐️', hp=750, attack=500, dexterity=10000, luck=2000, accuracy=500, coins=350),
-    Mob(name='🦕Бронтозавр ⭐️⭐️', hp=2000, attack=1500, dexterity=500, luck=500, accuracy=1000, coins=350),
     Mob(name='🦖Ахиллобатор ⭐️⭐️', hp=1000, attack=1000, dexterity=1000, luck=1500, accuracy=10000, coins=350),
     Mob(name='🐊Стегозавр ⭐️⭐️', hp=1500, attack=1000, dexterity=500, luck=2000, accuracy=1000, coins=350),
     Mob(name='🦖Спинозавр 🌟', hp=2000, attack=1500, dexterity=500, luck=500, accuracy=500, coins=350),
     Mob(name='🦖Карнотавр 🌟', hp=2000, attack=1000, dexterity=1500, luck=1500, accuracy=1000, coins=350),
-    Mob(name='🦖Мегалозавр 🌟🌟', hp=1500, attack=1000, dexterity=1500, luck=1000, accuracy=1500, coins=350),
-    Mob(name='🦖Тираннозавр 🌟🌟', hp=3000, attack=1500, dexterity=500, luck=500, accuracy=500, coins=350),
+    Mob(name='🦖Мегалозавр 🌟🌟', hp=2500, attack=1000, dexterity=1500, luck=1000, accuracy=1500, coins=350),
+    Mob(name='🦕Бронтозавр ⭐️⭐️', hp=2000, attack=1500, dexterity=500, luck=500, accuracy=1000, coins=350),
+    Mob(name='🦖Тираннозавр 🌟🌟', hp=3000, attack=1500, dexterity=500, luck=1000, accuracy=1000, coins=350),
 ]
 
 

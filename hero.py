@@ -12,7 +12,7 @@ from rand import randint
 all_modules = {
     1: [25, "📥модуль силы"],
     2: [100, "📥модуль ловкости"],
-    3: [50, "📥модуль удачи"],
+    3: [100, "📥модуль удачи"],
     4: [50, "📥модуль точности"],
     5: [5, "📥модуль хп"],
     6: [15, "📥модуль дохода"],
@@ -179,7 +179,8 @@ class Hero:
     CNT_LOG = 30
     buffs = None
     km_buff = 0
-    modul = 0  # 11111 есть 5 модулей
+    modul = 0
+    moduls = ''
     zone = 0
     km_heal = 0
     dzen = 0
@@ -277,7 +278,7 @@ class Hero:
         if k != i:
             return 0
         if k in [2, 3, 4]:
-            return 50 if value * 0.1 < 50 else round(value * 0.1)
+            return 100 if value * 0.1 < 100 else round(value * 0.1)
         if k == 1:
             return 25 if value * 0.05 < 25 else round(value * 0.05)
 
@@ -305,16 +306,16 @@ class Hero:
     def get_accuracy(self) -> int:
         return self.accuracy + self.get_stack(3) + self.buffs[3] + self.get_module(4, self.accuracy)
 
+
     def get_act_modul(self) -> (int, list):
-        if self.modul:
-            modul = self.modul
-            k = 1
-            while modul % 10 != 2 or modul == 0 and k <= len(all_modules.keys()):
-                modul //= 10
-                k += 1
-            return k, all_modules[k]
-        else:
-            return 0, None
+        if self.moduls != '':
+            k = len(self.moduls)
+            for i in self.moduls:
+                if i == '1':
+                    return k, all_modules[k]
+                k -= 1
+        return 0, None
+
 
     def get_str_modul(self) -> str:
         k, mod = self.get_act_modul()
@@ -339,21 +340,23 @@ class Hero:
             out += f"({self.buffs[i]})"
         return out
 
+
     def add_module(self):
-        if self.modul != 0:
-            k = len(str(self.modul)) + 1
-            self.modul = int("1" * k) + int(pow(10, k - 1))
+        if self.moduls == '':
+            self.moduls = '1'
         else:
-            self.modul = 2
+            k = len(self.moduls)
+            self.moduls = '1' + '0' * k
+
 
     def activate_module(self, i: int) -> str:  # 1 2 3 4..
-        if not self.modul:
+        if self.moduls == '' or i > len(self.moduls):
             return "нет такого модуля\n"
-        k = len(str(self.modul))
-        if i <= k:
-            self.modul = int("1" * k) + int(pow(10, i - 1))
-            return f"{self.get_str_modul()} активирован\n"
-        return "нет такого модуля\n"
+
+        list_mod = list('0' * len(self.moduls))
+        list_mod[len(list_mod) - i] = '1'
+        self.moduls = ''.join(list_mod)
+        return f"{self.get_str_modul()} активирован\n"
 
     def ret_cnt_perks(self) -> int:
         out = 0
@@ -411,18 +414,12 @@ class Hero:
         else:
             data += f"количество bm до перка {1250*self.ret_cnt_perks() - self.get_bm()}\n"
 
-        if self.perks[0] != '0':
-            data += f"{text_data[0]}  {self.perks[0]}, коэф {perk_force_list[int(self.perks[0])-1]}\n"
-        if self.perks[1] != '0':
-            data += f"{text_data[1]}  {self.perks[1]}, коэф {perk_arm_list[int(self.perks[1])-1]}\n"
-        if self.perks[2] != '0':
-            data += f"{text_data[2]}  {self.perks[2]}, коэф {perk_dex_list[int(self.perks[2]) - 1]}\n"
-        if self.perks[3] != '0':
-            data += f"{text_data[3]}  {self.perks[3]}, коэф {perk_accur_list[int(self.perks[3]) - 1]}\n"
-        if self.perks[4] != '0':
-            data += f"{text_data[4]}  {self.perks[4]}, коэф {perk_drone_list[int(self.perks[4]) - 1]}\n"
-        if self.perks[5] != '0':
-            data += f"{text_data[5]}  {self.perks[5]}, коэф {perk_arm_list[int(self.perks[5]) - 1]}\n"
+        perks_all = [perk_force_list, perk_arm_list, perk_dex_list, perk_accur_list, perk_drone_list, perk_luck_list]
+
+        for i in range(0, len(perks_all)):
+            if int(self.perks[i]):
+                data += f"{text_data[i]}  {self.perks[i]}, коэф {perks_all[i][int(self.perks[i]) - 1]}\n"
+
         if data == "ваши умения:\n":
             return "у вас нет умений!"
 
@@ -497,7 +494,9 @@ class Hero:
     def get_miss(self, dex: int) -> bool:
         acc = self.get_accuracy()
         k = 4 if dex / acc >= 4 else dex / acc
-        return randint(0, 1000) < 200 * k
+        r = randint(0, 50)
+        print(f'{r} < {10 * k} hero {self.name}')
+        return r < 10 * k
 
     def calc_cost(self, val: int) -> int:
         out = 13 * val - 3 * self.charisma
@@ -537,7 +536,7 @@ class Hero:
                         list_m = list_mobs[k+5]
                     else:
                         list_m = list_mobs[k]
-                        coef = 8
+                        coef = 7
 
                 else:
                     list_m = list_mobs[k]
@@ -609,11 +608,8 @@ class Hero:
 
     def make_header(self) -> str:
         buffed = "*бафф*" if self.km_buff > 0 else ""
-        zoned = "☢" if self.zone == 1 else ""
-        zoned = "☠️" if self.zone == 2 else zoned
-        zoned = "🤡️" if self.zone == 3 else zoned
-        zoned = "🔪" if self.zone == 4 else zoned
-        zoned = "👺" if self.zone == 5 else zoned
+        zones_mark =["", "☢", "☠️", "🤡️", "🔪", "👺"]
+        zoned = zones_mark[self.zone]
         enfect = ""
         for buff in self.buffs:
             if buff < 0:
@@ -722,7 +718,7 @@ class Hero:
                 break
 
     def attack_mob_pvp(self, mob: Mob, min_log: bool = False) -> str:
-        out = f"❤️ {round(self.hp)} {self.get_name()} vs {mob.get_name()} ❤{round(mob.hp)}\n"
+        out = f"❤️ {round(self.hp)} {self.get_name()} vs {mob.get_name()} ❤{round(mob.hp)}\n\n"
         armor = self.calc_armor()
         hp_mob = mob.hp
         cnt_attack = 0
@@ -795,7 +791,7 @@ class Hero:
             self.km_buff = randint(15, 25)
 
     def attack_mob(self, mob: Mob, is_dange=False, min_log: bool = False) -> str:
-        out = f"Сражение с {mob.get_name()} ❤{mob.hp}\n"
+        out = f"Сражение с {mob.get_name()} ❤{mob.hp}\n\n"
         armor = self.calc_armor()
         hp_mob = mob.hp
         cnt_attack = 0
@@ -894,15 +890,19 @@ class Hero:
                                 if randint(0, 400) == 199:
                                     self.stock.add_stuff(400)
                                     out += f"Вой вой вам выпало кое-что интересное {used_items[400]['name']}"
-                                if randint(0, 1000) == 666:
+                                if randint(0, 700) == 666:
                                     type = randint(0, 2)
                                     self.stock.add_item(armor_all[type][13])
                                     out += f"Вой вой вам выпало кое-что интересное {armor_all[type][13].get_name()}"
-                                if randint(0, 1000) == 666:
+                                if randint(0, 700) == 666:
                                     self.stock.add_item(weapons_all[21])
                                     out += f"Вой вой вам выпало кое-что интересное {weapons_all[21].get_name()}"
+                                if randint(0, 500) == 222:
+                                    code = random.choice([405, 406, 407])
+                                    self.stock.add_stuff(code)
+                                    out += f"Вой вой вам выпало кое-что интересное {used_items[code]['name']}"
                             if self.zone == 3: #clown
-                                if randint(0, 1000) == 777:
+                                if randint(0, 500) == 222:
                                     type = randint(0, 2)
                                     self.stock.add_item(armor_all[type][12])
                                     out += f"Вой вой вам выпало кое-что интересное {armor_all[type][12].get_name()}"
@@ -916,6 +916,10 @@ class Hero:
                                 if randint(0, 500) == 333:
                                     self.stock.add_stuff(402)
                                     out += f"Вой вой вам выпало кое-что интересное {used_items[402]['name']}"
+                                if randint(0, 500) == 222:
+                                    code = random.choice([405, 406, 407])
+                                    self.stock.add_stuff(code)
+                                    out += f"Вой вой вам выпало кое-что интересное {used_items[code]['name']}"
                                 if randint(0, 700) == 555 and not self.drone:
                                     out += f"🛰{all_drones[2].get_name()} возле поверженного моба лежал дрон, теперь можно его использовать\n"
                                     self.drone = copy.copy(all_drones[2])
@@ -930,6 +934,10 @@ class Hero:
                                     if randint(0, 400) == 222:
                                         out += f"🛰{all_drones[3].get_name()} возле поверженного моба лежал дрон, теперь можно его использовать\n"
                                         self.drone = copy.copy(all_drones[3])
+                                if randint(0, 500) == 222:
+                                    code = random.choice([405, 406, 407])
+                                    self.stock.add_stuff(code)
+                                    out += f"Вой вой вам выпало кое-что интересное {used_items[code]['name']}"
                                 if "Шао" in mob.name:
                                     if randint(0, 100) == 50:
                                         type = randint(0, 2)
@@ -1128,7 +1136,7 @@ class Hero:
         self.hungry = hero_db.hungry
         self.km = hero_db.km
         self.all_km = hero_db.all_km
-        self.modul = hero_db.modul
+        self.moduls = hero_db.moduls
         self.zone = hero_db.zone
         self.dzen = hero_db.dzen
         self.perks = hero_db.perks
@@ -1140,5 +1148,5 @@ class Hero:
                       charisma=self.charisma, luck=self.luck,
                       accuracy=self.accuracy, materials=self.materials,
                       coins=self.coins, hungry=self.hungry, km=self.km, mob="",
-                      all_km=self.all_km, modul=self.modul, zone=self.zone, dzen=self.dzen,
+                      all_km=self.all_km, moduls=self.moduls, zone=self.zone, dzen=self.dzen,
                       band_id=self.band_id, band_name=self.band_name, perks=self.perks)
