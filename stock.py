@@ -39,9 +39,9 @@ used_items = {100: {"name": "сырое мясо", "hungry": 30, "hp": 2},
                     "accuracy": -150},
               403: {"name": "👽модификатор тирранид", "damage": 100, "armor": 110, "dexterity": -200, "accuracy": -200},
               404: {"name": "☠️модификатор проклятый", "damage": 110, "armor": 120, "dexterity": -100, "luck": -250, "accuracy": -250},
-              405: {"name": "модификатор ловкач А", "damage": -20, "armor": -30, "dexterity": 150, "accuracy": 150},
-              406: {"name": "модификатор безумец Б", "damage": -30, "armor": -40, "dexterity": 200, "accuracy": 200},
-              407: {"name": "️модификатор глупец В", "damage": -50, "armor": -50, "dexterity": 300, "accuracy": 300},
+              405: {"name": "🤸🏽‍♂️модификатор ловкости", "damage": -40, "armor": -40, "dexterity": 200},
+              406: {"name": "🎯модификатор точности", "damage": -40, "armor": -40, "accuracy": 200},
+              407: {"name": "️🤪модификатор глупец", "damage": -60, "armor": -60, "dexterity": 150, "accuracy": 150},
               500: {"name": "Сбрасыватель перков"},
               }
 
@@ -74,8 +74,11 @@ class Stock:
 
     def get_data_lombard(self) -> str:
         out = "Экипировка которую можно продать:\n\n"
+        equip_list = []
         for w in self.equip:
-            out += self.equip[w].get_data_cost() + "\n"
+            equip_list.append(self.equip[w].get_data_cost())
+        for ws in sorted(equip_list):
+            out += ws + "\n"
         return out
 
     def add_stuff(self, key: int) -> None:
@@ -89,8 +92,11 @@ class Stock:
             stf = self.used_stuff.get(code, None)
             if stf:
                 out = "Выбери элемент для улучшения:\n"
+                equip_list = []
                 for w in self.equip:
-                    out += self.equip[w].get_data_mod(code) + "\n"
+                    equip_list.append(self.equip[w].get_data_mod(code))
+                for ws in sorted(equip_list):
+                    out += ws + "\n"
                 return out
             return
         if code == 500:
@@ -126,7 +132,7 @@ class Stock:
             if hun:
                 outstr += f"🍗-{hun}% "
             if hp > 0:
-                outstr += f"❤+{hp} "
+                outstr += f"❤+{hp} ({round(hero.hp)}) "
             elif hp < 0:
                 outstr += f"💔{hp} "
             if force:
@@ -155,11 +161,10 @@ class Stock:
                     dmg = used_items[k].get('damage')
                     dex = used_items[k].get('dexterity')
                     acc = used_items[k].get('accuracy')
-                    if luck:
-                        luck = f"👼{luck}"
-                    else:
-                        luck = ""
-                    out += f"{used_items[k].get('name')}({self.used_stuff[k]}) 🛡{arm}|⚔️{dmg} 🎯{acc} 🤸🏽‍♂️{dex} {luck} /ustf_{k}\n"
+                    luck = f"👼{luck}" if luck else ""
+                    dex = f"🤸🏽‍♂️{dex}" if dex else ""
+                    acc = f"🎯{acc}" if acc else ""
+                    out += f"{used_items[k].get('name')}({self.used_stuff[k]}) 🛡{arm}|⚔️{dmg} {acc} {dex} {luck} /ustf_{k}\n"
                 else:
                     out += f"{used_items[k].get('name')}({self.used_stuff[k]}) /ustf_{k}\n"
 
@@ -189,10 +194,16 @@ class Stock:
         out = "🎒СОДЕРЖИМОЕ РЮКЗАКА\n"
         out += "   Полезное\n"
         out += self.print_stuff(3)
-        out += self.print_stuff(4)
+        out += "/mods модификаторы\n"
         cnt = len(self.equip)
         out += f"Экипировка ({cnt}/{self.MAX_EQUIP})\n"
+        equip_list = []
         for w in self.equip:
-            out += self.equip[w].get_data() + "\n"
-        out += "\nеда /food \nбаффы /buff \nвыкинуть /drop\nмобы в команде /mobs убрать мобов /clr_mobs"
+            equip_list.append(self.equip[w].get_data())
+        for ws in sorted(equip_list):
+            out += ws + "\n"
+        out += "\nеда /food \nбаффы /buff \nвыкинуть /drop\nмобы в команде /mobs\nубрать мобов /clr_mobs"
         return out
+
+    def get_mods(self) -> str:
+        return self.print_stuff(4)

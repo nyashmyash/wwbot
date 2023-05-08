@@ -179,7 +179,6 @@ class Hero:
     CNT_LOG = 30
     buffs = None
     km_buff = 0
-    modul = 0
     moduls = ''
     zone = 0
     km_heal = 0
@@ -193,6 +192,7 @@ class Hero:
     danges = None
     mob_km = 0
     min_log = False
+    cnt_miss = 0
 
     def go(self, reverse=False) -> None:
         if reverse:
@@ -492,11 +492,16 @@ class Hero:
             return 1
 
     def get_miss(self, dex: int) -> bool:
+        if self.cnt_miss > 0:
+            self.cnt_miss = 0
+            return False
         acc = self.get_accuracy()
-        k = 4 if dex / acc >= 4 else dex / acc
-        r = randint(0, 50)
-        print(f'{r} < {10 * k} hero {self.name}')
-        return r < 10 * k
+        k = 4 if dex/acc >= 4 else dex/acc
+        r = randint(0, 500)
+        if k <= 0.5 and r < 100 * k:
+            self.cnt_miss += 1
+        #print(f'{r} < {10 * k} hero {self.name}')
+        return r < 100 * k
 
     def calc_cost(self, val: int) -> int:
         out = 13 * val - 3 * self.charisma
@@ -882,19 +887,19 @@ class Hero:
                                     out += f"моб {mob.get_name()} взят в команду!\n"
                                     self.mobs.append(mob)
 
-                            if self.zone >= 1 and not self.drone:
-                                if randint(0, 1000) == 555:
+                            if self.zone in [1, 2, 3] and not self.drone:
+                                if randint(0, 500) == 455:
                                     out += f"🛰{all_drones[1].get_name()} возле поверженного моба лежал дрон, теперь можно его использовать\n"
                                     self.drone = copy.copy(all_drones[1])
                             if self.zone == 2: #death
                                 if randint(0, 400) == 199:
                                     self.stock.add_stuff(400)
                                     out += f"Вой вой вам выпало кое-что интересное {used_items[400]['name']}"
-                                if randint(0, 700) == 666:
+                                if randint(0, 500) == 266:
                                     type = randint(0, 2)
                                     self.stock.add_item(armor_all[type][13])
                                     out += f"Вой вой вам выпало кое-что интересное {armor_all[type][13].get_name()}"
-                                if randint(0, 700) == 666:
+                                if randint(0, 500) == 266:
                                     self.stock.add_item(weapons_all[21])
                                     out += f"Вой вой вам выпало кое-что интересное {weapons_all[21].get_name()}"
                                 if randint(0, 500) == 222:
@@ -902,32 +907,32 @@ class Hero:
                                     self.stock.add_stuff(code)
                                     out += f"Вой вой вам выпало кое-что интересное {used_items[code]['name']}"
                             if self.zone == 3: #clown
-                                if randint(0, 500) == 222:
+                                if randint(0, 400) == 222:
                                     type = randint(0, 2)
                                     self.stock.add_item(armor_all[type][12])
                                     out += f"Вой вой вам выпало кое-что интересное {armor_all[type][12].get_name()}"
-                                if randint(0, 1000) == 777:
+                                if randint(0, 400) == 277:
                                     self.stock.add_item(weapons_all[22])
                                     out += f"Вой вой вам выпало кое-что интересное {weapons_all[22].get_name()}"
-                            if self.zone == 4:
+                            if self.zone == 4: #pk
                                 if randint(0, 400) == 199:
                                     self.stock.add_stuff(401)
                                     out += f"Вой вой вам выпало кое-что интересное {used_items[401]['name']}"
-                                if randint(0, 500) == 333:
+                                if randint(0, 400) == 333:
                                     self.stock.add_stuff(402)
                                     out += f"Вой вой вам выпало кое-что интересное {used_items[402]['name']}"
-                                if randint(0, 500) == 222:
+                                if randint(0, 400) == 222:
                                     code = random.choice([405, 406, 407])
                                     self.stock.add_stuff(code)
                                     out += f"Вой вой вам выпало кое-что интересное {used_items[code]['name']}"
-                                if randint(0, 700) == 555 and not self.drone:
+                                if randint(0, 500) == 455 and not self.drone:
                                     out += f"🛰{all_drones[2].get_name()} возле поверженного моба лежал дрон, теперь можно его использовать\n"
                                     self.drone = copy.copy(all_drones[2])
-                            if self.zone == 5:
-                                if randint(0, 1000) == 444:
+                            if self.zone == 5: #arena
+                                if randint(0, 500) == 444:
                                     self.stock.add_stuff(500)
                                     out += f"Вой вой вам выпало кое-что интересное {used_items[500]['name']}"
-                                if randint(0, 1000) == 333:
+                                if randint(0, 700) == 333:
                                     self.stock.add_stuff(404)
                                     out += f"Вой вой вам выпало кое-что интересное {used_items[404]['name']}"
                                 if not self.drone:
@@ -939,7 +944,7 @@ class Hero:
                                     self.stock.add_stuff(code)
                                     out += f"Вой вой вам выпало кое-что интересное {used_items[code]['name']}"
                                 if "Шао" in mob.name:
-                                    if randint(0, 100) == 50:
+                                    if randint(0, 20) == 10:
                                         type = randint(0, 2)
                                         self.stock.add_item(armor_all[type][14])
                                         out += f"Вой вой вам выпало кое-что интересное {armor_all[type][14].get_name()}"
