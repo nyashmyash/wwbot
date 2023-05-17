@@ -462,12 +462,16 @@ class Hero:
     def calc_attack(self, use_force: bool=False) -> int:
         if self.weapon:
             dmg = self.weapon.dmg
+            force = self.get_force(use_force)
             if self.weapon.mod:
                 dmg += used_items[self.weapon.mod]["damage"]
             if self.force < 50:
-                return round(dmg + self.get_force(use_force))
+                return round(dmg + force)
             else:
-                return round(50 + dmg * pow(1.03, self.get_force(use_force) / 50))
+                if force > 1800:
+                    return round(50 + dmg * (pow(1.03, 1800 / 50)* pow(1.015, (force - 1800) / 50)))
+                else:
+                    return round(50 + dmg * pow(1.03, force / 50))
         else:
             return 1
 
@@ -515,7 +519,7 @@ class Hero:
         self.mob_fight = copy.copy(mobs_zone[k])
 
     def select_mob(self) -> None:
-        if self.zone == 3 or self.zone == 4 or self.zone == 5:
+        if self.zone >= 3:
             r = 200
         else:
             r = round(200 - self.km * 1.3) if self.km < 80 else 100
@@ -532,6 +536,10 @@ class Hero:
                 k = (self.km - 31)//4
                 i = randint(3*k, 3*k + 2)
                 self.mob_fight = copy.copy(list_mk_zone[i])
+            elif self.zone == 6:
+                k = (self.km - 66)//4
+                i = randint(3*k, 3*k + 2)
+                self.mob_fight = copy.copy(list_mob_dino_zone[i])
             else:
                 k = self.km // 5
                 if k >= len(list_mobs):
@@ -613,7 +621,7 @@ class Hero:
 
     def make_header(self) -> str:
         buffed = "*бафф*" if self.km_buff > 0 else ""
-        zones_mark =["", "☢", "☠️", "🤡️", "🔪", "👺"]
+        zones_mark =["", "☢", "☠️", "🤡️", "🔪", "👺", "🐊"]
         zoned = zones_mark[self.zone]
         enfect = ""
         for buff in self.buffs:
@@ -951,6 +959,30 @@ class Hero:
                                     elif randint(0, 10) == 5:
                                         self.stock.add_item(weapons_all[23])
                                         out += f"Вой вой вам выпало кое-что интересное {weapons_all[23].get_name()}"
+                            if self.zone == 6: #dino
+                                if randint(0, 500) == 444:
+                                    self.stock.add_stuff(500)
+                                    out += f"Вой вой вам выпало кое-что интересное {used_items[500]['name']}"
+                                if randint(0, 700) == 333:
+                                    self.stock.add_stuff(404)
+                                    out += f"Вой вой вам выпало кое-что интересное {used_items[404]['name']}"
+                                if not self.drone:
+                                    if randint(0, 400) == 222:
+                                        out += f"🛰{all_drones[4].get_name()} возле поверженного моба лежал дрон, теперь можно его использовать\n"
+                                        self.drone = copy.copy(all_drones[4])
+                                if randint(0, 500) == 222:
+                                    code = random.choice([405, 406, 407])
+                                    self.stock.add_stuff(code)
+                                    out += f"Вой вой вам выпало кое-что интересное {used_items[code]['name']}"
+                                if "Тирран" in mob.name:
+                                    if randint(0, 20) == 10:
+                                        type = randint(0, 2)
+                                        self.stock.add_item(armor_all[type][15])
+                                        out += f"Вой вой вам выпало кое-что интересное {armor_all[type][15].get_name()}"
+                                    elif randint(0, 10) == 5:
+                                        self.stock.add_item(weapons_all[24])
+                                        out += f"Вой вой вам выпало кое-что интересное {weapons_all[24].get_name()}"
+
 
                         return out
             else:
@@ -988,7 +1020,7 @@ class Hero:
 
     def died_hero_mob(self) -> None:
         out = f"{self.log_hit(text_hero_dead)}\n"
-        if self.zone == 1 or self.zone == 2:
+        if self.zone >= 1:
             out += f"потеряно: 🕳 {round(self.coins * 0.5)}"
             self.coins *= 0.5
         else:

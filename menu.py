@@ -108,6 +108,23 @@ def menu_mk(add_fight: bool = False) -> ReplyKeyboardMarkup:
     return reply_markup
 
 
+def menu_dino(add_fight: bool = False) -> ReplyKeyboardMarkup:
+    keyboard = [
+        [
+            InlineKeyboardButton("👣️Парк динозавров"),
+            InlineKeyboardButton("👣Идти дальше"),
+        ],
+        [
+            InlineKeyboardButton("👣Идти к лагерю"),
+            InlineKeyboardButton("⛺️В лагерь"),
+            InlineKeyboardButton("📟Пип-бой"),
+        ]
+    ]
+    if add_fight:
+        keyboard[0].insert(0, InlineKeyboardButton("🔪Напасть"))
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    return reply_markup
+
 def menu_dange(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [

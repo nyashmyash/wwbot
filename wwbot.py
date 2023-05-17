@@ -58,7 +58,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         rf"Hi {user.mention_html()}!"
     )
 
-#list_mob_clown_zone
 
 async def get_hero(update):
     rslt = all_data.get(update.effective_user.id, None)
@@ -69,14 +68,9 @@ async def get_hero(update):
         stock = Stock()
         hero.stock = stock
         hero.buffs = [0, 0, 0, 0]
-        #hero.debuffs = [0, 0, 0, 0]
         hero.danges = []
         stock.equip = OrderedDict()
         if not len(db_hero_fetch):
-            # for i in range(0, 5):
-            #    stock.equip[weapons_all[i].get_code()] = copy.copy(weapons_all[i])
-            # for i in range(0, 3):
-            #    stock.equip[armor_all[i][6].get_code()] = copy.copy(armor_all[i][6])
 
             hero.id = str(update.effective_user.id)
             hero.band_id = 0
@@ -659,6 +653,22 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                         header + "вы отправились в 🔪️painkiller🔪️ зону, вернуться в лагерь нельзя",
                         reply_markup=menu_go_dead())
 
+            if msg_txt == "👣️Парк динозавров" and hero.km == 66:
+                hero.zone = 6
+                hero.go()
+                header = hero.make_header()
+                hero.select_mob()
+                if hero.mob_fight:
+                    await update.message.reply_text(
+                        header + "вы отправились в пустошь где динозавры, вернуться в лагерь нельзя")
+                    # await update.message.reply_text(f"на вас напал моб {hero.mob_fight.name}",
+                    #                                 reply_markup=menu_attack())
+                else:
+                    await update.message.reply_text(
+                        header + "вы отправились в пустошь где динозавры, вернуться в лагерь нельзя",
+                        reply_markup=menu_go_dead())
+
+
         if hero.zone == 2:
             if msg_txt == "👣️👹Смертельная арена👹" and hero.km == 30:
                 hero.zone = 5
@@ -853,6 +863,10 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 hero.zone = 1
                 await update.message.reply_text("Вы покинули блядский цирк")
 
+            if hero.km == 79 and hero.zone == 6:
+                hero.zone = 0
+                await update.message.reply_text("Вы покинули зону динозавров")
+
             if hero.km == 59 and hero.zone == 4:
                 hero.zone = 1
                 await update.message.reply_text("Вы покинули painkiller zone")
@@ -993,6 +1007,10 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
             if hero.km == 47:
                 await update.message.reply_text("Можно войти в пустошь painkiller🔪", reply_markup=menu_painkiller(pvp))
+                return
+
+            if hero.km == 66:
+                await update.message.reply_text("Можно войти в пустошь динозавров", reply_markup=menu_dino(pvp))
                 return
 
             if hero.km == 31 or hero.km == 16:

@@ -324,22 +324,19 @@ list_mob_painkiller_zone = [
 
 ]
 
-"""Трицератопс 
-Диплодок 
-Амаргазавры
-Археоцератопс
-Гуанлонг
-"""
-
 list_mob_dino_zone = [
-    Mob(name='🦤Птеродактиль ⭐️', hp=750, attack=500, dexterity=10000, luck=2000, accuracy=500, coins=350),
-    Mob(name='🦖Ахиллобатор ⭐️⭐️', hp=1000, attack=1000, dexterity=1000, luck=1500, accuracy=10000, coins=350),
-    Mob(name='🐊Стегозавр ⭐️⭐️', hp=1500, attack=1000, dexterity=500, luck=2000, accuracy=1000, coins=350),
-    Mob(name='🦖Спинозавр 🌟', hp=2000, attack=1500, dexterity=500, luck=500, accuracy=500, coins=350),
-    Mob(name='🦖Мегалозавр 🌟', hp=2500, attack=1000, dexterity=1500, luck=1000, accuracy=1500, coins=350),
-    Mob(name='🦖Карнотавр 🌟🌟', hp=2000, attack=1000, dexterity=1500, luck=1500, accuracy=1000, coins=350),
-    Mob(name='🦕Бронтозавр 🌟🌟', hp=2000, attack=1500, dexterity=500, luck=1000, accuracy=1000, coins=350),
-    Mob(name='🦖Тираннозавр 🌟🌟', hp=3000, attack=1500, dexterity=500, luck=1000, accuracy=1000, coins=350),
+    Mob(name='🦤Птеродактиль ⭐️', hp=750, attack=1000, dexterity=10000, luck=2000, accuracy=500, coins=350),
+    Mob(name='🦖Диплодок ⭐️⭐️', hp=2000, attack=1000, dexterity=500, luck=1000, accuracy=10000, coins=360),
+    Mob(name='🦖Ахиллобатор ⭐️⭐️', hp=1000, attack=1000, dexterity=1000, luck=1500, accuracy=10000, coins=360),
+    Mob(name='🐊Стегозавр ⭐️⭐️', hp=1500, attack=1000, dexterity=500, luck=2000, accuracy=1000, coins=370),
+    Mob(name='🦖Спинозавр 🌟', hp=2000, attack=1500, dexterity=500, luck=500, accuracy=500, coins=370),
+    Mob(name='🦖Мегалозавр 🌟', hp=2500, attack=1500, dexterity=1500, luck=1000, accuracy=1500, coins=370),
+    Mob(name='🦖Гуанлонг 🌟', hp=2200, attack=1500, dexterity=1200, luck=1200, accuracy=1500, coins=370),
+    Mob(name='🦖Карнотавр 🌟🌟', hp=2000, attack=1500, dexterity=1500, luck=1500, accuracy=1000, coins=380),
+    Mob(name='🦖Археоцератопс 🌟🌟', hp=1500, attack=1500, dexterity=1500, luck=1000, accuracy=1500, coins=380),
+    Mob(name='🦖Трицератопс 🌟🌟', hp=1800, attack=2000, dexterity=1200, luck=1200, accuracy=1200, coins=380),
+    Mob(name='🦕Бронтозавр 🌟🌟', hp=2000, attack=2000, dexterity=500, luck=1000, accuracy=1000, coins=390),
+    Mob(name='🦖Тираннозавр 🌟🌟', hp=3000, attack=2000, dexterity=500, luck=1000, accuracy=1000, coins=390),
 ]
 
 
@@ -621,10 +618,10 @@ list_mobs75_80 = [
     Mob(name='🔳Разум (кибернетический⚡️⚡️ )', hp=2300, attack=1200, dexterity=1020, luck=720, accuracy=1020, coins=370),
     Mob(name='🧞‍♂️Джин (колоссальный⚡️⚡️ )', hp=2300, attack=1200, dexterity=1020, luck=720, accuracy=1020, coins=370),
     Mob(name='🧞‍♀Джин (фантастический⚡️⚡️ )', hp=2500, attack=1200, dexterity=1020, luck=720, accuracy=1020, coins=370),
-    Mob(name='🧞‍♀Джин (сила⚡️⚡️ )', hp=2200, attack=1400, dexterity=1220, luck=1020, accuracy=1020, coins=370),
+    Mob(name='🧞‍♀Джин (сила⚡️⚡️ )', hp=2200, attack=1250, dexterity=1020, luck=1020, accuracy=1020, coins=370),
     Mob(name='🧞Джин (гуль⚡️⚡️ )', hp=2200, attack=1100, dexterity=1420, luck=1020, accuracy=1220, coins=370),
     Mob(name='🧞‍♀Джин (ифрит⚡️⚡️ )', hp=2400, attack=1100, dexterity=1220, luck=1020, accuracy=1020, coins=370),
-    Mob(name='🧞Джин (марид⚡️⚡️ )', hp=2000, attack=1400, dexterity=1420, luck=1420, accuracy=1420, coins=370),
+    Mob(name='🧞Джин (марид⚡️⚡️ )', hp=2000, attack=1100, dexterity=1420, luck=1420, accuracy=1420, coins=370),
 
 ]
 
