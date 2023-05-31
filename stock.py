@@ -101,8 +101,11 @@ class Stock:
             return
         if code == 500:
             hero.perks = '0' * 6
-            self.used_stuff.pop(code)
-            return
+            if self.used_stuff[code] == 1:
+                self.used_stuff.pop(code)
+            else:
+                self.used_stuff[code] -= 1
+            return "навыки сброшены"
         stf = self.used_stuff.get(code, None)
         if stf:
             if self.used_stuff[code] == 1:
@@ -194,6 +197,7 @@ class Stock:
         out = "🎒СОДЕРЖИМОЕ РЮКЗАКА\n"
         out += "   Полезное\n"
         out += self.print_stuff(3)
+        out += self.print_stuff(5)
         out += "/mods модификаторы\n"
         cnt = len(self.equip)
         out += f"Экипировка ({cnt}/{self.MAX_EQUIP})\n"

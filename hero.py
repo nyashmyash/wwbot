@@ -488,7 +488,10 @@ class Hero:
             if not test:
                 self.weapon.life -= 0.5
             if use_perks and self.perks[3] != '0':
-                return round(self.calc_attack(use_perks) * random.uniform(0.85, 1.15*perk_accur_list[int(self.perks[3])-1]))
+                if randint(0, 6) == 5:
+                    return round(self.calc_attack(use_perks) * random.uniform(0.85, 1.15)*perk_accur_list[int(self.perks[3])-1])
+                else:
+                    return round(self.calc_attack(use_perks) * random.uniform(0.85, 1.15))
             else:
                 return round(self.calc_attack(use_perks) * random.uniform(0.85, 1.15))
         else:
@@ -734,17 +737,17 @@ class Hero:
         out = f"❤️ {round(self.hp)} {self.get_name()} vs {mob.get_name()} ❤{round(mob.hp)}\n\n"
         armor = self.calc_armor()
         hp_mob = mob.hp
-        cnt_attack = 0
+        cnt_log_msg = 0
         is_first = True
         if mob.is_first_hit(luck=self.get_luck()):
             is_first = False
 
         while round(self.hp) > 0:
-            cnt_attack += 1
             if is_first:
                 is_first = False
                 if self.get_miss(mob.dexterity):
-                    if cnt_attack < self.CNT_LOG:
+                    if cnt_log_msg < self.CNT_LOG:
+                        cnt_log_msg += 1
                         out += f"❤️ {round(self.hp)} {self.get_name()} ➰ {self.log_hit(text_hero_mis, min_log)}\n"
                 else:
                     drone_hit = ""
@@ -752,12 +755,13 @@ class Hero:
                     if self.drone:
                         drone_dmg, drone_hit = self.drone.get_attack(mob, self.perks)
                     att = self.get_attack()
-                    if cnt_attack < self.CNT_LOG:
+                    if cnt_log_msg < self.CNT_LOG:
+                        cnt_log_msg += 1
                         out += f"❤️ {round(self.hp)} {self.get_name()} {self.log_hit(text_hit_mob, min_log)} 💥{round(att)}\n"
                         out += drone_hit
                     hp_mob -= att + drone_dmg
                     if hp_mob <= 0:
-                        if cnt_attack > self.CNT_LOG:
+                        if cnt_log_msg > self.CNT_LOG:
                             out += " ......... ....... ....\n"
                         self.enfect_hero(mob)
                         out += f"{mob.get_name()} повержен\n"
@@ -765,7 +769,9 @@ class Hero:
             else:
                 is_first = True
                 if mob.get_miss(self.get_dexterity()):
-                    out += f"🌀{mob.get_name()} {self.log_hit(text_mob_mis, min_log)}\n"
+                    if cnt_log_msg < self.CNT_LOG:
+                        cnt_log_msg += 1
+                        out += f"🌀{mob.get_name()} {self.log_hit(text_mob_mis, min_log)}\n"
                 else:
                     dmg = mob.get_attack() - armor
                     dmg = dmg if dmg > 0 else 1
@@ -775,13 +781,15 @@ class Hero:
                         if self.drone.hp <= 0:
                             self.drone = None
                     if drone_hit == "":
-                        out += f"{mob.get_name()} {mob.log_hit_mob(min_log)} {self.get_name()} 💔-{round(dmg)}\n"
+                        if cnt_log_msg < self.CNT_LOG:
+                            cnt_log_msg += 1
+                            out += f"{mob.get_name()} {mob.log_hit_mob(min_log)} {self.get_name()} 💔-{round(dmg)}\n"
                         self.hp -= dmg
                         self.get_hit_armor()
                     else:
                         out += drone_hit
 
-        if cnt_attack > self.CNT_LOG:
+        if cnt_log_msg > self.CNT_LOG:
             out += " ......... ....... ....\n"
 
         if round(self.hp) <= 0:
@@ -807,18 +815,18 @@ class Hero:
         out = f"Сражение с {mob.get_name()} ❤{mob.hp}\n\n"
         armor = self.calc_armor()
         hp_mob = mob.hp
-        cnt_attack = 0
+        cnt_log_msg = 0
         is_first = True
         if mob.is_first_hit(luck=self.get_luck()): #первый ли удар моба
             is_first = False
 
         miss_text = ""
         while round(self.hp) > 0:
-            cnt_attack += 1
             if is_first:
                 is_first = False
                 if self.get_miss(mob.dexterity): #начинаем бить
-                    if cnt_attack < self.CNT_LOG:
+                    if cnt_log_msg < self.CNT_LOG:
+                        cnt_log_msg += 1
                         miss_text = f"👤Ты ➰ {self.log_hit(text_hero_mis, min_log)}\n"
                 else:
                     out += miss_text
@@ -838,12 +846,13 @@ class Hero:
                             self.hp += hp_mob * regen_mod / 100
                             regen_str = f"❤+{round(hp_mob*regen_mod/100)}"
 
-                    if cnt_attack < self.CNT_LOG:
+                    if cnt_log_msg < self.CNT_LOG:
+                        cnt_log_msg += 1
                         out += f"❤ {round(self.hp)} 👤Ты {self.log_hit(text_hit_mob, min_log)} 💥{round(att)} {regen_str}\n"
                         out += drone_hit
                     hp_mob -= att + drone_dmg
                     if hp_mob <= 0:
-                        if cnt_attack >= self.CNT_LOG:
+                        if cnt_log_msg >= self.CNT_LOG:
                             out += " ......... ....... ....\n"
                         out += f"{mob.get_name()} повержен\n"
                         bonus_mod = self.get_module(6)
@@ -988,10 +997,12 @@ class Hero:
             else:
                 is_first = True
                 if mob.get_miss(self.get_dexterity()):
-                    if cnt_attack < self.CNT_LOG:
+                    if cnt_log_msg < self.CNT_LOG:
                         miss_text = f"🌀{self.log_hit(text_mob_mis, min_log)}\n"
                 else:
-                    out += miss_text
+                    if cnt_log_msg < self.CNT_LOG:
+                        cnt_log_msg += 1
+                        out += miss_text
                     miss_text = ""
                     dmg = mob.get_attack() - armor
                     dmg = dmg if dmg > 0 else 1
@@ -1002,14 +1013,16 @@ class Hero:
                             self.drone = None
                     if drone_hit == "":
                         self.hp -= dmg
-                        if cnt_attack < self.CNT_LOG:
+                        if cnt_log_msg < self.CNT_LOG:
+                            cnt_log_msg += 1
                             out += f"{mob.log_hit_mob(min_log)} 💔-{round(dmg)}\n"
                         self.get_hit_armor()
                     else:
-                        if cnt_attack < self.CNT_LOG:
+                        if cnt_log_msg < self.CNT_LOG:
+                            cnt_log_msg += 1
                             out += drone_hit
 
-        if cnt_attack >= self.CNT_LOG:
+        if cnt_log_msg >= self.CNT_LOG:
             out += " ......... ....... ....\n"
 
         if round(self.hp) <= 0:
@@ -1080,10 +1093,10 @@ class Hero:
         return out
 
     @staticmethod
-    def fight_heroes(hero1: object, hero2: object, cnt_attack: int, min_log: bool = False) -> str:
+    def fight_heroes(hero1: object, hero2: object, cnt_log_msg: int, min_log: bool = False) -> str:
         out = ""
         if hero1.get_miss(hero2.get_dexterity(True)):
-            if cnt_attack < hero1.CNT_LOG:
+            if cnt_log_msg < hero1.CNT_LOG:
                 out += f"❤️ {round(hero1.hp)} {hero1.get_name()} 🌀{hero1.log_hit(text_hero_mis, min_log)}\n"
         else:
             drone_hit = ""
@@ -1107,7 +1120,7 @@ class Hero:
 
             if drone_hit_block == "":
                 dmg = 1 if dmg < 0 else dmg
-                if cnt_attack < hero1.CNT_LOG:
+                if cnt_log_msg < hero1.CNT_LOG:
                     out += f"❤️ {round(hero1.hp)} {hero1.get_name()} {hero1.log_hit(text_hit, min_log)} 💥{round(dmg)}\n"
 
                 hero2.hp -= dmg
@@ -1119,7 +1132,7 @@ class Hero:
                         out += f"❤️ {round(hero2.hp)} {hero2.get_name()} сработал навык счастливчик ❤️ +{hero2.max_hp*0.3} \n"
 
                 if hero2.hp <= 0:
-                    if cnt_attack > hero1.CNT_LOG:
+                    if cnt_log_msg > hero1.CNT_LOG:
                         out += " ......... ....... ....\n"
                     out += f"{hero2.get_name()} повержен\n"
                     return out
@@ -1131,23 +1144,23 @@ class Hero:
         out = "\n"
         self.arm_clc = self.attack_armor(True)
         hero.arm_clc = hero.attack_armor(True)
-        cnt_attack = 0
+        cnt_log_msg = 0
         is_first = False
         if self.is_first_hit(luck=hero.get_luck(True), use_perk=True):
             is_first = True
 
         while round(self.hp) > 0:
-            cnt_attack += 1
+            cnt_log_msg += 1
             if is_first:
                 is_first = False
-                out += Hero.fight_heroes(self, hero, cnt_attack, min_log)
+                out += Hero.fight_heroes(self, hero, cnt_log_msg, min_log)
             else:
                 is_first = True
-                out += Hero.fight_heroes(hero, self, cnt_attack, min_log)
+                out += Hero.fight_heroes(hero, self, cnt_log_msg, min_log)
             if hero.hp <= 0 or self.hp <= 0:
                 break
 
-        if cnt_attack > self.CNT_LOG:
+        if cnt_log_msg > self.CNT_LOG:
             out += " ......... ....... ....\n"
 
         if round(self.hp) <= 0:

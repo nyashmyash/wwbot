@@ -244,7 +244,7 @@ list_dange90 = [
     Mob(name='Арес (Марс 🌟💢🌟)', hp=4010, attack=1500, dexterity=1620, luck=1620, accuracy=1620, coins=400),
     Mob(name='Посейдон (Нептун 🌟💢🌟)', hp=4210, attack=1600, dexterity=1620, luck=1620, accuracy=1620, coins=400),
     Mob(name='Гефест (Вулкан 🌟💢🌟)️', hp=4510, attack=1700, dexterity=1620, luck=1620, accuracy=1620, coins=400),
-    Mob(name='Аполлон 🌟💢🌟', hp=4610, attack=900, dexterity=1620, luck=1620, accuracy=1620, coins=400),
+    Mob(name='Аполлон 🌟💢🌟', hp=4610, attack=1900, dexterity=1620, luck=1620, accuracy=1620, coins=400),
     Mob(name='Гермес (Меркурий 🌟💢🌟)️', hp=5010, attack=2000, dexterity=1620, luck=1620, accuracy=1620, coins=400),
     Mob(name='Зевс (Юпитер 🌟💢🌟)️', hp=5010, attack=2300, dexterity=1620, luck=1620, accuracy=1620, coins=400),
     None
@@ -640,15 +640,20 @@ list_mobs85_90 = [
     Mob(name='Лавовый Голем 🌟💢🌟', hp=3550, attack=1600, dexterity=1320, luck=920, accuracy=1420, coins=450),
     Mob(name='Крепость Ментала 🌟💢🌟', hp=3600, attack=1650, dexterity=1320, luck=920, accuracy=1420, coins=450),
     Mob(name='Рахлум 🌟💢🌟', hp=3600, attack=1650, dexterity=1320, luck=920, accuracy=1420, coins=450),
-    Mob(name='Вольфинатор 🌟💢🌟', hp=3600, attack=1700, dexterity=1320, luck=920, accuracy=1420, coins=450)
+    Mob(name='Мундус 🌟💢🌟', hp=3600, attack=1700, dexterity=1320, luck=920, accuracy=1420, coins=450),
+    Mob(name='Вергилий 🌟💢🌟', hp=3200, attack=1800, dexterity=1320, luck=920, accuracy=1420, coins=450),
+    Mob(name='Атеон 🌟💢🌟', hp=3200, attack=1800, dexterity=1320, luck=920, accuracy=1420, coins=450),
+    Mob(name='Galamoth 🌟💢🌟', hp=3300, attack=1700, dexterity=1320, luck=1620, accuracy=1420, coins=450),
+    Mob(name='Дымный Рыцарь 🌟💢🌟', hp=3300, attack=1700, dexterity=1320, luck=1620, accuracy=1420, coins=450)
+
 ]
 
 list_mobs90 = [
-    Mob(name='Амфисбена 🎇', hp=4000, attack=1700, dexterity=1420, luck=1520, accuracy=1520, coins=550),
-    Mob(name='Горгона 🎇', hp=4100, attack=1700, dexterity=1400, luck=1520, accuracy=1520, coins=550),
-    Mob(name='Дракайн 🎇', hp=4200, attack=1700, dexterity=1420, luck=1520, accuracy=1520, coins=550),
-    Mob(name='Пегас 🎇', hp=4300, attack=1800, dexterity=1420, luck=1520, accuracy=1520, coins=550),
-    Mob(name='Титан 🎇', hp=4400, attack=1800, dexterity=1420, luck=1520, accuracy=1520, coins=550)
+    Mob(name='Амфисбена 🎇', hp=4000, attack=1800, dexterity=1420, luck=1520, accuracy=1520, coins=550),
+    Mob(name='Горгона 🎇', hp=4100, attack=1800, dexterity=1400, luck=1520, accuracy=1520, coins=550),
+    Mob(name='Дракайн 🎇', hp=4200, attack=1800, dexterity=1420, luck=1520, accuracy=1520, coins=550),
+    Mob(name='Пегас 🎇', hp=4300, attack=1900, dexterity=1420, luck=1520, accuracy=1520, coins=550),
+    Mob(name='Титан 🎇', hp=4400, attack=1900, dexterity=1420, luck=1520, accuracy=1520, coins=550)
 ]
 
 list_boss = [
