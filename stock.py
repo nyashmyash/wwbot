@@ -133,7 +133,7 @@ class Stock:
                 hero.km_heal = used_items[code].get("km_heal", 0)
             outstr = ""
             if hun:
-                outstr += f"🍗-{hun}% "
+                outstr += f"🍗-{hun}% (🍗{round(hero.hungry)}%)"
             if hp > 0:
                 outstr += f"❤+{hp} ({round(hero.hp)}) "
             elif hp < 0:

@@ -6,8 +6,8 @@ from drone import all_drones
 from mob import *
 from stock import Stock
 
-x = 1400
-hp = 1500
+x = 1500
+hp = 1600
 h1 = Hero()
 h1.go_boss = 2
 h1.km = 37
@@ -34,8 +34,8 @@ h1.armor.append(copy.copy(armor_all[2][10]))
 h1.stock = Stock()
 h1.stock.used_stuff = {}
 # увеличение брони в 2.1 раза
-h1.drone = copy.copy(all_drones[3])
-h1.drone.name = 'dr_111'
+#h1.drone = copy.copy(all_drones[3])
+#h1.drone.name = 'dr_111'
 h1.perks = "000004"
 h2 = copy.copy(h1)
 h2.weapon = copy.copy(h1.weapon)
@@ -115,20 +115,41 @@ h5.perks = "000004"
 # h1.weapon.mod = 403
 #h1.armor[0].mod = 401
 
-# print(h1.armor[0].get_data())
-#h1.armor[2].mod = 403
-# print(h1.return_data())
 res = ""
-h1.armor[0].mod = h1.armor[1].mod = h1.armor[2].mod = 401
+h1.armor[0].mod = h1.armor[1].mod = h1.armor[2].mod = 400
+# print(h1.return_data())
+#
+# for i in range(0, len(list_dange80)-1):
+#    if h1.hp > 1:
+#        res += h1.attack_mob(list_dange80[i], True, True) +"\n"
 
-for i in range(0, len(list_dange80)-1):
-    if h1.hp > 1:
-        res += h1.attack_mob(list_dange80[i], True, True) +"\n"
+#print(res)
 
-print(res)
+# list_mob_dino_zone
+# list_mk_zone
+print(h1.get_force())
+print(h1.calc_attack())
+l = {}
+died = 0
+for m in range(0, 10):
+    for k in range(0, len(list_mob_dino_zone)):
+        print(h1.attack_mob(list_mob_dino_zone[k]))
+        if not l.get(k, 0):
+            l[k] = 0
+        if h1.hp == 1:
+            died += 1
+        l[k] += round(h1.hp)
+        h1.hp = h1.max_hp
 
 
 
+print(l)
+print(died)
+
+# for m in list_mob_dino_zone:
+#     if h1.hp > 0:
+#         print(h1.attack_mob(m))
+    #h1.hp = h1.max_hp
 # from rand import randint
 # for i in range(0, 1000):
 #     print(randint(0, 10))

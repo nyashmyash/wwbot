@@ -507,6 +507,7 @@ list_mobs45_50 = [
     Mob(name='👮полиция (курит что-то🏵)', hp=341, attack=200, dexterity=320, luck=320, accuracy=320, coins=170),
     Mob(name='🕵️сыщик (ищет твой труп🏵)', hp=345, attack=200, dexterity=320, luck=320, accuracy=320, coins=170),
     Mob(name='👵🏿бабка (с аннигилятором🏵)', hp=360, attack=200, dexterity=320, luck=320, accuracy=320, coins=170),
+    Mob(name='👨‍🦳дед (с аннигилятором🏵)', hp=370, attack=210, dexterity=320, luck=320, accuracy=320, coins=170),
     Mob(name='🐸жаба (легендарная🏵)', hp=380, attack=220, dexterity=320, luck=320, accuracy=320, coins=210),
     Mob(name='🐴конь БоДжек(нюхает герыч🏵)', hp=370, attack=210, dexterity=330, luck=320, accuracy=330, coins=200),
     Mob(name='🧑🏼‍🔬Джесси (готовит кристаллы🏵)', hp=370, attack=210, dexterity=330, luck=320, accuracy=330, coins=200),
@@ -607,6 +608,16 @@ list_mobs70_75 = [
             coins=400),
     Mob(name='🐢Йода (леветирует и ебашит🌟🌟)', hp=1600, attack=900, dexterity=820, luck=720, accuracy=1020,
             coins=400),
+    Mob(name='👶Голлум (моя прелесть🌟🌟)', hp=1400, attack=1000, dexterity=920, luck=820, accuracy=1220,
+                coins=400),
+    Mob(name='🤴Арагорн (король 🌟🌟)', hp=1800, attack=800, dexterity=1020, luck=720, accuracy=1020,
+                coins=400),
+    Mob(name='🧙Гэндальф (ты не пройдешь 🌟🌟)', hp=1300, attack=1100, dexterity=1020, luck=1020, accuracy=1220,
+                coins=400),
+    Mob(name='👦🏻Фродо (несет кольцо 🌟🌟)', hp=1500, attack=900, dexterity=1020, luck=1020, accuracy=1020,
+        coins=400),
+    Mob(name='🦹🏿‍♂️Саурон (смерть всем 🌟🌟)', hp=1600, attack=1000, dexterity=720, luck=720, accuracy=720,
+        coins=400),
 ]
 
 list_mobs75_80 = [
@@ -622,6 +633,8 @@ list_mobs75_80 = [
     Mob(name='🧞Джин (гуль⚡️⚡️ )', hp=2200, attack=1100, dexterity=1420, luck=1020, accuracy=1220, coins=370),
     Mob(name='🧞‍♀Джин (ифрит⚡️⚡️ )', hp=2400, attack=1100, dexterity=1220, luck=1020, accuracy=1020, coins=370),
     Mob(name='🧞Джин (марид⚡️⚡️ )', hp=2000, attack=1100, dexterity=1420, luck=1420, accuracy=1420, coins=370),
+    Mob(name='🐉Змей горыныч (дышит огнем⚡️⚡️ )', hp=2000, attack=1000, dexterity=1820, luck=1420, accuracy=1420, coins=370),
+    Mob(name='💀Кощей Бессмертный  (смерть в игле⚡️⚡️ )', hp=2500, attack=1300, dexterity=1120, luck=1120, accuracy=1020, coins=370),
 
 ]
 
@@ -632,7 +645,9 @@ list_mobs80_85 = [
     Mob(name='Алудранский Рептилоид ⚡️🌟⚡', hp=2900, attack=1400, dexterity=1220, luck=720, accuracy=1320, coins=400),
     Mob(name='Кукулькан, Бог Ветра ⚡️🌟⚡', hp=3000, attack=1500, dexterity=1220, luck=720, accuracy=1320, coins=400),
     Mob(name='Личинка-Экзотех ⚡️🌟⚡', hp=3300, attack=1500, dexterity=1220, luck=720, accuracy=1320, coins=400),
-    Mob(name='Мордехай Заклинатель ⚡️🌟⚡', hp=3300, attack=1500, dexterity=1220, luck=720, accuracy=1320, coins=400)
+    Mob(name='Мордехай Заклинатель ⚡️🌟⚡', hp=3300, attack=1500, dexterity=1220, luck=720, accuracy=1320, coins=400),
+    Mob(name='Болотный прыгун ⚡️🌟⚡', hp=3000, attack=1200, dexterity=1820, luck=100, accuracy=1320, coins=400),
+
 ]
 
 list_mobs85_90 = [

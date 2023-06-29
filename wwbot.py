@@ -778,7 +778,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                         if hero.buffs[3] < 0:
                             out_eff += f"точность {hero.buffs[3]}\n"
 
-                        await update.message.reply_text("Внимание! Вы заражены:\n" + out_eff)
+                        await update.message.reply_text(f"Внимание! Вы заражены:{out_eff}\nПейте баффы: /buff")
                     await menu_sel(update, hero, hero.make_header() + res)
                 else:
                     hero.hp = 1
@@ -839,9 +839,12 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 header = hero.make_header()
                 if random.randint(0, 10) > 8:
                     hero.mob_fight = copy.copy(list_boss[0])
-                    hero.mob_fight.attack = 1500
+                    hero.mob_fight.name = "💀Теневой некромонстр ⚡️🌟⚡"
+                    hero.mob_fight.attack = hero.max_hp
+                    hero.mob_fight.luck = hero.luck/1.5
+                    hero.mob_fight.dexterity = hero.dexterity/1.5
                     hero.mob_fight.accuracy = 5000
-                    hero.mob_fight.hp = 3000
+                    hero.mob_fight.hp = round(hero.max_hp*1.5)
                 else:
                     hero.select_mob()
                 if hero.mob_fight:
@@ -1028,7 +1031,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             await update.message.reply_text("Можно отдохнуть /deeprest", reply_markup=menu_go(pvp))
             return
 
-        if hero.km in [34, 44, 54] and hero.zone == 2:
+        if hero.km in [34, 44, 54, 64, 74] and hero.zone == 2:
             await update.message.reply_text("Можно выйти из пустоши смерти", reply_markup=menu_dead_quit(pvp))
             return
 
