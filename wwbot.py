@@ -85,8 +85,11 @@ async def get_hero(update):
             hero.coins = 1000
             hero.perks = "000000"
             await add_hero_db(async_session, hero)
-            await add_hero_armor_db(async_session, hero)
-            await add_hero_weapon_db(async_session, hero)
+            h = await get_hero_db(async_session, str(update.effective_user.id))
+            hero.base_id = h[0].id
+            logger.info(update.effective_chat.first_name + f"  base_id {hero.base_id}")
+            #await add_hero_armor_db(async_session, hero)
+            #await add_hero_weapon_db(async_session, hero)
 
         else:
             hero_db = db_hero_fetch[0]
@@ -767,7 +770,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 res = hero.attack_mob(mob, False, hero.min_log)
                 hero.mob_fight = None
                 if hero.km != 0:
-                    if mob.enfect:
+                    if mob.enfect and not hero.km_protect:
                         out_eff = ""
                         if hero.buffs[0] < 0:
                             out_eff = f"cила {hero.buffs[0]}\n"

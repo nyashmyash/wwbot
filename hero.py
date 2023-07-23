@@ -18,11 +18,13 @@ all_modules = {
     6: [15, "📥модуль дохода"],
     7: [2.5, "📥модуль вампиризма"]
 }
-perk_dex_list = [1.2, 1.5, 1.8, 2.3]
-perk_arm_list = [1.2, 1.5, 1.7, 2]
-perk_luck_list = [1.2, 1.4, 1.6, 2]
-perk_force_list = [1.2, 1.3, 1.4, 1.5]
+perk_force_list = [1.1, 1.3, 1.5, 1.7]
+perk_arm_list = [1.2, 1.4, 1.8, 2]
+perk_dex_list = [1.2, 1.5, 2, 3]
 perk_accur_list = [1.2, 1.4, 1.6, 2]
+#char
+perk_luck_list = [1.2, 1.5, 2, 3]
+
 
 
 text_mess_go = ["Вы обследовали разрушенный дом, но ничего интересного не обнаружили.",
@@ -179,6 +181,7 @@ class Hero:
     CNT_LOG = 30
     buffs = None
     km_buff = 0
+    km_protect = 0
     moduls = ''
     zone = 0
     km_heal = 0
@@ -216,6 +219,9 @@ class Hero:
             self.hp += heal_hp
             if self.hp > self.max_hp:
                 self.hp = self.max_hp
+
+        if self.km_protect:
+            self.km_protect -= 1
 
         if self.km_buff:
             self.km_buff -= 1
@@ -488,8 +494,8 @@ class Hero:
             if not test:
                 self.weapon.life -= 0.5
             if use_perks and self.perks[3] != '0':
-                if randint(0, 6) == 5:
-                    return round(self.calc_attack(use_perks) * random.uniform(0.85, 1.15)*perk_accur_list[int(self.perks[3])-1])
+                if randint(0, 4) == 3:
+                    return round(self.calc_attack(False) * random.uniform(0.85, 1.15)*perk_accur_list[int(self.perks[3])-1])
                 else:
                     return round(self.calc_attack(use_perks) * random.uniform(0.85, 1.15))
             else:
@@ -799,7 +805,7 @@ class Hero:
         return out
 
     def enfect_hero(self, mob: Mob) -> None:
-        if mob.enfect:
+        if mob.enfect and not self.km_protect:
             i = randint(0, 3)
             if i == 0:
                 self.buffs[i] = -self.force // 2
@@ -980,13 +986,13 @@ class Hero:
                                     self.stock.add_stuff(code)
                                     out += f"Вой вой вам выпало кое-что интересное {used_items[code]['name']}"
                                 if "Тиранн" in mob.name:
-                                    if randint(0, 20) == 10:
+                                    if randint(0, 30) == 10:
                                         type = randint(0, 2)
-                                        self.stock.add_item(armor_all[type][15])
-                                        out += f"Вой вой вам выпало кое-что интересное {armor_all[type][15].get_name()}"
-                                    elif randint(0, 10) == 5:
-                                        self.stock.add_item(weapons_all[24])
-                                        out += f"Вой вой вам выпало кое-что интересное {weapons_all[24].get_name()}"
+                                        self.stock.add_item(armor_all[type][16])
+                                        out += f"Вой вой вам выпало кое-что интересное {armor_all[type][16].get_name()}"
+                                    elif randint(0, 20) == 5:
+                                        self.stock.add_item(weapons_all[25])
+                                        out += f"Вой вой вам выпало кое-что интересное {weapons_all[25].get_name()}"
 
 
                         return out
@@ -1124,8 +1130,8 @@ class Hero:
                 if hero2.perks[5] != '0' and hero2.hp < hero2.max_hp:
                     coef = perk_luck_list[int(hero2.perks[5]) - 1] #2
                     if randint(0, 100) < coef*20:
-                        hero2.hp += hero2.max_hp*0.3
-                        out += f"❤️ {round(hero2.hp)} {hero2.get_name()} сработал навык счастливчик ❤️ +{hero2.max_hp*0.3} \n"
+                        hero2.hp += hero2.max_hp*0.5
+                        out += f"❤️ {round(hero2.hp)} {hero2.get_name()} сработал навык счастливчик ❤️ +{hero2.max_hp*0.5} \n"
 
                 if hero2.hp <= 0:
                     if cnt_log_msg > hero1.CNT_LOG:

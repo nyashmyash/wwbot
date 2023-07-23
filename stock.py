@@ -28,6 +28,8 @@ used_items = {100: {"name": "сырое мясо", "hungry": 30, "hp": 2},
               205: {"name": "стероиды", "dexterity": 50, "accuracy": 50, "km": 20},
               206: {"name": "психонавт", "dexterity": 100, "accuracy": 100, "km": 30},
               207: {"name": "мельдоний", "dexterity": 150, "accuracy": 150, "km": 40},
+              208: {"name": "прививка", "km_protect": 15},
+              209: {"name": "антибиотик", "km_protect": 25},
               300: {"name": "💉Мед-Х", "hp": 50},
               301: {"name": "💌Медпак", "hp": 80},
               302: {"name": "🧪Стимбласт", "hp": 120, "km_heal": 3},
@@ -58,7 +60,7 @@ def get_random_item(med: bool = False) -> (int, dict):
 
 
 def get_random_buff() -> (int, dict):
-    buff = random.randint(200, 207)
+    buff = random.randint(200, 209)
     return buff, used_items[buff]
 
 
@@ -128,6 +130,8 @@ class Stock:
                 luck = used_items[code].get("luck", 0)
                 accur = used_items[code].get("accuracy", 0)
                 hero.km_buff = used_items[code].get("km", 0)
+                hero.km_protect = used_items[code].get("km_protect", 0)
+
 
             if code // 100 == 3:
                 hero.km_heal = used_items[code].get("km_heal", 0)
