@@ -670,22 +670,39 @@ list_mobs85_90 = [
 ]
 
 list_mobs90_95 = [
-    Mob(name='Амфисбена 🎇', hp=4000, attack=1800, dexterity=1420, luck=1520, accuracy=1520, coins=550),
-    Mob(name='Горгона 🎇', hp=4100, attack=1800, dexterity=1400, luck=1520, accuracy=1520, coins=550),
-    Mob(name='Дракайн 🎇', hp=4200, attack=1800, dexterity=1420, luck=1520, accuracy=1520, coins=550),
-    Mob(name='Пегас 🎇', hp=4300, attack=1900, dexterity=1420, luck=1520, accuracy=1520, coins=550),
-    Mob(name='Титан 🎇', hp=4400, attack=1900, dexterity=1420, luck=1520, accuracy=1520, coins=550)
+    Mob(name='Амфисбена 🎇(🌟)', hp=4000, attack=1700, dexterity=1420, luck=1520, accuracy=1520, coins=550),
+    Mob(name='Горгона 🎇(🌟)', hp=4000, attack=1700, dexterity=1400, luck=1520, accuracy=1520, coins=550),
+    Mob(name='Дракайн 🎇(🌟)', hp=4000, attack=1700, dexterity=1420, luck=1520, accuracy=1520, coins=550),
+    Mob(name='Пегас 🎇(🌟🌟)', hp=4300, attack=1800, dexterity=1420, luck=1520, accuracy=1520, coins=550),
+    Mob(name='Титан 🎇(🌟🌟)', hp=4300, attack=1800, dexterity=1420, luck=1520, accuracy=1520, coins=550),
+    Mob(name='Кербер 🎇(🌟🌟)', hp=4300, attack=1800, dexterity=1420, luck=1520, accuracy=1520, coins=550),
+    Mob(name='Минотавр 🎇(🌟🌟🌟)', hp=4500, attack=1900, dexterity=1400, luck=1520, accuracy=1520, coins=550),
+    Mob(name='Грифон 🎇(🌟🌟🌟)', hp=4500, attack=1900, dexterity=1420, luck=1520, accuracy=1520, coins=550),
+    Mob(name='Гидра Лернейская 🎇(🌟🌟🌟)', hp=4500, attack=1900, dexterity=1420, luck=1520, accuracy=1520, coins=550),
+    Mob(name='Гарпии 🎇(🌟🌟🌟)', hp=4500, attack=1900, dexterity=1420, luck=1520, accuracy=1520, coins=550)
 ]
 
 list_mobs95_100 = [
-    Mob(name='Лосяш 🌟🎇', hp=4500, attack=2000, dexterity=1520, luck=1620, accuracy=1720, coins=600),
-    Mob(name='Пин 🌟🎇', hp=4600, attack=2100, dexterity=1500, luck=1620, accuracy=1720, coins=600),
-    Mob(name='Бараш 🌟🎇', hp=5000, attack=2200, dexterity=1520, luck=1620, accuracy=1720, coins=600),
-    Mob(name='Копатыч 🌟🎇', hp=5100, attack=2300, dexterity=1520, luck=1620, accuracy=1720, coins=600),
-    Mob(name='Совунья 🌟🎇', hp=5200, attack=2400, dexterity=1520, luck=1620, accuracy=1720, coins=600),
-    Mob(name='Кар-Карыч 🌟🎇', hp=5200, attack=2400, dexterity=1520, luck=1620, accuracy=1720, coins=600)
+    Mob(name='Лосяш 🔮(🌟)', hp=4500, attack=2000, dexterity=1520, luck=1620, accuracy=1720, coins=600),
+    Mob(name='Пин 🔮(🌟)', hp=4500, attack=2100, dexterity=1500, luck=1620, accuracy=1720, coins=600),
+    Mob(name='Бараш 🔮(🌟🌟)', hp=5000, attack=2200, dexterity=1520, luck=1620, accuracy=1720, coins=600),
+    Mob(name='Крош 🔮(🌟🌟)', hp=5000, attack=2200, dexterity=1520, luck=1620, accuracy=1720, coins=600),
+    Mob(name='Нюша 🔮(🌟🌟)', hp=5000, attack=2200, dexterity=1500, luck=1620, accuracy=1720, coins=600),
+    Mob(name='Копатыч 🔮(🌟🌟)', hp=5000, attack=2300, dexterity=1520, luck=1620, accuracy=1720, coins=600),
+    Mob(name='Совунья 🔮(🌟🌟🌟)', hp=5500, attack=2400, dexterity=1520, luck=1620, accuracy=1720, coins=600),
+    Mob(name='Кар-Карыч 🔮(🌟🌟🌟)', hp=5500, attack=2400, dexterity=1520, luck=1620, accuracy=1720, coins=600),
+    Mob(name='Жулик 🔮(🌟🌟🌟)', hp=5500, attack=2400, dexterity=1520, luck=1720, accuracy=1820, coins=600),
+    Mob(name='Подболотник 🔮(🌟🌟🌟)', hp=5500, attack=2400, dexterity=1500, luck=1720, accuracy=1820, coins=600),
 ]
 
+list_mobs100_105 = [
+    Mob(name='Фиксик Шпулик 🔩(🌟)', hp=5500, attack=2600, dexterity=1920, luck=1920, accuracy=1820, coins=650),
+    Mob(name='Фиксик Ватрушка 🔩(🌟)', hp=5500, attack=2700, dexterity=1900, luck=1920, accuracy=1820, coins=650),
+    Mob(name='Фиксик Кусачка 🔩(🌟🌟)', hp=6000, attack=2700, dexterity=1920, luck=1920, accuracy=1820, coins=650),
+    Mob(name='Фиксик Кнопка 🔩(🌟🌟)', hp=6000, attack=2700, dexterity=1920, luck=1920, accuracy=1820, coins=650),
+    Mob(name='Фиксик Шурупчик 🔩(🌟🌟🌟)', hp=6500, attack=2800, dexterity=1920, luck=1920, accuracy=1720, coins=650),
+    Mob(name='Фиксик Болтик 🔩(🌟🌟🌟)', hp=6500, attack=2800, dexterity=1920, luck=1920, accuracy=1720, coins=650)
+]
 
 list_boss = [
     Mob(name='💀Некрогигант ⚡️🌟⚡', hp=3500, attack=200, dexterity=50, luck=120, accuracy=1000, coins=400, km=31),
@@ -700,5 +717,5 @@ list_mobs = [list_mobs1_5, list_mobs5_10,
              list_mobs50_55, list_mobs55_60,
              list_mobs60_65, list_mobs65_70,
              list_mobs70_75, list_mobs75_80,
-             list_mobs80_85, list_mobs85_90, list_mobs90_95, list_mobs95_100
+             list_mobs80_85, list_mobs85_90, list_mobs90_95, list_mobs95_100, list_mobs100_105
              ]

@@ -196,6 +196,7 @@ class Hero:
     mob_km = 0
     min_log = False
     cnt_miss = 0
+    necro_lvl = 1
 
     def go(self, reverse=False) -> None:
         if reverse:
@@ -902,7 +903,7 @@ class Hero:
 
                             if out_stuff!= "":
                                 out += "вам выпало:" + out_stuff +"\n"
-                            if randint(0, 20) == 1:
+                            if randint(0, 20) == 1 and not ("Теневой некромонстр" in mob.get_name()):
 
                                 if not self.mobs:
                                     self.mobs = []
@@ -1052,6 +1053,7 @@ class Hero:
         self.zone = 0
         self.mob_fight = None
         self.danges = []
+        self.necro_lvl = 1
 
     def log_hit(self, texts_list: list, min_log: bool=False) -> str:
         if min_log:
@@ -1113,15 +1115,17 @@ class Hero:
                     out += f"{hero2.get_name()} повержен\n"
                     return out
 
-            dmg = hero1.get_attack(True) - hero2.arm_clc
-
+            attack = hero1.get_attack(True)
+            dmg = attack - hero2.arm_clc
+            dmg = 1 if dmg < 0 else dmg
+            if randint(0, 10) == 5:
+                dmg = attack*0.25
             if hero2.drone:
                 drone_hit_block = hero2.drone.get_hit(dmg, hero2.perks)
                 if hero2.drone.hp <= 0:
                     hero2.drone = None
 
             if drone_hit_block == "":
-                dmg = 1 if dmg < 0 else dmg
                 if cnt_log_msg < hero1.CNT_LOG:
                     out += f"❤️ {round(hero1.hp)} {hero1.get_name()} {hero1.log_hit(text_hit, min_log)} 💥{round(dmg)}\n"
 
@@ -1129,9 +1133,12 @@ class Hero:
                 hero2.get_hit_armor()
                 if hero2.perks[5] != '0' and hero2.hp < hero2.max_hp:
                     coef = perk_luck_list[int(hero2.perks[5]) - 1] #2
-                    if randint(0, 100) < coef*20:
+                    if randint(0, 100) < coef*20 and hero2.max_hp > hero2.hp > 0:
+                        hp_cur = hero2.hp
                         hero2.hp += hero2.max_hp*0.5
-                        out += f"❤️ {round(hero2.hp)} {hero2.get_name()} сработал навык счастливчик ❤️ +{hero2.max_hp*0.5} \n"
+                        if hero2.hp > hero2.max_hp:
+                            hero2.hp = hero2.max_hp
+                        out += f"❤️ {round(hero2.hp)} {hero2.get_name()} сработал навык счастливчик ❤️ +{round(hero2.hp - hp_cur)} \n"
 
                 if hero2.hp <= 0:
                     if cnt_log_msg > hero1.CNT_LOG:
