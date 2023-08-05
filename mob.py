@@ -645,27 +645,27 @@ list_mobs75_80 = [
 ]
 
 list_mobs80_85 = [
-    Mob(name='Угх Зан III ⚡️🌟⚡', hp=2600, attack=1300, dexterity=1220, luck=720, accuracy=1320, coins=400),
-    Mob(name='Биотанк ⚡️🌟⚡', hp=2700, attack=1300, dexterity=1220, luck=720, accuracy=1320, coins=400),
-    Mob(name='Арахноид (взрослый) ⚡️🌟⚡', hp=2750, attack=1400, dexterity=1220, luck=720, accuracy=1320, coins=400),
-    Mob(name='Алудранский Рептилоид ⚡️🌟⚡', hp=2900, attack=1400, dexterity=1220, luck=720, accuracy=1320, coins=400),
-    Mob(name='Кукулькан, Бог Ветра ⚡️🌟⚡', hp=3000, attack=1500, dexterity=1220, luck=720, accuracy=1320, coins=400),
-    Mob(name='Личинка-Экзотех ⚡️🌟⚡', hp=3300, attack=1500, dexterity=1220, luck=720, accuracy=1320, coins=400),
-    Mob(name='Мордехай Заклинатель ⚡️🌟⚡', hp=3300, attack=1500, dexterity=1220, luck=720, accuracy=1320, coins=400),
-    Mob(name='Болотный прыгун ⚡️🌟⚡', hp=3000, attack=1200, dexterity=1820, luck=100, accuracy=1320, coins=400),
+    Mob(name='Угх Зан III ⚡⚡(️🌟)', hp=2600, attack=1300, dexterity=1220, luck=720, accuracy=1320, coins=400),
+    Mob(name='Биотанк ⚡️⚡(️🌟)', hp=2700, attack=1300, dexterity=1220, luck=720, accuracy=1320, coins=400),
+    Mob(name='Арахноид (взрослый) ⚡️⚡(️🌟)', hp=2750, attack=1400, dexterity=1220, luck=720, accuracy=1320, coins=400),
+    Mob(name='Алудранский Рептилоид ⚡️⚡(️🌟️🌟)', hp=2900, attack=1400, dexterity=1220, luck=720, accuracy=1320, coins=400),
+    Mob(name='Кукулькан, Бог Ветра ⚡️⚡(️🌟️🌟)', hp=3000, attack=1500, dexterity=1220, luck=720, accuracy=1320, coins=400),
+    Mob(name='Личинка-Экзотех ⚡️⚡(️🌟️🌟️🌟)', hp=3300, attack=1500, dexterity=1220, luck=720, accuracy=1320, coins=400),
+    Mob(name='Мордехай Заклинатель ⚡️⚡(️🌟️🌟️🌟)', hp=3300, attack=1500, dexterity=1220, luck=720, accuracy=1320, coins=400),
+    Mob(name='Болотный прыгун ⚡️⚡(️🌟️🌟️🌟)', hp=3000, attack=1200, dexterity=1820, luck=1000, accuracy=1320, coins=400),
 
 ]
 
 list_mobs85_90 = [
-    Mob(name='Рам-Бог 🌟💢🌟', hp=3500, attack=1600, dexterity=1320, luck=920, accuracy=1420, coins=450),
-    Mob(name='Лавовый Голем 🌟💢🌟', hp=3550, attack=1600, dexterity=1320, luck=920, accuracy=1420, coins=450),
-    Mob(name='Крепость Ментала 🌟💢🌟', hp=3600, attack=1650, dexterity=1320, luck=920, accuracy=1420, coins=450),
-    Mob(name='Рахлум 🌟💢🌟', hp=3600, attack=1650, dexterity=1320, luck=920, accuracy=1420, coins=450),
-    Mob(name='Мундус 🌟💢🌟', hp=3600, attack=1700, dexterity=1320, luck=920, accuracy=1420, coins=450),
-    Mob(name='Вергилий 🌟💢🌟', hp=3200, attack=1800, dexterity=1320, luck=920, accuracy=1420, coins=450),
-    Mob(name='Атеон 🌟💢🌟', hp=3200, attack=1800, dexterity=1320, luck=920, accuracy=1420, coins=450),
-    Mob(name='Galamoth 🌟💢🌟', hp=3300, attack=1700, dexterity=1320, luck=1620, accuracy=1420, coins=450),
-    Mob(name='Дымный Рыцарь 🌟💢🌟', hp=3300, attack=1700, dexterity=1320, luck=1620, accuracy=1420, coins=450)
+    Mob(name='Вергилий 💢(🌟)', hp=3200, attack=1600, dexterity=1520, luck=1020, accuracy=1420, coins=450),
+    Mob(name='Атеон 💢(🌟)', hp=3200, attack=1600, dexterity=1520, luck=1020, accuracy=1420, coins=450),
+    Mob(name='Galamoth 💢(🌟🌟)', hp=3300, attack=1650, dexterity=1320, luck=1620, accuracy=1420, coins=450),
+    Mob(name='Лавовый Голем 💢(🌟🌟)', hp=3450, attack=1700, dexterity=1320, luck=1120, accuracy=1420, coins=450),
+    Mob(name='Дымный Рыцарь 💢(🌟🌟)', hp=3400, attack=1750, dexterity=1320, luck=1220, accuracy=1420, coins=450),
+    Mob(name='Рам-Бог 💢(🌟🌟)', hp=3450, attack=1700, dexterity=1320, luck=920, accuracy=1420, coins=450),
+    Mob(name='Крепость Ментала 💢(🌟🌟🌟)', hp=3600, attack=1800, dexterity=1320, luck=920, accuracy=1420, coins=450),
+    Mob(name='Рахлум 💢(🌟🌟🌟)', hp=3600, attack=1800, dexterity=1420, luck=1220, accuracy=1520, coins=450),
+    Mob(name='Мундус 💢(🌟🌟🌟)', hp=3600, attack=1800, dexterity=1420, luck=1220, accuracy=1420, coins=450),
 
 ]
 

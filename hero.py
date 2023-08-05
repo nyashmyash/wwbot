@@ -801,7 +801,7 @@ class Hero:
 
         if round(self.hp) <= 0:
             out += f"{self.get_name()} {self.log_hit(text_hero_dead)}\n"
-            self.died_hero()
+            #self.died_hero()
         self.km = 0
         return out
 
@@ -1085,10 +1085,10 @@ class Hero:
                 else:
                     i += 1
 
-        while self.mobs and i < len(self.mobs) and hero.hp >= 0:
+        while self.mobs and i < len(self.mobs) and hero.hp >= 0 and hero.km > 0:
             out += hero.attack_mob_pvp(self.mobs[i], min_log)
             i += 1
-        while hero.mobs and j < len(hero.mobs) and self.hp >= 0:
+        while hero.mobs and j < len(hero.mobs) and self.hp >= 0 and self.km > 0:
             out += self.attack_mob_pvp(hero.mobs[j], min_log)
             j += 1
 

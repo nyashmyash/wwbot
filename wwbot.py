@@ -591,7 +591,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
                         hdr1 = f"Сражение с {hero.get_name()}\n\n"
                         hdr2 = f"Сражение с {hero_h.get_name()}\n\n"
-                        if hero_h.hp <= 0:
+                        if hero_h.hp < hero.hp:
                             hero_h.died_hero()  # -10%
                             hero_h.coins -= round(hero_h.coins * (0.25 + hero.get_module(6) / 100))
                             hero.coins += round(hero_h.coins * (0.23 + hero.get_module(6) / 100))
@@ -600,7 +600,7 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                                                     reply_markup=menu_camp())
                             await update.message.reply_text(hdr2 + out +f"Вы выиграли!!!\n получено: 🕳 {round(hero_h.coins * 0.23)}")
                             pvp_end = True
-                        if hero.hp <= 0:
+                        else:
                             hero.died_hero()
                             hero.coins -= round(hero.coins * (0.25 + hero_h.get_module(6) / 100))
                             hero_h.coins += round(hero.coins * (0.23 + hero_h.get_module(6) / 100))
@@ -1226,6 +1226,30 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             await update.message.reply_text(f"записано на босса {list_boss[hero.go_boss-1].name} {cnt_boss}")
         else:
             await update.message.reply_text(f"никого нет на босса")
+
+    # elif "/additm" in msg_txt:
+    #     msg = msg_txt.replace("/additm", "")
+    #     items = msg.split("u")
+    #     user = items[0]
+    #     item = items[1]
+    #     for h in all_data:
+    #         if h == user:
+    #             hero_h = all_data[h]
+    #             if item.startswith("w"):
+    #                 dmg = item.replace("w", "")
+    #                 for weapon in weapons_all:
+    #                     if str(weapon.dmg) == dmg:
+    #                         hero_h.stock.add_item(weapon)
+    #             if item.startswith("a"):
+    #                 arm = item.replace("a", "")
+    #                 arm = arm.split('t')
+    #                 for armor in armor_all[arm[0]]:
+    #                     if str(armor.arm) == arm[1]:
+    #                         hero_h.stock.add_item(armor)
+
+    elif msg_txt.startswith("/set_name "):
+        name = msg_txt.replace("/set_name ", "")
+        hero.name = name
 
     elif msg_txt == "/startboss":
         if hero.go_boss:
