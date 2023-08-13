@@ -97,13 +97,44 @@ def menu_mk(add_fight: bool = False) -> ReplyKeyboardMarkup:
             InlineKeyboardButton("👣Идти дальше"),
         ],
         [
-            InlineKeyboardButton("👣Идти к лагерю"),
-            InlineKeyboardButton("⛺️В лагерь"),
             InlineKeyboardButton("📟Пип-бой"),
         ]
     ]
     if add_fight:
         keyboard[0].insert(0, InlineKeyboardButton("🔪Напасть"))
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    return reply_markup
+
+
+def menu_necro(add_fight: bool = False) -> ReplyKeyboardMarkup:
+    keyboard = [
+        [
+            InlineKeyboardButton("👣️💀Зона некронов"),
+            InlineKeyboardButton("👣Идти дальше"),
+        ],
+        [
+            InlineKeyboardButton("📟Пип-бой"),
+        ]
+    ]
+    if add_fight:
+        keyboard[0].insert(0, InlineKeyboardButton("🔪Напасть"))
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    return reply_markup
+
+
+def menu_necro_quit(add_fight: bool = False) -> ReplyKeyboardMarkup:
+    keyboard = [
+        [
+            InlineKeyboardButton("️💀Покинуть пустошь некронов💀"),
+            InlineKeyboardButton("👣Идти дальше")
+        ],
+        [
+            InlineKeyboardButton("📟Пип-бой"),
+        ]
+    ]
+    if add_fight:
+        keyboard[0].insert(0, InlineKeyboardButton("🔪Напасть"))
+
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     return reply_markup
 
@@ -170,8 +201,6 @@ def menu_dead_quit(add_fight: bool = False) -> ReplyKeyboardMarkup:
             InlineKeyboardButton("👣Идти дальше")
         ],
         [
-            InlineKeyboardButton("👣Идти к лагерю"),
-            InlineKeyboardButton("⛺️В лагерь"),
             InlineKeyboardButton("📟Пип-бой"),
         ]
     ]

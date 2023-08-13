@@ -685,6 +685,18 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     await update.message.reply_text(
                         header + "вы отправились на смертельную арену, вернуться в лагерь нельзя",
                         reply_markup=menu_go_dead())
+            if msg_txt == "👣️💀Зона некронов" and hero.km == 40:
+                hero.zone = 7
+                hero.go()
+                header = hero.make_header()
+                hero.select_mob()
+                if hero.mob_fight:
+                    await update.message.reply_text(
+                        header + "вы отправились в зону некронов, вернуться в лагерь нельзя")
+                else:
+                    await update.message.reply_text(
+                        header + "вы отправились в зону некронов, вернуться в лагерь нельзя",
+                        reply_markup=menu_go_dead())
 
         if msg_txt == "🔥Зайти в данж" and hero.km in danges.keys() and hero.in_dange == 0:
             if hero.km in hero.danges:
@@ -765,6 +777,19 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             else:
                 await update.message.reply_text(header + "вы покинули пустошь смерти",
                                                 reply_markup=menu_go())
+        elif msg_txt == "️💀Покинуть пустошь некронов💀" and hero.zone == 7:
+            hero.zone = 1
+            hero.go()
+            header = hero.make_header()
+            hero.select_mob()
+            if hero.mob_fight:
+                await update.message.reply_text(header + "вы покинули пустошь некронов")
+                await update.message.reply_text(f"на вас напал моб {hero.mob_fight.get_name()}",
+                                                reply_markup=menu_attack())
+            else:
+                await update.message.reply_text(header + "вы покинули пустошь некронов",
+                                                reply_markup=menu_go())
+
         elif msg_txt == "⚔️Дать отпор":
             mob = hero.mob_fight
             if mob:
@@ -848,7 +873,11 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     hero.mob_fight.luck = hero.luck/1.5
                     hero.mob_fight.dexterity = hero.dexterity/1.5
                     hero.mob_fight.accuracy = 5000
-                    hero.mob_fight.hp = round(hero.max_hp*1.5*hero.necro_lvl)
+                    att = hero.calc_attack()*1.15
+                    necro_hp = round(hero.max_hp * 1.5 * hero.necro_lvl)
+                    if att > necro_hp:
+                        necro_hp = round(att*pow(1.1, hero.necro_lvl))
+                    hero.mob_fight.hp = necro_hp
                     hero.necro_lvl += 0.2
                 else:
                     hero.select_mob()
@@ -1000,6 +1029,11 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 await update.message.reply_text("Можно зайти на смертельную арену 👹👹", reply_markup=menu_mk(pvp))
                 return
 
+        if hero.zone == 2:
+            if hero.km == 40:
+                await update.message.reply_text("Можно зайти в пустошь некронов", reply_markup=menu_necro(pvp))
+                return
+
         if hero.zone == 1:
             if hero.km == 30:
                 await update.message.reply_text(f"Можно изучить дзен, всего заполнено 🕳{hero.get_in_dzen()}\nПоместить крышки в дзен /dzen", reply_markup=menu_go(pvp))
@@ -1038,6 +1072,10 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
         if hero.km in [34, 44, 54, 64, 74] and hero.zone == 2:
             await update.message.reply_text("Можно выйти из пустоши смерти", reply_markup=menu_dead_quit(pvp))
+            return
+
+        if hero.km in [50, 60, 70, 80] and hero.zone == 7:
+            await update.message.reply_text("Можно выйти из пустоши некронов", reply_markup=menu_necro_quit(pvp))
             return
 
         if hero.km in rad_zones and hero.zone <= 1:
