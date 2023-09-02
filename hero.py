@@ -993,6 +993,9 @@ class Hero:
                                         self.stock.add_item(weapons_all[23])
                                         out += f"Вой вой вам выпало кое-что интересное {weapons_all[23].get_name()}"
                             if self.zone == 7: #некро
+                                if randint(0, 10) == 4:
+                                    self.stock.add_stuff(210)
+                                    out += f"Вой вой вам выпало кое-что интересное {used_items[210]['name']}"
                                 if randint(0, 400) == 344:
                                     self.stock.add_stuff(500)
                                     out += f"Вой вой вам выпало кое-что интересное {used_items[500]['name']}"

@@ -835,11 +835,11 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     if round(hero.hp) <= 0:
                         hero.died_hero()
                         await update.message.reply_text(
-                            f"побег не успешен, ты помер\:\(, вы потеряли 🕳 {lost}",
+                            f"побег не успешен, ты помер:(, вы потеряли 🕳 {lost}",
                             reply_markup=menu_camp())
                     else:
                         await menu_sel(update, hero, hero.make_header() +
-                                                         f"побег не успешен\(, вы потеряли 💔 {dmg} 🕳 {lost}")
+                                                         f"побег не успешен(, вы потеряли 💔 {dmg} 🕳 {lost}")
 
                 hero.mob_fight = None
 
@@ -1130,6 +1130,7 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             await add_hero_armor_db(async_session, h)
             await add_hero_weapon_db(async_session, h)
             await update_hero_items(async_session, h)
+            await update.message.reply_text("сохранение завершено")
             #await upd_indexes(async_session, h)
     #elif "/initbase" == msg_txt:
     #    await create_table_db(async_session)
