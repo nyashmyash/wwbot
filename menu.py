@@ -263,7 +263,7 @@ def menu_go(add_fight: bool = False) -> ReplyKeyboardMarkup:
     return reply_markup
 
 
-def menu_go_dead() -> ReplyKeyboardMarkup:
+def menu_go_dead(add_fight: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [
             InlineKeyboardButton("📟Пип-бой"),
@@ -273,6 +273,8 @@ def menu_go_dead() -> ReplyKeyboardMarkup:
             InlineKeyboardButton("🔎Осмотреться"),
         ]
     ]
+    if add_fight:
+        keyboard[0].insert(0, InlineKeyboardButton("🔪Напасть"))
 
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     return reply_markup

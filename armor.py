@@ -70,8 +70,14 @@ class Armor:
             return self.name + "*"
         return self.name
 
-    def get_data_hero(self) -> str:
-        out = f"▪️ {self.get_name()} 🛡 {self.arm}{self.arm_mod()} 🔧{round(100 * self.life / self.max_life)} %"
+    def get_data_hero(self, summ: bool=False) -> str:
+        if not summ:
+            out = f"▪️ {self.get_name()} 🛡 {self.arm}{self.arm_mod()} 🔧{round(100 * self.life / self.max_life)} %"
+        else:
+            arm = self.arm
+            if self.arm_mod() != '':
+                arm += int(self.arm_mod())
+            out = f"▪️ {self.get_name()} 🛡 {arm} 🔧{round(100 * self.life / self.max_life)} %"
         return out
 
     def get_code(self) -> str:

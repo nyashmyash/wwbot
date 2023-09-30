@@ -202,8 +202,8 @@ class Stock:
         out = "🎒СОДЕРЖИМОЕ РЮКЗАКА\n"
         out += "   Полезное\n"
         out += self.print_stuff(3)
-        out += self.print_stuff(5)
         out += "/mods модификаторы\n"
+        out += self.print_stuff(5)
         cnt = len(self.equip)
         out += f"Экипировка ({cnt}/{self.MAX_EQUIP})\n"
         equip_list = []

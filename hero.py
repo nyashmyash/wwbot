@@ -197,6 +197,7 @@ class Hero:
     min_log = False
     cnt_miss = 0
     necro_lvl = 1
+    summ_stats = False
 
     def go(self, reverse=False) -> None:
         if reverse:
@@ -335,6 +336,8 @@ class Hero:
         out = str(val)
         stack = self.get_stack(i)
         mod = self.get_module(i + 1, val)
+        if self.summ_stats:
+            return val + stack + self.buffs[i] + mod
 
         if stack > 0:
             out += "+" + str(stack)
@@ -437,7 +440,7 @@ class Hero:
         👤{0} {21}
         ├ 🤟{22}       умения /perks
         ├ ❤ {1}/{2}  🍗{14}% | ⚔️{15} | 🛡 {16} 
-        ├ 👣{17}   уменьшает текст /min_log 
+        ├ 👣{17}   /min_log /summ_stats
         ├ 💪{3} | 🤸🏽‍♂️{4} | 🗣{5} 
         ├ 👼{6} | 🎯{7}
         ├ {19}
@@ -450,7 +453,7 @@ class Hero:
         └ 🕳{13} 👣👣{18}"""
 
         dzen = f"🏵{self.get_dzen_lvl()}" if self.get_dzen_lvl() else ""
-        weapon = self.weapon.get_data_hero() if self.weapon else "нет оружия"
+        weapon = self.weapon.get_data_hero(self.summ_stats) if self.weapon else "нет оружия"
         armor = self.calc_armor()
         drone = self.drone.get_drone_text_line() if self.drone else "нет дрона"
         band_name = self.band_name + "   /band" if self.band_name not in ["введите имя банды","", None] else "нет банды"
@@ -464,7 +467,7 @@ class Hero:
 
 
     def arm_str(self, arm: object) -> str:
-        return arm.get_data_hero() if arm else "нет брони"
+        return arm.get_data_hero(self.summ_stats) if arm else "нет брони"
 
     def calc_attack(self, use_perk: bool=False) -> int:
         if self.weapon:
@@ -720,6 +723,7 @@ class Hero:
         out = ""
         boss_round = 0
         cnt_dead = 0
+        hp_boss = boss.hp
         while boss.hp > 0:
             if boss_round > 100:
                 break
@@ -760,6 +764,9 @@ class Hero:
 
             if cnt_dead == len(list_heroes):
                 break
+        for i in range(0, len(list_heroes)):
+            list_heroes[i].go_boss = 0
+        boss.hp = hp_boss
 
     def attack_mob_pvp(self, mob: Mob, min_log: bool = False) -> str:
         out = f"❤️ {round(self.hp)} {self.get_name()} vs {mob.get_name()} ❤{round(mob.hp)}\n\n"

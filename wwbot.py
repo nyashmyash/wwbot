@@ -1067,7 +1067,10 @@ async def text_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             return
 
         if hero.km == 52:
-            await update.message.reply_text("Можно отдохнуть /deeprest", reply_markup=menu_go(pvp))
+            if hero.zone == 1:
+                await update.message.reply_text("Можно отдохнуть /deeprest", reply_markup=menu_go(pvp))
+            else:
+                await update.message.reply_text("Можно отдохнуть /deeprest", reply_markup=menu_go_dead(pvp))
             return
 
         if hero.km in [34, 44, 54, 64, 74] and hero.zone == 2:
@@ -1095,9 +1098,8 @@ async def boss_fight(boss_id: int = 0) -> None:
         return
     list_heroes = []
     for h in all_data:
-        hero_h = all_data[h]
-        if hero_h.go_boss == boss_id:
-            list_heroes.append(hero_h)
+        if all_data[h].go_boss == boss_id:
+            list_heroes.append(all_data[h])
     Hero.attack_boss(list_heroes, list_boss[boss_id-1], boss_id=boss_id)
 
     str_heroes = "\n"
@@ -1114,6 +1116,7 @@ async def boss_fight(boss_id: int = 0) -> None:
                                                       reply_markup=menu_camp())
         else:
             await list_heroes[i].ef_chat.send_message(list_heroes[i].text_out_boss + str_heroes)
+        list_heroes[i].text_out_boss = ""
 
 
 async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -1130,7 +1133,7 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             await add_hero_armor_db(async_session, h)
             await add_hero_weapon_db(async_session, h)
             await update_hero_items(async_session, h)
-            await update.message.reply_text("сохранение завершено")
+        await update.message.reply_text("сохранение завершено")
             #await upd_indexes(async_session, h)
     #elif "/initbase" == msg_txt:
     #    await create_table_db(async_session)
@@ -1510,6 +1513,8 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     #    hero.perks = '0' * 6
     elif "/min_log" == msg_txt:
         hero.min_log = not hero.min_log
+    elif "/summ_stats" == msg_txt:
+        hero.summ_stats = not hero.summ_stats
     elif "/perks" == msg_txt:
         data = hero.return_perks()
     elif "/perk_" in msg_txt and hero.free_perks():

@@ -55,8 +55,14 @@ class Weapon:
         else:
             return round(self.cost * self.life / self.max_life)
 
-    def get_data_hero(self) -> str:
-        out = f"▪️ {self.get_name()} ⚡️{self.dmg}{self.dmg_mod()} 🔧{round(100 * self.life / self.max_life)} %"
+    def get_data_hero(self, summ: bool=False) -> str:
+        if not summ:
+            out = f"▪️ {self.get_name()} ⚡️{self.dmg}{self.dmg_mod()} 🔧{round(100 * self.life / self.max_life)} %"
+        else:
+            dmg = self.dmg
+            if self.dmg_mod() != '':
+                dmg += int(self.dmg_mod())
+            out = f"▪️ {self.get_name()} ⚡️{dmg} 🔧{round(100 * self.life / self.max_life)} %"
         return out
 
     def get_name(self) -> str:
