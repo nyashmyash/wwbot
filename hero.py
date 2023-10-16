@@ -3,6 +3,7 @@ from random import sample
 from mob import *
 import random
 import copy
+import re
 from armor import stack_buff, armor_all
 from weapon import weapons_all
 from stock import get_random_item, used_items
@@ -435,6 +436,83 @@ class Hero:
 
         return data
 
+    def parse_stock(self, data: str):
+        self.parse_stuff(data)
+        arm = re.findall(r'eqa_(.*?)(?:\n|$)', data)
+        for arm_s in arm:
+            i = int(arm_s.split('t')[0])
+            arm = arm_s.split('t')[1].split('z')[0]
+            for a in armor_all[i]:
+                if a.arm == int(arm):
+                    self.stock.add_item(a)
+                    break
+        eqw = re.findall(r'eqw_(.*?)(?:\n|$)', data)
+        for wp_s in eqw:
+            dmg = int(wp_s.split('z')[0])
+            for w in weapons_all:
+                if w.dmg == int(dmg):
+                    self.stock.add_item(w)
+                    break
+
+    def parse_stuff(self, data: str):
+        code = list(map(int, re.findall(r'ustf_(.*?)(?:\n|$)', data)))
+        cnt = list(map(int, re.findall(r'\((.*?)\)', data)))
+        self.stock.used_stuff.update(dict(zip(code, cnt)))
+
+    def parse_data(self, data: str):
+        substrings = data.split("\n")
+        self.name = substrings[0].split(' ')[0][1:]
+        self.max_hp = int(substrings[2].split('/')[1].split(' ')[0])
+        self.hp = self.max_hp
+        f_d_c = substrings[4].split('|')
+        self.force = int(re.findall(r'\d+',f_d_c[0])[0])
+        self.dexterity = int(re.findall(r'\d+',f_d_c[1])[0])
+        self.charisma = int(re.findall(r'\d+',f_d_c[2])[0])
+        l_a = substrings[5].split('|')
+        self.luck = int(re.findall(r'\d+',l_a[0])[0])
+        self.accuracy = int(re.findall(r'\d+',l_a[1])[0])
+        module = substrings[6][2:]
+        for k in all_modules:
+            if all_modules[k][1] == module:
+                for i in range(0, int(module)):
+                    self.add_module()
+                break
+        wp = re.findall(r'\d+',substrings[8])[0]
+        for w in weapons_all:
+            if w.dmg == int(wp):
+                wp = w
+
+        arm1 = re.findall(r'\d+',substrings[9])[0]
+        arm2 = re.findall(r'\d+',substrings[10])[0]
+        arm3 = re.findall(r'\d+',substrings[11])[0]
+
+        for ar in armor_all[0]:
+            if ar.arm == int(arm1):
+                arm1 = ar
+                break
+        for ar in armor_all[1]:
+            if ar.arm == int(arm2):
+                arm2 = ar
+                break
+        for ar in armor_all[2]:
+            if ar.arm == int(arm3):
+                arm3 = ar
+                break
+
+        self.weapon = copy.copy(wp)
+        self.weapon.use = 1
+        self.armor = []
+        self.armor.append(copy.copy(arm1))
+        self.armor.append(copy.copy(arm2))
+        self.armor.append(copy.copy(arm3))
+        for arm in self.armor:
+            arm.use = 1
+        self.materials = int(re.findall(r'\d+', substrings[12])[0])
+        lst = re.findall(r'\d+', substrings[13])
+        self.coins = int(lst[0])
+        self.all_km = int(lst[1])
+        self.dzen = int(lst[2])
+
     def return_data(self) -> str:
         data = """
         👤{0} {21}
@@ -450,7 +528,7 @@ class Hero:
         ├ 🧥{10}
         ├ 🧤{11}
         ├ 📦{12}
-        └ 🕳{13} 👣👣{18}"""
+        └ 🕳{13} 👣👣{18} dzen🕳{23}"""
 
         dzen = f"🏵{self.get_dzen_lvl()}" if self.get_dzen_lvl() else ""
         weapon = self.weapon.get_data_hero(self.summ_stats) if self.weapon else "нет оружия"
@@ -463,7 +541,7 @@ class Hero:
                            self.arm_str(self.armor[0]),
                            self.arm_str(self.armor[1]), self.arm_str(self.armor[2]), self.materials,
                            round(self.coins), self.hungry, self.calc_attack(),
-                           armor, self.km, self.all_km, self.get_str_modul(), drone, dzen, band_name)
+                           armor, self.km, self.all_km, self.get_str_modul(), drone, dzen, band_name, self.dzen)
 
 
     def arm_str(self, arm: object) -> str:
@@ -530,6 +608,18 @@ class Hero:
         while k > 0 and r % k != 0:
             k -= 1
         self.mob_fight = copy.copy(mobs_zone[k])
+
+    def add_mob(self, name_mob: str) -> None:
+        k = self.km // 5
+        if k >= len(list_mobs):
+            k = len(list_mobs) - 1
+        list_m = list_mobs[k]
+        if len(list_m) < 50:
+            new_mob = copy.copy(list_m[randint(0, len(list_m) - 1)])
+            new_mob.name = name_mob
+            list_m.append(new_mob)
+            return 1
+        return 0
 
     def select_mob(self) -> None:
         if self.zone >= 3:

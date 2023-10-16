@@ -1190,6 +1190,13 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             k += 1
         data += f"\n{p+1}. {hero.coins} || {hero.get_name()}\n"
 
+    elif msg_txt.startswith("/addmob"):
+        if len(msg_txt.replace("/addmob", "")) > 100:
+            return
+        name_mob = msg_txt.replace("/addmob", "").lstrip()
+        if hero.add_mob(name_mob):
+            await update.message.reply_text(f"моб {name_mob} добавлен")
+
     elif msg_txt.startswith("/topbm"):
         def sortf(e):
             return e.max_hp + e.force + e.accuracy + e.luck + e.dexterity + e.charisma
@@ -1215,7 +1222,7 @@ async def comm_msg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if len(msg_txt.replace("/name_drone", "")) > 100:
             return
         if hero.drone:
-            hero.drone.name = msg_txt.replace("/name_drone", "")
+            hero.drone.name = msg_txt.replace("/name_drone", "").lstrip()
     elif "/online" == msg_txt:
         for h in all_data:
             hero_h = all_data[h]

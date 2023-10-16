@@ -205,7 +205,7 @@ class Stock:
         out += "/mods модификаторы\n"
         out += self.print_stuff(5)
         cnt = len(self.equip)
-        out += f"Экипировка ({cnt}/{self.MAX_EQUIP})\n"
+        out += f"Экипировка   {cnt}/{self.MAX_EQUIP}\n"
         equip_list = []
         for w in self.equip:
             equip_list.append(self.equip[w].get_data())

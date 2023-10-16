@@ -383,6 +383,8 @@ list_mobs5_10 = [
             coins=30),
     Mob(name='👯‍♀преферанс и барышни', hp=19, attack=13, dexterity=10, luck=100, accuracy=10,
             coins=30),
+    Mob(name='🥟хинкали (съешь его)', hp=19, attack=13, dexterity=10, luck=100, accuracy=10,
+            coins=30),
 
 ]
 
@@ -448,7 +450,10 @@ list_mobs25_30 = [
     Mob(name='🐸жаба (мифическая)', hp=100, attack=70, dexterity=120, luck=120, accuracy=120, coins=120),
     Mob(name='💀терминатор T-800 (ищет Сарру Конор)', hp=90, attack=60, dexterity=120, luck=120, accuracy=120, coins=120),
     Mob(name='👮🏻‍♀️терминатор T-1000 (превратился в пол)', hp=90, attack=60, dexterity=120, luck=120, accuracy=120, coins=120),
-    Mob(name='👯‍♀тротил и шахидки', hp=90, attack=60, dexterity=120, luck=120, accuracy=120, coins=120),
+    Mob(name='👵🏿баба-яга (в ступе)', hp=90, attack=60, dexterity=120, luck=120, accuracy=120, coins=120),
+    Mob(name='🏚теремок на курьих ножках', hp=90, attack=60, dexterity=120, luck=120, accuracy=120, coins=120),
+    Mob(name='👶иван дурак', hp=90, attack=60, dexterity=120, luck=120, accuracy=120, coins=120),
+    Mob(name='🐴конек-горбунок', hp=90, attack=60, dexterity=120, luck=120, accuracy=120, coins=120),
 ]
 
 list_mobs30_35 = [
