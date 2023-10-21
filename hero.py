@@ -462,6 +462,7 @@ class Hero:
     def parse_data(self, data: str):
         substrings = data.split("\n")
         self.name = substrings[0].split(' ')[0][1:]
+        lvl = int(substrings[0].split(' ')[1][1:])
         self.max_hp = int(substrings[2].split('/')[1].split(' ')[0])
         self.hp = self.max_hp
         f_d_c = substrings[4].split('|')
@@ -511,7 +512,7 @@ class Hero:
         lst = re.findall(r'\d+', substrings[13])
         self.coins = int(lst[0])
         self.all_km = int(lst[1])
-        self.dzen = int(lst[2])
+        self.dzen = 500000*self.calc_sum(lvl) + int(lst[2])
 
     def return_data(self) -> str:
         data = """
@@ -541,8 +542,8 @@ class Hero:
                            self.arm_str(self.armor[0]),
                            self.arm_str(self.armor[1]), self.arm_str(self.armor[2]), self.materials,
                            round(self.coins), self.hungry, self.calc_attack(),
-                           armor, self.km, self.all_km, self.get_str_modul(), drone, dzen, band_name, self.dzen)
-
+                           armor, self.km, self.all_km, self.get_str_modul(), drone, dzen, band_name,
+                           self.dzen - self.calc_sum(self.get_dzen_lvl())*500000)
 
     def arm_str(self, arm: object) -> str:
         return arm.get_data_hero(self.summ_stats) if arm else "нет брони"
